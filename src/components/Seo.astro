@@ -1,0 +1,39 @@
+---
+import { site } from '../data/site';
+import { abs } from '../lib/seo';
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  noIndex?: boolean;
+}
+
+const { title, description, path, ogImage = site.ogDefault, ogType = 'website', noIndex = false } = Astro.props;
+const canonical = abs(path);
+const image = ogImage.startsWith('http') ? ogImage : abs(ogImage);
+---
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+{noIndex && <meta name="robots" content="noindex, nofollow" />}
+
+<meta property="og:site_name" content={site.shortName} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={image} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:url" content={canonical} />
+<meta property="og:type" content={ogType} />
+<meta property="og:locale" content="en_US" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={image} />
+
+<!-- GSC: replace the content value with the Search Console verification token -->
+<meta name="google-site-verification" content={site.gscToken} />

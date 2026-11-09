@@ -1,0 +1,219 @@
+---
+// The Book · five sections. The cover is the hero (placeholder until Jon supplies it).
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Section from '../components/Section.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Button from '../components/Button.astro';
+import Obj from '../components/Obj.astro';
+import Placeholder from '../components/Placeholder.astro';
+import { site, bookInfo } from '../data/site';
+import portrait from '../assets/photos/joe-portrait.png';
+
+const title = 'Bursting the Bubble by Joe Hliboki | Always Forward Coaching';
+const description =
+  'Bursting the Bubble: A Commonsense Guide to Early Career Success, by Joe Hliboki. The straight-talk handbook for your first years of work. Available on Amazon.';
+const path = '/the-book/';
+
+const schema = [
+  {
+    '@type': 'Book',
+    name: `${bookInfo.title}: ${bookInfo.subtitle}`,
+    alternateName: bookInfo.title,
+    author: { '@id': `${site.url}/#joe` },
+    url: `${site.url}${path}`,
+    inLanguage: 'en',
+    bookFormat: 'https://schema.org/Paperback',
+    genre: 'Career development',
+    offers: { '@type': 'Offer', url: site.amazon, availability: 'https://schema.org/InStock', seller: { '@type': 'Organization', name: 'Amazon' } },
+  },
+];
+---
+
+<Base {title} {description} {path} crumbs={[{ name: 'The Book', href: path }]} {schema}>
+  <!-- 1. Hero -->
+  <section class="bhero" aria-labelledby="book-title">
+    <div class="container bhero__grid">
+      <div class="bhero__visual" data-reveal>
+        <div class="bhero__cover">
+          <Placeholder text="BOOK COVER PLACEHOLDER: assets/source/book-cover.jpg, Jon supplies" block />
+          <span class="bhero__cover-title" aria-hidden="true">{bookInfo.title}</span>
+        </div>
+        <div class="bhero__obj">
+          <Obj name="notebook-pen" size={110} sizeMobile={80} rotate={-14} depth="near" float eager phase={2} />
+        </div>
+      </div>
+      <div class="bhero__copy" data-reveal-children>
+        <p class="eyebrow">The book</p>
+        <h1 id="book-title">{bookInfo.title}</h1>
+        <p class="deck">{bookInfo.subtitle}</p>
+        <p class="lede">School hands you a diploma and a bubble: the comfortable set of assumptions about how work is going to work. Then the first job pops it. This is the handbook for that moment.</p>
+        <div class="bhero__actions">
+          <Button href="#amazon-url-placeholder" describedBy="amazon-ph">Get it on Amazon</Button>
+          <Button href="#sample-pdf-placeholder" variant="ghost" describedBy="sample-ph">Read a chapter</Button>
+        </div>
+        <p class="small" id="amazon-ph"><Placeholder text="AMAZON_URL_PLACEHOLDER" /></p>
+        <p class="small" id="sample-ph"><Placeholder text="SAMPLE_PDF_PLACEHOLDER or remove the Read a chapter button" /></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. What is in it -->
+  <Section tone="mist" pitch id="inside" labelledby="inside-title">
+    <div class="prose" data-reveal-children>
+      <h2 id="inside-title">No theory. No hustle sermon. Just what works.</h2>
+      <p>
+        Joe took everything he learned mentoring Fortune 100 new hires, and everything he watched them learn the hard way, and wrote it down in plain language. How to show up. How to be managed. How to ask. How to recover when you get it wrong. How to get noticed for the right reasons and avoid getting noticed for the wrong ones.
+      </p>
+      <p>The idea that runs through the book is <strong>borrowed experience</strong>: you do not have to make every mistake yourself to learn from it. Someone already made it. Joe watched.</p>
+    </div>
+    <ul class="pullouts" data-reveal-children>
+      <li class="card">
+        <h3>Self-awareness first.</h3>
+        <p>Most early-career problems are not skill problems. They are "nobody told me how this looks from the other side of the desk" problems.</p>
+      </li>
+      <li class="card">
+        <h3>Be easy to manage.</h3>
+        <p>The first ninety days have one job, and it is not brilliance. It is trust.</p>
+      </li>
+      <li class="card">
+        <h3>The bubble pops either way.</h3>
+        <p>The book just makes sure it pops on your terms.</p>
+      </li>
+    </ul>
+  </Section>
+
+  <!-- 3. Who it is for -->
+  <Section id="for" labelledby="for-title">
+    <div class="prose" data-reveal-children>
+      <h2 id="for-title">Buy it for yourself. Or for the graduate who will not ask.</h2>
+      <p>
+        New grads and early-career professionals. Parents who want to help without hovering. Managers onboarding young teams who would rather hand over a book than repeat the same speech. Graduation-gift shoppers, you know who you are.
+      </p>
+    </div>
+  </Section>
+
+  <!-- 4. The author -->
+  <Section tone="mist" pitch id="author" labelledby="author-title">
+    <div class="author">
+      <div class="author__photo photo-card px-mid" data-reveal>
+        <Image src={portrait} alt="Portrait of Joe Hliboki, business and career coach" widths={[360, 540, 720]} sizes="(max-width: 899px) 70vw, 360px" format="webp" quality={78} loading="lazy" decoding="async" />
+      </div>
+      <div class="author__copy" data-reveal-children>
+        <h2 id="author-title">Joe Hliboki</h2>
+        <p>
+          Former Cisco sales leader, Certified FocalPoint Business, Executive & Career Coach, father of three, and the guy a mentor once told to stop wasting his knack for earning a young person's trust in thirty minutes. The book is that knack, written down. He coaches the same material <a href="/early-career-coaching/">one-on-one</a>, runs it as <a href="/career-steppingstones/">a group program</a>, and delivers it inside companies as <a href="/corporate-training/">an early-talent program</a>.
+        </p>
+        <Placeholder text="READER QUOTES PLACEHOLDER: two or three Amazon reviews, if Jon has them." block />
+      </div>
+    </div>
+  </Section>
+
+  <!-- 5. Closing CTA -->
+  <CtaBand heading="Read it. Then come talk about it." body="The book is the cheapest coaching session Joe offers. The next one is free." button={{ label: 'Book a call with Joe', href: '/contact/' }} />
+</Base>
+
+<style>
+  .bhero {
+    padding-block: var(--s-4) var(--s-8);
+  }
+  .bhero__grid {
+    display: grid;
+    gap: var(--s-6);
+    align-items: center;
+  }
+  .bhero__visual {
+    position: relative;
+    justify-self: center;
+    width: min(100%, 280px);
+  }
+  .bhero__cover {
+    position: relative;
+    aspect-ratio: 2 / 3;
+    display: grid;
+    align-content: end;
+    gap: var(--s-2);
+    padding: var(--s-3);
+    background: linear-gradient(160deg, var(--navy), var(--navy-700));
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-2);
+    transform: rotate(-5deg);
+  }
+  .bhero__cover :global(.ph) {
+    background: rgba(255, 255, 255, 0.92);
+  }
+  .bhero__cover-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: var(--paper);
+    letter-spacing: -0.02em;
+  }
+  .bhero__obj {
+    position: absolute;
+    left: -36px;
+    bottom: -24px;
+    z-index: 2;
+  }
+  .bhero__copy h1 {
+    margin-bottom: var(--s-2);
+  }
+  .bhero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+    align-items: center;
+    margin-top: var(--s-3);
+  }
+  .bhero__copy .small {
+    margin-top: var(--s-1);
+  }
+  .pullouts {
+    list-style: none;
+    margin: var(--s-5) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--s-3);
+  }
+  .pullouts h3 {
+    margin-bottom: 6px;
+  }
+  .pullouts p {
+    margin: 0;
+  }
+  .author {
+    display: grid;
+    gap: var(--s-5);
+    align-items: center;
+  }
+  .author__photo {
+    --tilt: 2deg;
+    width: min(70vw, 360px);
+    aspect-ratio: 3 / 4;
+  }
+  .author__copy p {
+    max-width: 60ch;
+    margin-bottom: var(--s-3);
+  }
+  @media (min-width: 900px) {
+    .bhero {
+      min-height: 60vh;
+      display: flex;
+      align-items: center;
+    }
+    .bhero__grid {
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+      gap: var(--s-8);
+    }
+    .bhero__visual {
+      width: 320px;
+    }
+    .pullouts {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .author {
+      grid-template-columns: 360px minmax(0, 1fr);
+      gap: var(--s-8);
+    }
+  }
+</style>

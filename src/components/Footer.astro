@@ -1,0 +1,161 @@
+---
+// Footer (03_layout_and_components.md). Navy, contour backdrop on the far layer, four columns.
+// The LWS badge and name are never animated.
+import { Image } from 'astro:assets';
+import logoWhite from '../assets/brand/logo-white-2x.png';
+import badge from '../assets/brand/verifiedsecured.png';
+import bgNavy from '../assets/backgrounds/bg-contour-navy.png';
+import Backdrop from './Backdrop.astro';
+import Placeholder from './Placeholder.astro';
+import { site } from '../data/site';
+import { services, moreLinks } from '../data/nav';
+const year = 2026;
+---
+
+<footer class="site-footer on-navy">
+  <Backdrop image={bgNavy} class="site-footer__bg" />
+  <div class="container site-footer__inner">
+    <div class="site-footer__grid">
+      <div class="site-footer__brand">
+        <a href="/" aria-label="Always Forward, home" class="site-footer__logo">
+          <Image src={logoWhite} alt="Always Forward Business & Career Coaching" width={200} height={61} densities={[1, 2]} loading="lazy" decoding="async" />
+        </a>
+        <p class="site-footer__tagline">{site.tagline}</p>
+        <p class="small">Montvale, New Jersey · coaching by video everywhere</p>
+      </div>
+
+      <nav class="site-footer__col" aria-labelledby="f-coaching">
+        <h2 class="site-footer__heading" id="f-coaching">Coaching</h2>
+        <ul>
+          {services.map((s) => <li><a href={s.href}>{s.title}</a></li>)}
+        </ul>
+      </nav>
+
+      <nav class="site-footer__col" aria-labelledby="f-more">
+        <h2 class="site-footer__heading" id="f-more">More</h2>
+        <ul>
+          {moreLinks.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+        </ul>
+      </nav>
+
+      <div class="site-footer__col" aria-labelledby="f-talk">
+        <h2 class="site-footer__heading" id="f-talk">Talk to Joe</h2>
+        <ul>
+          <li>Office <a href={`tel:${site.phoneOfficeE164}`}>{site.phoneOffice}</a></li>
+          <li>Mobile <a href={`tel:${site.phoneMobileE164}`}>{site.phoneMobile}</a></li>
+          <li>Email <a href={`mailto:${site.email}`}>{site.email}</a> <Placeholder text={site.emailPlaceholder} /></li>
+          <li><a href={site.calendly} target="_blank" rel="noopener">Grab a time on Calendly</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="site-footer__bottom">
+      <p class="small">© {year} Always Forward, LLC · <a href="/privacy/">Privacy</a></p>
+      <a class="lws" href="https://livewebstudios.com" rel="noopener">
+        <Image src={badge} alt="Live Web Studios verified and secured" width={150} height={37} loading="lazy" decoding="async" class="lws__badge" />
+        <span class="lws__text">Powered by Live Web Studios</span>
+      </a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    position: relative;
+    overflow: hidden;
+    background: var(--navy);
+    padding-block: var(--s-8) var(--s-4);
+    margin-top: 0;
+  }
+  .site-footer :global(.site-footer__bg) {
+    opacity: 0.55;
+  }
+  .site-footer__inner {
+    position: relative;
+    z-index: 1;
+  }
+  .site-footer__grid {
+    display: grid;
+    gap: var(--s-5);
+  }
+  .site-footer__logo {
+    display: inline-block;
+    width: 200px;
+    margin-bottom: var(--s-2);
+  }
+  .site-footer__tagline {
+    color: var(--sky-200);
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1.125rem;
+    max-width: 30ch;
+  }
+  .site-footer__heading {
+    font-family: var(--font-body);
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--sky-200);
+    margin-bottom: var(--s-2);
+  }
+  .site-footer__col ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+  }
+  .site-footer__col li {
+    color: var(--sky-200);
+    font-size: 0.9375rem;
+  }
+  .site-footer__col a {
+    color: var(--paper);
+    text-decoration-color: rgba(169, 211, 240, 0.5);
+  }
+  .site-footer__col a:hover {
+    text-decoration-color: var(--sky-200);
+  }
+  .site-footer__bottom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-2);
+    margin-top: var(--s-6);
+    padding-top: var(--s-3);
+    border-top: 1px solid rgba(169, 211, 240, 0.25);
+  }
+  .site-footer__bottom .small {
+    color: var(--sky-200);
+  }
+  .lws {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: var(--sky-200);
+    font-size: var(--fs-small);
+  }
+  .lws :global(.lws__badge) {
+    width: 150px;
+    height: 37px;
+    opacity: 1;
+  }
+  .lws:hover .lws__text {
+    text-decoration: underline;
+    text-decoration-color: var(--sky-200);
+  }
+  @media (min-width: 720px) {
+    .site-footer__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (min-width: 1024px) {
+    .site-footer__grid {
+      grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
+      gap: var(--s-6);
+    }
+  }
+</style>

@@ -1,0 +1,23 @@
+# Windows
+desktop.ini
+Thumbs.db
+ehthumbs.db
+$RECYCLE.BIN/
+
+# Mac
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Claude Code
+*.log
+.claude/
+
+# Build
+node_modules/
+dist/
+.astro/
+qa/
+
+# Root-level markdown stays out of the repo (Jon). Posts in src/content are not affected.
+/*.md

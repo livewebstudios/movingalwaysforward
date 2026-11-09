@@ -1,0 +1,11 @@
+---
+// A labeled placeholder Jon replaces after the build. Always visible, never styled away.
+interface Props {
+  text: string;
+  block?: boolean;
+  class?: string;
+}
+const { text, block = false, class: cls = '' } = Astro.props;
+---
+
+<span class:list={['ph', { 'ph--block': block }, cls]} role="note" aria-label={`Placeholder: ${text}`}>[{text}]</span>

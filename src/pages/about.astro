@@ -1,0 +1,201 @@
+---
+// About Joe · five sections. No objects on this page; the photos do the work.
+import { Image, getImage } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Section from '../components/Section.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { site } from '../data/site';
+import portrait from '../assets/photos/joe-portrait.png';
+import ridge from '../assets/photos/joe-ridge-trail.png';
+
+const title = 'About Joe Hliboki, Business & Career Coach | Always Forward Coaching';
+const description =
+  'Meet Joe Hliboki: Certified FocalPoint business, executive and career coach in Montvale, NJ. Former Cisco sales leader, author of Bursting the Bubble, early-career specialist.';
+const path = '/about/';
+
+const portraitImg = await getImage({ src: portrait, width: 800, format: 'jpg' });
+const schema = [
+  {
+    '@type': 'Person',
+    '@id': `${site.url}/#joe`,
+    name: site.owner,
+    givenName: 'Joe',
+    familyName: 'Hliboki',
+    jobTitle: site.jobTitle,
+    description,
+    image: new URL(portraitImg.src, site.url).href,
+    url: `${site.url}${path}`,
+    worksFor: { '@id': `${site.url}/#org` },
+    address: { '@type': 'PostalAddress', addressLocality: 'Montvale', addressRegion: 'NJ', addressCountry: 'US' },
+    alumniOf: { '@type': 'Organization', name: 'Cisco' },
+    memberOf: { '@type': 'Organization', name: 'BNI Sunrise, Bergen County' },
+    knowsAbout: ['Career coaching', 'Executive coaching', 'Sales training', 'Leadership development', 'Early-career development'],
+    sameAs: [site.linkedin],
+  },
+];
+---
+
+<Base {title} {description} {path} crumbs={[{ name: 'About Joe', href: path }]} {schema} personOverride>
+  <!-- 1. Hero -->
+  <section class="ahero" aria-labelledby="about-title">
+    <div class="container ahero__grid">
+      <div class="ahero__copy" data-reveal-children>
+        <p class="eyebrow">About</p>
+        <h1 id="about-title">The coach who has actually done the job.</h1>
+        <p class="lede">Joe Hliboki led sales teams at Cisco, mentored its best new hires, raised three kids through the Gen Z job market, and then made coaching his second career. Montvale, New Jersey.</p>
+      </div>
+      <div class="ahero__photo photo-card px-mid" data-reveal>
+        <Image src={portrait} alt="Portrait of Joe Hliboki, business and career coach" widths={[420, 640, 860]} sizes="(max-width: 899px) 80vw, 420px" format="webp" quality={78} loading="eager" decoding="async" fetchpriority="high" />
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. The story -->
+  <Section tone="mist" pitch id="story" labelledby="story-title">
+    <div class="prose story" data-reveal-children>
+      <h2 id="story-title">From carrying the number to coaching the people who do.</h2>
+      <p>
+        Joe spent his corporate career at Cisco, where he led a healthcare sales team of sixteen to twenty people depending on the year. Hiring, promoting, coaching through slumps, managing up, carrying the number. The career questions he gets paid to answer now are ones he lived first, with a quota attached.
+      </p>
+      <p>
+        Every year Cisco would hire a handful of new engineers, one in a hundred out of a hundred thousand applicants, train them in North Carolina, and let the best choose where to go. New York was always a top pick, so one would land on Joe's team. Brilliant on paper. Not yet people-smart. Joe became their mentor, and found he could get through to them fast.
+      </p>
+      <blockquote class="pullquote">
+        &ldquo;Not every 62-year-old guy can talk to all these young people and connect with them in thirty minutes. You have something worth pursuing here.&rdquo;
+        <cite>A mentor, watching Joe do it.</cite>
+      </blockquote>
+      <p>
+        That was the crossroads. He was coaching executives at a client when the COO heard about his book and asked him to work with a few twenty-somethings on staff too. The leadership work paid in dollars. The early-career work paid in pennies. And Joe noticed that his preparation, his enthusiasm and the impact he was having all went up when the room got younger. He was good at both. He was built for one.
+      </p>
+      <p>
+        Always Forward is what he did about it. Joe became a Certified FocalPoint Business, Executive & Career Coach, FocalPoint being the global coaching network whose curriculum backs his own experience with tested structure, and opened a practice with an unusual spread: Fortune-100-grade <a href="/corporate-training/">training for companies</a>, and <a href="/early-career-coaching/">$75 sessions</a> for kids six months out of college. He wrote <a href="/the-book/"><em>Bursting the Bubble: A Commonsense Guide to Early Career Success</em></a> so the advice would not be limited to the people in the room.
+      </p>
+      <p>
+        The tagline is the job description. <strong>Working to facilitate change and accelerate success</strong>: change, because nothing he coaches works without it, and acceleration, because you would get there eventually. He just gets you there sooner.
+      </p>
+    </div>
+  </Section>
+
+  <!-- 3. Wide band -->
+  <section class="ridge" aria-labelledby="ridge-title">
+    <div class="ridge__media px-far" aria-hidden="true">
+      <Image src={ridge} alt="" widths={[800, 1400, 2000]} sizes="100vw" format="webp" quality={70} loading="lazy" decoding="async" />
+    </div>
+    <div class="container ridge__inner">
+      <div class="ridge__card card" data-reveal>
+        <h2 id="ridge-title">Off the clock.</h2>
+        <p>
+          Joe lives in Montvale, New Jersey, with his wife and three kids, which means the Gen Z research program runs at home, nights and weekends. He has coached more than five hundred young athletes over the years. He is a member and officer of BNI Sunrise in Bergen County, where he is known for volunteering workshops nobody asked for and everybody attends. The family's long-range plan points toward the Connecticut shore, so Fairfield County clients: he is already looking your way.
+        </p>
+      </div>
+    </div>
+    <span class="sr-only">Joe Hliboki walking a ridge trail at sunrise with mist in the valley behind him</span>
+  </section>
+
+  <!-- 4. Credentials -->
+  <Section id="credentials" labelledby="cred-title">
+    <div class="sec-head" data-reveal>
+      <h2 id="cred-title">The short version.</h2>
+    </div>
+    <ol class="creds" data-reveal-children>
+      <li>Certified FocalPoint Business, Executive & Career Coach</li>
+      <li>Former sales leader, Cisco: healthcare team of sixteen to twenty</li>
+      <li>Author, <em>Bursting the Bubble: A Commonsense Guide to Early Career Success</em></li>
+      <li>BNI Sunrise member and Power of One Coordinator, Bergen County, NJ</li>
+      <li>Coaching practice: three years, three delivery days a week, in person in northern NJ and by video nationally</li>
+    </ol>
+  </Section>
+
+  <!-- 5. Closing CTA -->
+  <CtaBand heading="Thirty minutes. See for yourself." body="The first call is free. Joe will tell you plainly whether coaching fits, and what to do tomorrow either way." button={{ label: 'Book a call with Joe', href: '/contact/' }} />
+</Base>
+
+<style>
+  .ahero {
+    padding-block: var(--s-4) var(--s-8);
+  }
+  .ahero__grid {
+    display: grid;
+    gap: var(--s-5);
+    align-items: center;
+  }
+  .ahero__photo {
+    --tilt: 3deg;
+    width: min(80vw, 420px);
+    aspect-ratio: 3 / 4;
+    justify-self: center;
+  }
+  .story p {
+    font-size: 1.0625rem;
+  }
+  .ridge {
+    position: relative;
+    overflow: hidden;
+    min-height: 480px;
+    display: flex;
+    align-items: center;
+    padding-block: var(--s-8);
+    background: var(--navy);
+  }
+  .ridge__media {
+    position: absolute;
+    inset: -10% 0;
+  }
+  .ridge__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .ridge__inner {
+    position: relative;
+    z-index: 1;
+  }
+  .ridge__card {
+    max-width: 520px;
+    padding: var(--s-4);
+  }
+  .ridge__card h2 {
+    margin-bottom: var(--s-2);
+  }
+  .creds {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-width: 760px;
+    counter-reset: cred;
+  }
+  .creds li {
+    counter-increment: cred;
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: var(--s-2);
+    align-items: baseline;
+    padding: var(--s-2) 0;
+    border-top: 1px solid var(--line);
+    font-size: 1.0625rem;
+  }
+  .creds li:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+  .creds li::before {
+    content: counter(cred, decimal-leading-zero);
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: var(--navy);
+  }
+  @media (min-width: 900px) {
+    .ahero {
+      min-height: 60vh;
+      display: flex;
+      align-items: center;
+    }
+    .ahero__grid {
+      grid-template-columns: minmax(0, 1.2fr) 420px;
+      gap: var(--s-8);
+    }
+    .ridge {
+      min-height: 560px;
+    }
+  }
+</style>

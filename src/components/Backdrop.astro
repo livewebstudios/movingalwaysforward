@@ -1,0 +1,63 @@
+---
+// The textured background behind the hero container, the CTA bands and the footer.
+// Image today; Jon will pass `video` later and nothing in the layout changes.
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  image: ImageMetadata;
+  /** optional { mp4?, webm? } sources; renders a muted looping video in the same box */
+  video?: { mp4?: string; webm?: string };
+  eager?: boolean;
+  parallax?: boolean;
+  opacity?: number;
+  class?: string;
+}
+const { image, video, eager = false, parallax = true, class: cls = '' } = Astro.props;
+---
+
+<div class:list={['backdrop', cls]} aria-hidden="true">
+  <div class:list={['backdrop__inner', { 'px-far': parallax }]}>
+    {
+      video ? (
+        <video class="backdrop__media" autoplay muted loop playsinline poster={image.src} preload="none">
+          {video.webm && <source src={video.webm} type="video/webm" />}
+          {video.mp4 && <source src={video.mp4} type="video/mp4" />}
+        </video>
+      ) : (
+        <Image
+          class="backdrop__media"
+          src={image}
+          widths={[720, 1200, 1800]}
+          sizes="100vw"
+          format="webp"
+          quality={64}
+          alt=""
+          loading={eager ? 'eager' : 'lazy'}
+          decoding="async"
+          fetchpriority={eager ? 'high' : 'auto'}
+        />
+      )
+    }
+  </div>
+</div>
+
+<style>
+  .backdrop {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .backdrop__inner {
+    position: absolute;
+    inset: -12% 0;
+  }
+  .backdrop :global(.backdrop__media) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+</style>

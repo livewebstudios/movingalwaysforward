@@ -1,0 +1,26 @@
+---
+// Buttons (01_brand_system.md). Primary = gold with navy text; the arrow crossfades to the
+// logo's flag on hover (the one place logo geometry leaks into UI, on purpose).
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'secondary' | 'ghost';
+  type?: 'button' | 'submit';
+  class?: string;
+  ariaLabel?: string;
+  external?: boolean;
+  describedBy?: string;
+}
+const { href, variant = 'primary', type = 'button', class: cls = '', ariaLabel, external = false, describedBy } = Astro.props;
+const Tag = href ? 'a' : 'button';
+const attrs = href
+  ? { href, ...(external ? { target: '_blank', rel: 'noopener' } : {}) }
+  : { type };
+---
+
+<Tag class:list={['btn', `btn--${variant}`, cls]} aria-label={ariaLabel} aria-describedby={describedBy} {...attrs}>
+  <span class="btn__label"><slot /></span>
+  <span class="btn__icon" aria-hidden="true">
+    <svg class="btn__arrow" viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h11M10 5l5 5-5 5" /></svg>
+    {variant === 'primary' && <svg class="btn__flag" viewBox="1104 92 224 432" width="12" height="20"><use href="#af-flag" /></svg>}
+  </span>
+</Tag>

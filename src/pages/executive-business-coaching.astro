@@ -1,0 +1,112 @@
+---
+// Executive & Business Coaching · ServiceSkeleton, six sections. No prices on this page.
+import Base from '../layouts/Base.astro';
+import Section from '../components/Section.astro';
+import InteriorHero from '../components/InteriorHero.astro';
+import ProofBlock from '../components/ProofBlock.astro';
+import CtaBand from '../components/CtaBand.astro';
+import StepsStrip from '../islands/StepsStrip';
+import { objSrc } from '../lib/images';
+import { service } from '../lib/seo';
+import oneOnOne from '../assets/photos/joe-one-on-one.png';
+
+const title = 'Executive & Business Coaching in Montvale NJ | Always Forward Coaching';
+const description =
+  'One-on-one executive and business coaching with Joe Hliboki, Certified FocalPoint coach and former Cisco sales leader. For professionals and owners ready for the next level.';
+const path = '/executive-business-coaching/';
+const coffee = await objSrc('coffee-cups', 144);
+const schema = [service('Executive & Business Coaching', path, description, 'Mid-career professionals, career changers and business owners')];
+---
+
+<Base {title} {description} {path} crumbs={[{ name: 'Executive & Business Coaching', href: path }]} {schema}>
+  <InteriorHero
+    eyebrow="Executive & Business Coaching"
+    title="Good at the work. Time to get good at the career."
+    deck="Structured one-on-one coaching for mid-career professionals, career changers and business owners. An honest assessment, a plan with dates on it, and someone who will ask about it."
+    button={{ label: 'Book a call', href: '/contact/' }}
+    object="compass"
+    objectRotate={-10}
+    photo={{ image: oneOnOne, alt: 'Joe Hliboki listening across a table to a young professional during a coaching session' }}
+  />
+
+  <Section tone="mist" pitch id="who" labelledby="who-title">
+    <div class="prose" data-reveal-children>
+      <h2 id="who-title">You do not need a cheerleader. You need an outside view and a plan you will follow.</h2>
+      <p>
+        Mid-career professionals stuck one level below where they belong. Career changers who know the destination but not the route. Business owners who are the bottleneck in their own company and know it. People who have been told they are "doing great" for three years and have not been promoted once.
+      </p>
+      <p class="callout"><strong>Not for you if:</strong> you want validation. Joe is kind, and he is also the person who will say the thing nobody else at your company will.</p>
+    </div>
+  </Section>
+
+  <Section id="what" labelledby="what-title">
+    <div class="sec-head" data-reveal>
+      <h2 id="what-title">What the engagement actually contains.</h2>
+    </div>
+    <ul class="syllabus" data-reveal-children>
+      <li>
+        <h3>A real assessment first.</h3>
+        <p>Where you are, where the current trajectory takes you, and the honest gap between that and where you want to be. Joe uses FocalPoint's assessment tools, including DISC where it helps, plus his own corporate mileage.</p>
+      </li>
+      <li>
+        <h3>A written plan with dates on it.</h3>
+        <p>Positioning, visibility, skills to build, conversations to have. Specific enough to be checked, not admired.</p>
+      </li>
+      <li>
+        <h3>Standing one-on-one sessions.</h3>
+        <p>Weekly or every other week, in person near Montvale or on video. Structured with FocalPoint's methodology and Joe's experience running teams. Accountability included, whether you want it that day or not.</p>
+      </li>
+      <li>
+        <h3>The hard conversations, rehearsed.</h3>
+        <p>The raise. The restructure. The partner who is not pulling weight. You walk in having already done it once, out loud, with someone who has had that conversation from both chairs.</p>
+      </li>
+    </ul>
+    <p class="prose owners" data-reveal>For owners, the plan also covers the business: where your time goes, what only you can do, and what you are doing anyway because nobody else will.</p>
+  </Section>
+
+  <Section tone="mist" pitch id="how" labelledby="how-title">
+    <div class="sec-head" data-reveal>
+      <h2 id="how-title">How it works</h2>
+    </div>
+    <StepsStrip
+      client:visible
+      {coffee}
+      steps={[
+        { title: 'Talk.', body: 'A free call. You describe the ceiling. Joe asks the questions nobody else will.' },
+        { title: 'Plan.', body: 'Assessment and a written plan inside the first two sessions.' },
+        { title: 'Work the plan.', body: 'Standing sessions, measured against the plan, adjusted as reality votes.' },
+      ]}
+    />
+  </Section>
+
+  <Section id="proof" labelledby="proof-title">
+    <ProofBlock
+      heading="Sixteen to twenty direct reports. Years of quota."
+      testimonial="TESTIMONIAL PLACEHOLDER: one or two from coaching clients. Jon supplies."
+      related={[
+        { lead: 'Need this for a team instead of one person?', label: 'Group Programs', href: '/group-programs/' },
+        { lead: 'Need it for your whole company?', label: 'Corporate Training', href: '/corporate-training/' },
+      ]}
+    >
+      <p>
+        Before coaching, Joe led a healthcare sales team of sixteen to twenty people at Cisco. Hiring, promoting, restructuring, managing up and down, carrying the number. He ran the careers he now coaches. He is a Certified FocalPoint Business, Executive & Career Coach, backed by a curriculum that has been delivered to businesses worldwide, and he has been coaching for three years with a client list that fills three delivery days a week.
+      </p>
+    </ProofBlock>
+  </Section>
+
+  <CtaBand
+    heading="The next level has a door. Find it."
+    body="Thirty minutes to describe the ceiling. Joe will tell you if he can help and, if he cannot, who can."
+    button={{ label: 'Book a call with Joe', href: '/contact/' }}
+    object="ladder"
+  />
+</Base>
+
+<style>
+  .owners {
+    margin-top: var(--s-4);
+    padding-top: var(--s-3);
+    border-top: 1px solid var(--line);
+    max-width: 760px;
+  }
+</style>

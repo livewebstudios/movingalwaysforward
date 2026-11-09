@@ -1,0 +1,334 @@
+---
+// Header (03_layout_and_components.md). Transparent over the hero, white with a hairline
+// after 40px of scroll. Nav items ALL CAPS. COACHING opens a 2x2 panel, one row per audience.
+import { Image } from 'astro:assets';
+import logo from '../assets/brand/logo-full-2x.png';
+import { services, primaryNav } from '../data/nav';
+import { objects } from '../lib/images';
+import Button from './Button.astro';
+import MobileNav from '../islands/MobileNav';
+
+const mobileItems = [
+  { label: 'COACHING', href: '/early-career-coaching/', children: services.map((s) => ({ label: s.title, href: s.href })) },
+  ...primaryNav,
+];
+---
+
+<header class="site-header" id="site-header">
+  <div class="container site-header__bar">
+    <a class="site-header__logo" href="/" aria-label="Always Forward, home">
+      <Image src={logo} alt="Always Forward Business & Career Coaching" width={180} height={55} densities={[1, 2]} loading="eager" decoding="async" fetchpriority="high" />
+    </a>
+
+    <nav class="site-nav" aria-label="Primary">
+      <ul class="site-nav__list">
+        <li class="site-nav__item site-nav__item--has-panel">
+          <button class="site-nav__link site-nav__toggle" type="button" aria-expanded="false" aria-controls="coaching-panel" id="coaching-toggle">
+            COACHING
+            <svg aria-hidden="true" viewBox="0 0 12 12" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 4.5 6 8l3.5-3.5" /></svg>
+          </button>
+          <div class="site-nav__panel" id="coaching-panel" hidden>
+            <ul class="panel-grid" aria-labelledby="coaching-toggle">
+              {
+                services.map((s) => (
+                  <li>
+                    <a class="panel-row" href={s.href}>
+                      <span class="panel-row__thumb" aria-hidden="true">
+                        <Image src={objects[s.object]} width={96} height={96} format="webp" quality={80} alt="" loading="lazy" decoding="async" />
+                      </span>
+                      <span class="panel-row__text">
+                        <span class="panel-row__title">{s.title}</span>
+                        <span class="panel-row__line">{s.line}</span>
+                      </span>
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+        </li>
+        {
+          primaryNav.map((item) => (
+            <li class="site-nav__item">
+              <a class="site-nav__link" href={item.href}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="site-header__actions">
+      <Button href="/contact/" class="site-header__cta">Book a call</Button>
+      <MobileNav client:load items={mobileItems} />
+    </div>
+  </div>
+</header>
+
+<script>
+  // Scroll state (motion kit #8), dropdown keyboard/pointer handling, current-page marking.
+  // The header persists across View Transitions, so this binds once and listens for page loads.
+  const header = document.getElementById('site-header');
+  const toggle = document.getElementById('coaching-toggle') as HTMLButtonElement | null;
+  const panel = document.getElementById('coaching-panel');
+  const item = toggle?.closest('.site-nav__item--has-panel') as HTMLElement | null;
+  let closeTimer: number | undefined;
+
+  const onScroll = () => header?.classList.toggle('is-scrolled', window.scrollY > 40);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  const setOpen = (open: boolean) => {
+    if (!toggle || !panel || !item) return;
+    toggle.setAttribute('aria-expanded', String(open));
+    panel.hidden = !open;
+    item.classList.toggle('is-open', open);
+  };
+
+  toggle?.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
+  item?.addEventListener('pointerenter', (e) => {
+    if ((e as PointerEvent).pointerType !== 'mouse') return;
+    window.clearTimeout(closeTimer);
+    setOpen(true);
+  });
+  item?.addEventListener('pointerleave', (e) => {
+    if ((e as PointerEvent).pointerType !== 'mouse') return;
+    closeTimer = window.setTimeout(() => setOpen(false), 160);
+  });
+  item?.addEventListener('focusout', (e) => {
+    if (!item.contains((e as FocusEvent).relatedTarget as Node | null)) setOpen(false);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && toggle?.getAttribute('aria-expanded') === 'true') {
+      setOpen(false);
+      toggle.focus();
+    }
+  });
+  document.addEventListener('click', (e) => {
+    if (item && !item.contains(e.target as Node)) setOpen(false);
+  });
+
+  const markCurrent = () => {
+    const here = location.pathname.replace(/\/?$/, '/');
+    document.querySelectorAll<HTMLAnchorElement>('.site-nav a, .panel-row').forEach((a) => {
+      const path = new URL(a.href, location.origin).pathname.replace(/\/?$/, '/');
+      if (path === here) a.setAttribute('aria-current', 'page');
+      else a.removeAttribute('aria-current');
+    });
+    const inCoaching = Array.from(document.querySelectorAll<HTMLAnchorElement>('.panel-row')).some((a) => a.getAttribute('aria-current'));
+    toggle?.classList.toggle('is-current', inCoaching);
+    setOpen(false);
+    onScroll();
+  };
+  document.addEventListener('astro:page-load', markCurrent);
+</script>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: transparent;
+    border-bottom: 1px solid transparent;
+    transition:
+      background-color 240ms var(--ease-out),
+      border-color 240ms var(--ease-out);
+  }
+  .site-header.is-scrolled {
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: saturate(140%) blur(8px);
+    border-bottom-color: var(--line);
+  }
+  .site-header__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-2);
+    height: 64px;
+  }
+  .site-header__logo {
+    display: block;
+    flex: none;
+    width: 140px;
+    transition: width 240ms var(--ease-out);
+  }
+  .site-header__logo img {
+    width: 100%;
+    height: auto;
+  }
+  .site-nav {
+    display: none;
+  }
+  .site-header__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--s-1);
+  }
+  .site-header__actions :global(.site-header__cta) {
+    min-height: 44px;
+    padding-inline: 16px;
+    font-size: 0.9375rem;
+  }
+
+  .site-nav__list {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .site-nav__item {
+    position: relative;
+  }
+  .site-nav__link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
+    padding: 0 12px;
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--navy);
+    text-decoration: none;
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+  .site-nav__link::after {
+    content: '';
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 8px;
+    height: 2px;
+    background: var(--sky);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 200ms var(--ease-out);
+  }
+  .site-nav__link:hover::after,
+  .site-nav__link:focus-visible::after,
+  .site-nav__link[aria-current='page']::after,
+  .site-nav__link.is-current::after,
+  .is-open > .site-nav__link::after {
+    transform: scaleX(1);
+  }
+  .site-nav__toggle svg {
+    transition: transform 200ms var(--ease-out);
+  }
+  .is-open > .site-nav__toggle svg {
+    transform: rotate(180deg);
+  }
+
+  .site-nav__panel {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(720px, calc(100vw - 48px));
+    padding: var(--s-2);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-2);
+    animation: panel-in 200ms var(--ease-out);
+  }
+  .site-nav__panel::before {
+    content: '';
+    position: absolute;
+    inset: -12px 0 auto;
+    height: 12px;
+  }
+  @keyframes panel-in {
+    from {
+      opacity: 0;
+      transform: translate(-50%, 6px);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+  }
+  .panel-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .panel-row {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 12px;
+    border-radius: var(--r-md);
+    text-decoration: none;
+    color: var(--ink);
+    transition: background-color var(--t-hover) var(--ease-out);
+  }
+  .panel-row:hover,
+  .panel-row:focus-visible,
+  .panel-row[aria-current='page'] {
+    background: var(--sky-050);
+  }
+  .panel-row__thumb {
+    flex: none;
+    width: 48px;
+    height: 48px;
+  }
+  .panel-row__thumb img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+  }
+  .panel-row__text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .panel-row__title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--navy);
+    line-height: 1.25;
+  }
+  .panel-row__line {
+    font-size: var(--fs-small);
+    color: var(--ink-600);
+    line-height: 1.4;
+  }
+
+  @media (min-width: 1024px) {
+    .site-header__bar {
+      height: 72px;
+    }
+    .site-header__logo {
+      width: 180px;
+    }
+    .site-header.is-scrolled .site-header__logo {
+      width: 150px;
+    }
+    .site-nav {
+      display: block;
+    }
+    .site-header__actions :global(.site-header__cta) {
+      min-height: 48px;
+      padding-inline: 20px;
+      font-size: 1rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-nav__panel {
+      animation: none;
+    }
+  }
+</style>

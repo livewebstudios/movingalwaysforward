@@ -1,0 +1,303 @@
+---
+// Career Steppingstones · the paid program from Joe's flyer. Driven by src/data/steppingstones.ts.
+import Base from '../layouts/Base.astro';
+import Section from '../components/Section.astro';
+import InteriorHero from '../components/InteriorHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import StoneCard from '../components/StoneCard.astro';
+import Backdrop from '../components/Backdrop.astro';
+import Obj from '../components/Obj.astro';
+import Button from '../components/Button.astro';
+import Placeholder from '../components/Placeholder.astro';
+import { stoneCards, tracks, flyers, pricing } from '../data/steppingstones';
+import { site } from '../data/site';
+import bgLight from '../assets/backgrounds/bg-contour-light.png';
+
+const title = 'Career Steppingstones: Virtual Career Growth Program | Always Forward Coaching';
+const description =
+  'Career Steppingstones is Joe Hliboki’s virtual career growth program for young professionals: small-group workshops, a peer Coffee Club, weekly accountability. $99 a month.';
+const path = '/career-steppingstones/';
+
+const schema = [
+  {
+    '@type': 'Course',
+    name: 'Career Steppingstones: A Virtual Career Growth Program',
+    description,
+    url: `${site.url}${path}`,
+    provider: { '@id': `${site.url}/#org` },
+    courseMode: 'Online',
+    educationalLevel: 'Early career',
+    hasCourseInstance: {
+      '@type': 'CourseInstance',
+      courseMode: 'Online',
+      courseWorkload: 'PT2H',
+      instructor: { '@id': `${site.url}/#joe` },
+    },
+    offers: [
+      { '@type': 'Offer', name: pricing.initiation.label, price: pricing.initiation.price, priceCurrency: 'USD', category: 'Initiation', availability: 'https://schema.org/InStock', url: `${site.url}${path}` },
+      { '@type': 'Offer', name: pricing.monthly.label, price: pricing.monthly.price, priceCurrency: 'USD', category: 'Subscription', availability: 'https://schema.org/InStock', url: `${site.url}${path}` },
+    ],
+  },
+];
+---
+
+<Base {title} {description} {path} crumbs={[{ name: 'Career Steppingstones', href: path }]} {schema}>
+  <InteriorHero
+    eyebrow="Career Steppingstones"
+    title="One stone at a time. Always forward."
+    deck="&ldquo;Hire me so you can get the job, and fire me. That is my success.&rdquo;"
+    deckSerif
+    body="A virtual career growth program for aspiring young professionals: two small-group workshops a month, a peer Coffee Club, and a coach in your corner for $99 a month. Cancel whenever, hopefully because you got the job."
+    button={{ label: 'Start with a free call', href: '/contact/' }}
+    object="stepping-stones"
+    objectSize={280}
+    objectRotate={-8}
+  />
+
+  <!-- 2. Who it is for -->
+  <Section tone="mist" pitch id="who" labelledby="who-title">
+    <div class="prose" data-reveal-children>
+      <h2 id="who-title">For the ones lacking a map, not ability.</h2>
+      <p>
+        About to graduate. Just graduated. Unemployed or underemployed and tired of it. Stuck, without focus, vision or direction. Or already working and wanting the next level and to get better at what you do. Joe built this because the one-on-one coaching works, and not every 23-year-old can afford it. This is the same material at a price a first paycheck can carry.
+      </p>
+      <blockquote class="pullquote">
+        To share awareness, insight, strategy and experience that produce confidence and a competitive career advantage that attracts hiring managers.
+        <cite>The program's purpose, in Joe's words</cite>
+      </blockquote>
+    </div>
+  </Section>
+
+  <!-- 3. What is in the program -->
+  <section class="stones-wrap" id="program" aria-labelledby="program-title">
+    <Backdrop image={bgLight} class="stones-bg" />
+    <div class="container stones-inner">
+      <div class="sec-head" data-reveal>
+        <h2 id="program-title">What you get.</h2>
+      </div>
+      <div class="stones" data-reveal-children>
+        {stoneCards.map((card) => <StoneCard {card} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. The two tracks -->
+  <Section id="tracks" labelledby="tracks-title">
+    <div class="sec-head" data-reveal-children>
+      <h2 id="tracks-title">Twenty-two workshops. Two tracks.</h2>
+      <p class="lede">Workshops rotate through these topics. Join any month and catch the rest as they come around.</p>
+    </div>
+    <div class="tracks">
+      <span class="path-line tracks__path" aria-hidden="true"></span>
+      {
+        tracks.map((t) => (
+          <div class="track" data-reveal-children>
+            <h3>{t.name}</h3>
+            <ol class="track__list">
+              {t.topics.map((topic) => (
+                <li>
+                  <span class="track__title">{topic.title}</span>
+                  <span class="track__theme">{topic.theme}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        ))
+      }
+    </div>
+  </Section>
+
+  <!-- 5. Proof and the flyer library -->
+  <Section tone="mist" pitch id="proof" labelledby="proof-title">
+    <div class="prose" data-reveal-children>
+      <h2 id="proof-title">From the coach who wrote the book.</h2>
+      <p>
+        Joe Hliboki is a Certified Business, Executive & Career Coach who helps people get better at what they do and solve the problems they have not been able to solve alone. He is connected to Gen Z through his own three kids, through coaching more than five hundred young athletes as they grew up, and through mentoring new hires inside a Fortune 100. <a href="/the-book/"><em>Bursting the Bubble</em></a> is the textbook; this program is the class. The same material, one-on-one, is <a href="/early-career-coaching/">Early Career Coaching</a>.
+      </p>
+    </div>
+
+    <div class="flyers" data-reveal-children>
+      <h3 class="flyers__heading">Program flyers.</h3>
+      <ul class="flyers__grid">
+        {
+          flyers.map((f) => (
+            <li class="flyer card">
+              <svg class="flyer__icon" aria-hidden="true" viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="#54A4E2" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h10l6 6v20H9z M19 3v6h6 M12 17h8 M12 22h8" /></svg>
+              <h4 class="flyer__title">{f.title}</h4>
+              <p class="small">{f.description}</p>
+              {f.file ? <a href={f.file} class="flyer__link" download>Download the PDF</a> : <Placeholder text={f.placeholder ?? 'PDF PLACEHOLDER'} />}
+            </li>
+          ))
+        }
+      </ul>
+      <p class="small flyers__note">More flyers get added as Joe produces them.</p>
+    </div>
+
+    <form class="capture card" action={site.formspree} method="POST" data-reveal aria-labelledby="capture-title">
+      <div class="capture__obj">
+        <Obj name="paper-plane" size={80} sizeMobile={64} rotate={-14} float phase={6} />
+      </div>
+      <h3 id="capture-title">New stones drop regularly. Want them as they land?</h3>
+      <div class="capture__row">
+        <div class="field">
+          <label for="ss-email">Email</label>
+          <input id="ss-email" type="email" name="email" autocomplete="email" required placeholder="you@example.com" />
+        </div>
+        <input type="text" name="_gotcha" class="sr-only" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <input type="hidden" name="_subject" value="Always Forward website: Steppingstones list" />
+        <Button type="submit">Send me the next one</Button>
+      </div>
+      <p class="small"><Placeholder text="FORM_ID_PLACEHOLDER: set the Formspree ID in src/data/site.ts" /></p>
+    </form>
+  </Section>
+
+  <!-- 6. Closing CTA -->
+  <CtaBand
+    heading="Thirty minutes with Coach Joe. Then decide."
+    body="The introductory call is included in the initiation, and it is also free if you just want to ask questions first."
+    button={{ label: 'Book the call', href: '/contact/' }}
+    object="stepping-stones"
+  />
+</Base>
+
+<style>
+  .stones-wrap {
+    position: relative;
+    overflow: hidden;
+    padding-block: var(--section-y);
+    background: var(--paper);
+  }
+  .stones-wrap :global(.stones-bg) {
+    opacity: 0.5;
+  }
+  .stones-inner {
+    position: relative;
+    z-index: 1;
+  }
+  .stones {
+    display: grid;
+    gap: var(--s-3);
+    align-items: stretch;
+  }
+  .tracks {
+    position: relative;
+    display: grid;
+    gap: var(--s-5);
+  }
+  .tracks__path {
+    display: none;
+  }
+  .track h3 {
+    margin-bottom: var(--s-2);
+    padding-bottom: var(--s-1);
+    border-bottom: 2px solid var(--sky);
+    display: inline-block;
+  }
+  .track__list {
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+    counter-reset: topic;
+    display: grid;
+    gap: 2px;
+  }
+  .track__list li {
+    counter-increment: topic;
+    display: grid;
+    grid-template-columns: 32px 1fr auto;
+    gap: 10px;
+    align-items: baseline;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .track__list li::before {
+    content: counter(topic, decimal-leading-zero);
+    font-family: var(--font-display);
+    font-weight: 800;
+    color: var(--navy);
+    font-size: 0.9375rem;
+  }
+  .track__title {
+    font-weight: 600;
+    color: var(--navy);
+  }
+  .track__theme {
+    font-size: var(--fs-small);
+    color: var(--ink-600);
+    text-transform: lowercase;
+  }
+  .flyers {
+    margin-top: var(--s-5);
+    max-width: 760px;
+  }
+  .flyers__heading {
+    margin-bottom: var(--s-2);
+  }
+  .flyers__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--s-2);
+  }
+  .flyer {
+    display: grid;
+    gap: 8px;
+    justify-items: start;
+  }
+  .flyer__title {
+    font-size: 1.0625rem;
+    margin: 0;
+  }
+  .flyer__link {
+    font-weight: 600;
+  }
+  .flyers__note {
+    margin-top: var(--s-2);
+  }
+  .capture {
+    position: relative;
+    margin-top: var(--s-5);
+    max-width: 760px;
+    padding-top: var(--s-5);
+  }
+  .capture__obj {
+    position: absolute;
+    top: -26px;
+    right: var(--s-2);
+  }
+  .capture h3 {
+    max-width: 22ch;
+    margin-right: 72px;
+  }
+  .capture__row {
+    display: grid;
+    gap: var(--s-2);
+    align-items: end;
+  }
+  .capture__row .field {
+    margin: 0;
+  }
+  @media (min-width: 768px) {
+    .stones {
+      grid-template-columns: 1fr 1fr;
+    }
+    .stones > :last-child {
+      grid-column: 1 / -1;
+      max-width: 600px;
+    }
+    .tracks {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--s-8);
+    }
+    .tracks__path {
+      display: block;
+    }
+    .flyers__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .capture__row {
+      grid-template-columns: 1fr auto;
+    }
+  }
+</style>

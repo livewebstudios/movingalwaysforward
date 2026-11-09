@@ -1,0 +1,38 @@
+---
+// 404 · mark-only logo, one line, one way out.
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Button from '../components/Button.astro';
+import mark from '../assets/brand/logo-mark-2x.png';
+---
+
+<Base title="Page not found | Always Forward Coaching" description="That path does not go anywhere. This one does." path="/404/" noIndex>
+  <base href="/" slot="head" />
+  <section class="nf">
+    <div class="container nf__inner">
+      <Image src={mark} alt="Always Forward" width={120} height={111} loading="eager" decoding="async" />
+      <h1>That path doesn't go anywhere. This one does.</h1>
+      <Button href="/">Back to the start</Button>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    padding-block: var(--s-12);
+    min-height: 60vh;
+    display: grid;
+    place-items: center;
+  }
+  .nf__inner {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+    gap: var(--s-4);
+    max-width: 640px;
+  }
+  .nf h1 {
+    font-size: var(--fs-h2);
+    margin: 0;
+  }
+</style>

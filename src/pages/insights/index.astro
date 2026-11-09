@@ -1,0 +1,157 @@
+---
+// Insights index · three sections: header, filter + list with the email rail, closing CTA.
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Section from '../../components/Section.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import Button from '../../components/Button.astro';
+import Obj from '../../components/Obj.astro';
+import Placeholder from '../../components/Placeholder.astro';
+import InsightsFilter, { type PostItem } from '../../islands/InsightsFilter';
+import { categories } from '../../content.config';
+import { site } from '../../data/site';
+import ridge from '../../assets/photos/joe-ridge-trail.png';
+
+const title = 'Insights: Plain Talk on Careers and Work | Always Forward Coaching';
+const description =
+  'Insights from coach Joe Hliboki: plain-talk writing on early careers, leadership, sales and workplace skills. A new post every two weeks.';
+const path = '/insights/';
+
+const posts = (await getCollection('insights', ({ data }) => !data.draft)).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const items: PostItem[] = posts.map((p) => ({
+  title: p.data.title,
+  href: `/insights/${p.id}/`,
+  date: p.data.pubDate.toISOString().slice(0, 10),
+  dateLabel: p.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }),
+  category: p.data.category,
+  description: p.data.description,
+}));
+
+const schema = [
+  {
+    '@type': 'Blog',
+    '@id': `${site.url}${path}#blog`,
+    url: `${site.url}${path}`,
+    name: 'Always Forward Insights',
+    description,
+    publisher: { '@id': `${site.url}/#org` },
+    author: { '@id': `${site.url}/#joe` },
+    blogPost: posts.map((p) => ({ '@type': 'BlogPosting', headline: p.data.title, url: `${site.url}/insights/${p.id}/`, datePublished: p.data.pubDate.toISOString().slice(0, 10) })),
+  },
+];
+---
+
+<Base {title} {description} {path} crumbs={[{ name: 'Insights', href: path }]} {schema}>
+  <!-- 1. Header -->
+  <section class="ihead" aria-labelledby="insights-title">
+    <div class="ihead__band" aria-hidden="true">
+      <Image src={ridge} alt="" widths={[800, 1400, 2000]} sizes="100vw" format="webp" quality={66} loading="eager" decoding="async" fetchpriority="high" class="ihead__img" />
+      <div class="ihead__scrim"></div>
+    </div>
+    <div class="container ihead__inner">
+      <div class="ihead__copy" data-reveal-children>
+        <p class="eyebrow">Insights</p>
+        <h1 id="insights-title">Plain talk on careers, leadership and work.</h1>
+        <p class="deck">A new post every two weeks. No jargon, no hot takes, no ten-minute reads that should have been two.</p>
+      </div>
+      <div class="ihead__obj">
+        <Obj name="paper-plane" size={140} sizeMobile={88} rotate={-14} depth="near" float eager phase={0} />
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Filter + list -->
+  <Section id="posts" tight labelledby="posts-title">
+    <h2 class="sr-only" id="posts-title">All posts</h2>
+    <div class="ilayout">
+      <div class="ilayout__main">
+        <InsightsFilter client:visible posts={items} {categories} />
+      </div>
+      <aside class="rail" aria-labelledby="rail-title">
+        <form class="rail__card card" action={site.formspree} method="POST">
+          <h3 id="rail-title">Get the next one by email.</h3>
+          <div class="field">
+            <label for="rail-email">Email</label>
+            <input id="rail-email" type="email" name="email" autocomplete="email" required placeholder="you@example.com" />
+          </div>
+          <input type="text" name="_gotcha" class="sr-only" tabindex="-1" autocomplete="off" aria-hidden="true" />
+          <input type="hidden" name="_subject" value="Always Forward website: Insights list" />
+          <Button type="submit">Send it</Button>
+          <p class="small rail__ph"><Placeholder text="FORM_ID_PLACEHOLDER" /></p>
+        </form>
+        <p class="small rail__rss">Prefer a feed? <a href="/insights/rss.xml">RSS</a>.</p>
+      </aside>
+    </div>
+  </Section>
+
+  <!-- 3. Closing CTA -->
+  <CtaBand heading="Reading is free. The call is too." body="If a post hit a nerve, that is usually the thing to talk about." button={{ label: 'Book a call with Joe', href: '/contact/' }} object="paper-plane" />
+</Base>
+
+<style>
+  .ihead {
+    position: relative;
+    padding-block: var(--s-6) var(--s-5);
+    overflow: hidden;
+  }
+  .ihead__band {
+    position: absolute;
+    inset: 0 0 auto;
+    height: 40%;
+    min-height: 180px;
+    z-index: 0;
+  }
+  .ihead :global(.ihead__img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 40%;
+  }
+  .ihead__scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.92) 55%, var(--paper));
+  }
+  .ihead__inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: var(--s-3);
+    align-items: end;
+    padding-top: var(--s-8);
+  }
+  .ihead__copy h1 {
+    margin-bottom: var(--s-2);
+  }
+  .ihead__obj {
+    justify-self: end;
+  }
+  .ilayout {
+    display: grid;
+    gap: var(--s-5);
+    align-items: start;
+  }
+  .rail__card h3 {
+    margin-bottom: var(--s-2);
+  }
+  .rail__ph {
+    margin-top: var(--s-2);
+  }
+  .rail__rss {
+    margin-top: var(--s-2);
+  }
+  @media (min-width: 900px) {
+    .ihead__inner {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+    .ilayout {
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: var(--s-8);
+    }
+    .rail {
+      position: sticky;
+      top: 96px;
+    }
+  }
+</style>

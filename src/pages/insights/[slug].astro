@@ -1,0 +1,207 @@
+---
+// Insights post · category pill, H1, date and reading time, body at 68ch, author block,
+// the post's own "Next step" link, prev/next. No sidebar.
+import { Image, getImage } from 'astro:assets';
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Button from '../../components/Button.astro';
+import { site } from '../../data/site';
+import { services } from '../../data/nav';
+import portrait from '../../assets/photos/joe-portrait.png';
+
+export async function getStaticPaths() {
+  const posts = (await getCollection('insights', ({ data }) => !data.draft)).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+  return posts.map((post, i) => ({
+    params: { slug: post.id },
+    props: { post, newer: posts[i - 1] ?? null, older: posts[i + 1] ?? null },
+  }));
+}
+
+const { post, newer, older } = Astro.props;
+const { Content } = await render(post);
+const path = `/insights/${post.id}/`;
+const title = `${post.data.title} | Always Forward Coaching`;
+const words = post.body?.split(/\s+/).filter(Boolean).length ?? 0;
+const minutes = Math.max(1, Math.round(words / 220));
+const dateLabel = post.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+const iso = post.data.pubDate.toISOString().slice(0, 10);
+
+const ctaMap: Record<string, string> = Object.fromEntries(services.map((s) => [s.href, s.title]));
+ctaMap['/the-book/'] = 'Bursting the Bubble, the book';
+ctaMap['/career-steppingstones/'] = 'Career Steppingstones';
+ctaMap['/contact/'] = 'Book a call with Joe';
+const ctaLabel = ctaMap[post.data.cta] ?? 'Talk to Joe';
+
+const portraitImg = await getImage({ src: portrait, width: 800, format: 'jpg' });
+const schema = [
+  {
+    '@type': 'BlogPosting',
+    '@id': `${site.url}${path}#post`,
+    headline: post.data.title,
+    description: post.data.description,
+    url: `${site.url}${path}`,
+    mainEntityOfPage: `${site.url}${path}`,
+    datePublished: iso,
+    dateModified: iso,
+    articleSection: post.data.category,
+    wordCount: words,
+    inLanguage: 'en',
+    author: { '@id': `${site.url}/#joe` },
+    publisher: { '@id': `${site.url}/#org` },
+    image: new URL(portraitImg.src, site.url).href,
+    isPartOf: { '@id': `${site.url}/insights/#blog` },
+  },
+];
+---
+
+<Base {title} description={post.data.description} {path} ogType="article" crumbs={[{ name: 'Insights', href: '/insights/' }, { name: post.data.title, href: path }]} {schema}>
+  <article class="post">
+    <header class="post__head container">
+      <a class="pill pill--tint post__cat" href={`/insights/#${post.data.category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>{post.data.category}</a>
+      <h1>{post.data.title}</h1>
+      <p class="small post__meta">
+        <time datetime={iso}>{dateLabel}</time> · {minutes} min read · by Joe Hliboki
+      </p>
+    </header>
+
+    <div class="post__body container">
+      <Content />
+    </div>
+
+    <footer class="post__foot container">
+      <div class="author card">
+        <Image src={portrait} alt="Portrait of Joe Hliboki, business and career coach" width={72} height={96} widths={[72, 144]} sizes="72px" format="webp" quality={80} loading="lazy" decoding="async" class="author__img" />
+        <div>
+          <p class="author__name">Joe Hliboki</p>
+          <p class="small">Certified FocalPoint Business, Executive & Career Coach. Montvale, NJ. <a href="/about/">About Joe</a></p>
+        </div>
+      </div>
+
+      <div class="next card">
+        <p class="eyebrow">Next step</p>
+        <Button href={post.data.cta}>{ctaLabel}</Button>
+      </div>
+
+      <nav class="pn" aria-label="More posts">
+        {
+          older ? (
+            <a class="pn__link" href={`/insights/${older.id}/`} rel="prev">
+              <span class="small">Older</span>
+              <span class="pn__title">{older.data.title}</span>
+            </a>
+          ) : (
+            <span />
+          )
+        }
+        {
+          newer ? (
+            <a class="pn__link pn__link--next" href={`/insights/${newer.id}/`} rel="next">
+              <span class="small">Newer</span>
+              <span class="pn__title">{newer.data.title}</span>
+            </a>
+          ) : (
+            <a class="pn__link pn__link--next" href="/insights/">
+              <span class="small">Index</span>
+              <span class="pn__title">All Insights</span>
+            </a>
+          )
+        }
+      </nav>
+    </footer>
+  </article>
+</Base>
+
+<style>
+  .post {
+    padding-block: var(--s-5) var(--s-12);
+  }
+  .post__head {
+    max-width: 820px;
+    margin-bottom: var(--s-5);
+  }
+  .post__cat {
+    text-decoration: none;
+    margin-bottom: var(--s-2);
+  }
+  .post__head h1 {
+    font-size: var(--fs-h2);
+    margin-bottom: var(--s-2);
+  }
+  .post__body {
+    max-width: calc(var(--measure) + 2 * var(--gutter));
+    font-size: 1.0625rem;
+  }
+  .post__body :global(p) {
+    margin-bottom: var(--s-3);
+  }
+  .post__body :global(strong) {
+    color: var(--navy);
+  }
+  .post__body :global(em) {
+    color: var(--ink-600);
+  }
+  .post__body :global(h2),
+  .post__body :global(h3) {
+    margin-top: var(--s-5);
+  }
+  .post__foot {
+    max-width: calc(var(--measure) + 2 * var(--gutter));
+    margin-top: var(--s-6);
+    display: grid;
+    gap: var(--s-3);
+  }
+  .author {
+    display: flex;
+    gap: var(--s-2);
+    align-items: center;
+    padding: var(--s-3);
+  }
+  .author :global(.author__img) {
+    width: 72px;
+    height: 96px;
+    object-fit: cover;
+    border-radius: var(--r-md);
+    flex: none;
+  }
+  .author__name {
+    font-family: var(--font-display);
+    font-weight: 600;
+    color: var(--navy);
+    margin: 0 0 2px;
+  }
+  .next {
+    display: grid;
+    gap: var(--s-1);
+    justify-items: start;
+    background: var(--mist);
+  }
+  .next .eyebrow {
+    margin: 0;
+  }
+  .pn {
+    display: grid;
+    gap: var(--s-2);
+    padding-top: var(--s-3);
+    border-top: 1px solid var(--line);
+  }
+  .pn__link {
+    display: grid;
+    gap: 2px;
+    text-decoration: none;
+  }
+  .pn__link--next {
+    text-align: right;
+  }
+  .pn__title {
+    font-weight: 600;
+    color: var(--navy);
+    text-decoration: underline;
+    text-decoration-color: var(--sky);
+    text-underline-offset: 0.2em;
+  }
+  @media (min-width: 640px) {
+    .pn {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,33 @@
+---
+// Privacy · short placeholder page. Jon supplies the text. Kept out of the index until then.
+import Base from '../layouts/Base.astro';
+import Placeholder from '../components/Placeholder.astro';
+const title = 'Privacy | Always Forward Coaching';
+const description = 'How Always Forward, LLC handles the information you share through this website, its forms and its scheduling links.';
+const path = '/privacy/';
+---
+
+<Base {title} {description} {path} crumbs={[{ name: 'Privacy', href: path }]} noIndex>
+  <section class="privacy">
+    <div class="container">
+      <p class="eyebrow">Privacy</p>
+      <h1>Privacy policy</h1>
+      <div class="prose">
+        <p>What Always Forward, LLC collects through this site, why, and how to ask for it to be removed.</p>
+        <Placeholder text="JON TO SUPPLY: privacy policy text. Cover the contact form (Formspree), the email list, Calendly scheduling, and Google Analytics." block />
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .privacy {
+    padding-block: var(--s-5) var(--s-12);
+  }
+  .privacy h1 {
+    margin-bottom: var(--s-3);
+  }
+  .prose :global(.ph--block) {
+    margin-top: var(--s-3);
+  }
+</style>

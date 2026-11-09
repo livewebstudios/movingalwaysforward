@@ -1,0 +1,200 @@
+---
+// Early Career Coaching · the flagship. ServiceSkeleton, six sections (docs/pages/early-career.md).
+import Base from '../layouts/Base.astro';
+import Section from '../components/Section.astro';
+import InteriorHero from '../components/InteriorHero.astro';
+import ProofBlock from '../components/ProofBlock.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Obj from '../components/Obj.astro';
+import Faq from '../components/Faq.astro';
+import StepsStrip from '../islands/StepsStrip';
+import { objSrc } from '../lib/images';
+import { service, faqPage } from '../lib/seo';
+import oneOnOne from '../assets/photos/joe-one-on-one.png';
+
+const title = 'Early Career Coaching for Young Professionals | Always Forward Coaching';
+const description =
+  'Career coaching for Gen Z and young professionals in NJ and by video anywhere. Resumes, interviews, first jobs, first promotions. $75 a session with coach Joe Hliboki.';
+const path = '/early-career-coaching/';
+const coffee = await objSrc('coffee-cups', 144);
+
+const faqs = [
+  {
+    q: 'Do I have to be in New Jersey?',
+    a: 'No. In-person sessions happen within about thirty miles of Montvale. Everyone else meets Joe on video, and most clients do.',
+  },
+  {
+    q: 'Can a parent book for their kid?',
+    a: 'Yes, and it happens a lot. The sessions are with the young person, not the parent. Joe will tell you both what to expect on the first call.',
+  },
+  {
+    q: 'How many sessions does it take?',
+    a: 'Most people see the resume and interview changes land inside a month. Promotion-track coaching runs longer because the goal is further out. There is no minimum.',
+  },
+  {
+    q: 'What if I am not a recent grad?',
+    a: 'Then you are probably looking for <a href="/executive-business-coaching/">executive and business coaching</a>.',
+  },
+];
+const faqPlain = faqs.map((f) => ({ q: f.q, a: f.a.replace(/<[^>]+>/g, '') }));
+
+const schema = [
+  service('Early Career Coaching', path, description, 'Recent graduates and young professionals, and their parents'),
+  faqPage(faqPlain),
+];
+---
+
+<Base {title} {description} {path} crumbs={[{ name: 'Early Career Coaching', href: path }]} {schema}>
+  <InteriorHero
+    eyebrow="Early Career Coaching"
+    title="Your career just started. Get good at it early."
+    deck="One-on-one coaching for new grads and young professionals, on video or in person in northern New Jersey. $75 a session. No contract, no package to decode."
+    button={{ label: 'Book a free first call', href: '/contact/' }}
+    object="notebook-pen"
+    objectRotate={-12}
+    photo={{ image: oneOnOne, alt: 'Joe Hliboki listening across a table to a young professional during a coaching session' }}
+  />
+
+  <!-- 2. Who this is for -->
+  <Section tone="mist" pitch id="who" labelledby="who-title">
+    <div class="prose" data-reveal-children>
+      <h2 id="who-title">For the person sending out two hundred applications into silence. And the parent watching it happen.</h2>
+      <p>
+        You just graduated, or you are a year or two in and nothing works the way school said it would. Or you are a parent and your kid is smart, qualified and stuck, and the advice you have is from a job market that no longer exists. Either way the problem is the same: starting a career is a skill, and nobody teaches it. Joe does.
+      </p>
+      <p class="callout">
+        <strong>Not for you if:</strong> you want someone to write your resume for you and hand it back. Joe will fix it with you, and you will know why every line is there.
+      </p>
+    </div>
+  </Section>
+
+  <!-- 3. What you get -->
+  <Section id="what" labelledby="what-title">
+    <div class="sec-head" data-reveal-children>
+      <h2 id="what-title">The syllabus.</h2>
+      <p class="deck">Every session is one-on-one with Joe. Here is what the first month looks like.</p>
+    </div>
+    <div class="what">
+      <div>
+        <ol class="syllabus" data-reveal-children>
+          <li>
+            <h3>Session one: where you actually are.</h3>
+            <p>Resume, LinkedIn, the applications you have sent, the interviews you have had. A straight read on what is working and what is quietly costing you offers.</p>
+          </li>
+          <li>
+            <h3>The plan.</h3>
+            <p>A written, specific plan after the first session: which roles, which companies, what to say, what to fix first. Not a vision board. A list with an order.</p>
+          </li>
+          <li>
+            <h3>The reps.</h3>
+            <p>Mock interviews with real feedback. Salary conversations before you need them. How to act in week one, how to get noticed by month three.</p>
+          </li>
+          <li>
+            <h3>The promotion track.</h3>
+            <p>Already employed? Sessions shift to professionalism, visibility, and making the next role happen instead of waiting for it.</p>
+          </li>
+        </ol>
+        <p class="what__between prose">Between sessions Joe is reachable. A question the night before an interview does not wait two weeks.</p>
+      </div>
+      <aside class="price card" data-reveal aria-labelledby="price-title">
+        <div class="price__obj">
+          <Obj name="calendar-30" size={80} sizeMobile={64} rotate={8} float phase={5} />
+        </div>
+        <h3 id="price-title" class="price__title">$75 per session · $300 per month for four sessions.</h3>
+        <p>Start, see what changes, keep going if it is working. Cancel any time. Hopefully because you got the job.</p>
+      </aside>
+    </div>
+  </Section>
+
+  <!-- 4. How it works -->
+  <Section tone="mist" pitch id="how" labelledby="how-title">
+    <div class="sec-head" data-reveal>
+      <h2 id="how-title">How it works</h2>
+    </div>
+    <StepsStrip
+      client:visible
+      {coffee}
+      steps={[
+        { title: 'Talk.', body: 'A free thirty-minute call. Bring your resume.' },
+        { title: 'Plan.', body: 'A written plan after session one.' },
+        { title: 'Work the plan.', body: 'Weekly sessions until the offer, or the promotion, lands.' },
+      ]}
+    />
+  </Section>
+
+  <!-- 5. Proof -->
+  <Section id="proof" labelledby="proof-title">
+    <ProofBlock heading="He mentored Cisco's new hires. Now he mentors yours." testimonial="TESTIMONIAL PLACEHOLDER: one from a young client, one from a parent. Jon supplies.">
+      <p>
+        Joe spent years at Cisco mentoring the company's elite new-hire engineers: twenty-two-year-olds walking into a Fortune 100 on day one. A mentor told him his ability to earn a young person's trust in thirty minutes was rare. Parents tend to agree. He has coached more than five hundred Gen Z athletes and professionals, has three of his own at home, and wrote the book on it: <a href="/the-book/"><em>Bursting the Bubble: A Commonsense Guide to Early Career Success</em></a>.
+      </p>
+      <Fragment slot="extra">
+        <a class="xlink card card--link" href="/career-steppingstones/" data-reveal>
+          <h3>Want structure and a group instead?</h3>
+          <p>Career Steppingstones is Joe's virtual program for young professionals: two small-group workshops a month, a peer Coffee Club, weekly accountability.</p>
+          <span class="xlink__go">Career Steppingstones</span>
+        </a>
+        <Faq items={faqs} />
+      </Fragment>
+    </ProofBlock>
+  </Section>
+
+  <!-- 6. Closing CTA -->
+  <CtaBand heading="Thirty minutes. Bring your resume." body="The first call is free and you will leave with something to fix tonight." button={{ label: 'Book a call with Joe', href: '/contact/' }} />
+</Base>
+
+<style>
+  .what {
+    display: grid;
+    gap: var(--s-5);
+    align-items: start;
+  }
+  .what__between {
+    margin-top: var(--s-4);
+    color: var(--ink-600);
+  }
+  .price {
+    position: relative;
+    background: var(--mist);
+    padding-top: var(--s-5);
+  }
+  .price__obj {
+    position: absolute;
+    top: -28px;
+    right: var(--s-2);
+  }
+  .price__title {
+    font-size: 1.375rem;
+    max-width: 16ch;
+    margin-right: 72px;
+  }
+  .xlink {
+    max-width: 760px;
+    margin-top: var(--s-2);
+  }
+  .xlink h3 {
+    margin-bottom: 6px;
+  }
+  .xlink p {
+    max-width: 60ch;
+  }
+  .xlink__go {
+    display: inline-block;
+    margin-top: var(--s-2);
+    font-weight: 600;
+    color: var(--navy);
+    text-decoration: underline;
+    text-decoration-color: var(--sky);
+    text-underline-offset: 0.2em;
+  }
+  @media (min-width: 900px) {
+    .what {
+      grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.8fr);
+      gap: var(--s-8);
+    }
+    .price {
+      position: sticky;
+      top: 96px;
+    }
+  }
+</style>

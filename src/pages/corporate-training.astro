@@ -1,0 +1,122 @@
+---
+// Corporate Training & Workshops · ServiceSkeleton with CatalogCards in the "what you get" slot.
+import Base from '../layouts/Base.astro';
+import Section from '../components/Section.astro';
+import InteriorHero from '../components/InteriorHero.astro';
+import ProofBlock from '../components/ProofBlock.astro';
+import CtaBand from '../components/CtaBand.astro';
+import StepsStrip from '../islands/StepsStrip';
+import CatalogCards, { type CatalogItem } from '../islands/CatalogCards';
+import { objSrc } from '../lib/images';
+import { service } from '../lib/seo';
+import workshop from '../assets/photos/joe-workshop.png';
+
+const title = 'Corporate Training & Workshops in New Jersey | Always Forward Coaching';
+const description =
+  'Sales training, leadership development and communication workshops for companies, delivered by Joe Hliboki. Course-catalog clarity: what you get, how long, what changes.';
+const path = '/corporate-training/';
+const coffee = await objSrc('coffee-cups', 144);
+const bubbles = await objSrc('speech-bubbles', 176);
+
+const items: CatalogItem[] = [
+  {
+    title: 'Sales Training',
+    what: 'Prospecting discipline, discovery that earns trust, objection handling, closing without the cringe. Built from Joe’s years leading a Cisco healthcare sales team.',
+    format: 'Half-day or full-day workshop, or a multi-week program with live deal coaching.',
+    outcome: 'A team selling on process instead of personality, with a shared language managers can coach to.',
+  },
+  {
+    title: 'Leadership Development',
+    what: 'New-manager fundamentals through senior-leader coaching: feedback, delegation, difficult conversations, running meetings people do not dread.',
+    format: 'Workshop series (typically four to eight sessions) or embedded one-on-one coaching for a leadership cohort.',
+    outcome: 'Managers who develop people instead of supervising them. Retention follows.',
+  },
+  {
+    title: 'Professional Communications',
+    what: 'The easy way to have hard conversations. Writing, presenting, and saying the thing that needs saying. Joe’s most-requested workshop, and the one he volunteered to his own BNI chapter.',
+    format: 'Half-day workshop, worksheets included.',
+    outcome: 'Fewer meetings about the meeting. Issues surfaced while they are still cheap.',
+    object: bubbles,
+  },
+  {
+    title: 'Early-Talent Programs',
+    what: 'Onboarding and professionalism curriculum for new grads and early hires, from the coach who mentored Cisco’s elite new-hire engineers and wrote <em>Bursting the Bubble</em>.',
+    format: 'Cohort program across a hire class’s first ninety days, with the book as the text.',
+    outcome: 'New hires productive by month three and still here past the two-year cliff.',
+  },
+  {
+    title: 'DISC Assessments',
+    what: 'Behavioral assessments for individuals or whole teams, with a debrief that turns the report into something people use in the next meeting.',
+    format: 'Assessment plus a one-hour individual debrief, or a half-day team session.',
+    outcome: 'People who understand how they and their colleagues work, and stop taking it personally.',
+  },
+];
+
+const schema = [service('Corporate Training & Workshops', path, description, 'HR and L&D leaders')];
+---
+
+<Base {title} {description} {path} crumbs={[{ name: 'Corporate Training & Workshops', href: path }]} {schema}>
+  <InteriorHero
+    eyebrow="Corporate Training & Workshops"
+    title="Training your people will actually use on Monday."
+    deck="Sales, leadership and communication programs for teams, built like courses: a syllabus, a duration, and an outcome you can report upward. Delivered by someone who carried a quota and ran the team."
+    button={{ label: 'Book a scope call', href: '/contact/' }}
+    object="ladder"
+    objectRotate={-6}
+    photo={{ image: workshop, alt: 'Joe Hliboki leading a workshop at the front of a glass-walled conference room' }}
+  />
+
+  <Section tone="mist" pitch id="who" labelledby="who-title">
+    <div class="prose" data-reveal-children>
+      <h2 id="who-title">For HR and L&D leaders who have sat through enough motivational theater.</h2>
+      <p>
+        You need programs with a syllabus, a duration and an outcome you can put in a slide. You need a trainer who has done the job, not one who has read about it. And you need the new hires you spent six months recruiting to still be here in two years. That last one is Joe's specialty.
+      </p>
+      <p>In-person within about thirty miles of Montvale, New Jersey, and in Fairfield County, Connecticut. Virtual anywhere. Travel further by arrangement.</p>
+    </div>
+  </Section>
+
+  <Section id="catalog" labelledby="catalog-title">
+    <div class="sec-head" data-reveal-children>
+      <h2 id="catalog-title">The catalog.</h2>
+      <p class="deck">Each program has a what, a format and an outcome. Mix them, or ask for something these do not cover.</p>
+    </div>
+    <CatalogCards client:visible {items} />
+  </Section>
+
+  <Section tone="mist" pitch id="how" labelledby="how-title">
+    <div class="sec-head" data-reveal>
+      <h2 id="how-title">How engagements run</h2>
+    </div>
+    <StepsStrip
+      client:visible
+      {coffee}
+      steps={[
+        { title: 'Scope call.', body: 'Your goals, your team, your timeline. Twenty minutes.' },
+        { title: 'Proposal.', body: 'A one-page program outline: sessions, deliverables, measurement.' },
+        { title: 'Delivery and debrief.', body: 'Joe delivers. You get a written debrief with recommended next steps.' },
+      ]}
+    />
+  </Section>
+
+  <Section id="proof" labelledby="proof-title">
+    <ProofBlock
+      heading="He has been the buyer of training too."
+      testimonial="TESTIMONIAL PLACEHOLDER: client logos or a workshop testimonial. Jon supplies."
+      related={[
+        { lead: 'One leader, not a team?', label: 'Executive & Business Coaching', href: '/executive-business-coaching/' },
+        { lead: 'A peer cohort instead?', label: 'Group Programs', href: '/group-programs/' },
+      ]}
+    >
+      <p>
+        Sixteen to twenty direct reports at a Fortune 100. Years of quota. A certification from FocalPoint, whose curriculum has been delivered to businesses worldwide. And Joe has sat on your side of the table, approving training budgets and watching what did and did not change afterward. His programs are built the way buyers wish they all were.
+      </p>
+    </ProofBlock>
+  </Section>
+
+  <CtaBand
+    heading="Twenty minutes of your time. A program worth budgeting for."
+    body="Tell Joe what your team needs to do differently. You will get a one-page outline back, not a deck."
+    button={{ label: 'Book a scope call', href: '/contact/' }}
+  />
+</Base>

@@ -1,0 +1,112 @@
+---
+// Career Steppingstones program card. Bullets are the mark-only logo (01_brand_system.md).
+// The featured card's gold price badge is the one gold element in its section.
+import { Image } from 'astro:assets';
+import mark from '../assets/brand/logo-mark-2x.png';
+import type { StoneCard as Card } from '../data/steppingstones';
+
+interface Props {
+  card: Card;
+}
+const { card } = Astro.props;
+---
+
+<article class:list={['stone', { 'stone--featured': card.featured }]} id={card.id}>
+  <div class="stone__head">
+    <h3 class="stone__title">{card.title}</h3>
+    {
+      card.price && (
+        <p class:list={['stone__price', { 'stone__price--gold': card.featured }]}>
+          <span class="stone__amount">{card.price}</span>
+          {card.priceNote && <span class="stone__note">{card.priceNote}</span>}
+        </p>
+      )
+    }
+  </div>
+  <ul class="stone__list">
+    {
+      card.items.map((it) => (
+        <li>
+          <Image src={mark} alt="" width={20} height={18} loading="lazy" decoding="async" class="stone__bullet" aria-hidden="true" />
+          <span>
+            {it.strong && <strong>{it.strong}</strong>}
+            {it.text}
+          </span>
+        </li>
+      ))
+    }
+  </ul>
+</article>
+
+<style>
+  .stone {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-3);
+    padding: var(--s-4);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-1);
+    height: 100%;
+  }
+  .stone--featured {
+    border-color: var(--navy);
+    border-width: 1.5px;
+  }
+  .stone__head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--s-2);
+  }
+  .stone__title {
+    margin: 0;
+  }
+  .stone__price {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    margin: 0;
+    padding: 6px 12px;
+    border-radius: var(--r-pill);
+    background: var(--sky-050);
+    color: var(--navy);
+    font-family: var(--font-display);
+    font-weight: 800;
+    white-space: nowrap;
+  }
+  .stone__price--gold {
+    background: var(--gold);
+  }
+  .stone__amount {
+    font-size: 1.375rem;
+    letter-spacing: -0.01em;
+  }
+  .stone__note {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: var(--fs-small);
+  }
+  .stone__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+  }
+  .stone__list li {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .stone :global(.stone__bullet) {
+    flex: none;
+    width: 20px;
+    height: 18px;
+    object-fit: contain;
+    margin-top: 4px;
+  }
+</style>

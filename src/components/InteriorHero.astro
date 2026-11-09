@@ -1,0 +1,147 @@
+---
+// Interior page hero (03_layout_and_components.md): left-aligned, no container box, one object,
+// optional mid-parallax photo card behind it. 60vh max. No dotted grid.
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Button from './Button.astro';
+import Obj from './Obj.astro';
+import type { ObjectName } from '../lib/images';
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  deck: string;
+  deckSerif?: boolean;
+  body?: string;
+  button?: { label: string; href: string };
+  object?: ObjectName;
+  objectSize?: number;
+  objectRotate?: number;
+  photo?: { image: ImageMetadata; alt: string };
+  id?: string;
+}
+const {
+  eyebrow,
+  title,
+  deck,
+  deckSerif = false,
+  body,
+  button,
+  object,
+  objectSize = 240,
+  objectRotate = -8,
+  photo,
+  id = 'hero',
+} = Astro.props;
+---
+
+<section class:list={['ihero', { 'ihero--visual': object || photo }]} id={id} aria-labelledby={`${id}-title`}>
+  <div class="container ihero__grid">
+    <div class="ihero__copy" data-reveal-children>
+      {object && (
+        <div class="ihero__obj-mobile">
+          <Obj name={object} size={120} sizeMobile={120} rotate={objectRotate} float eager phase={1} />
+        </div>
+      )}
+      <p class="eyebrow">{eyebrow}</p>
+      <h1 id={`${id}-title`}>{title}</h1>
+      <p class:list={deckSerif ? 'deck' : 'lede'} set:html={deck} />
+      {body && <p class="ihero__body" set:html={body} />}
+      {button && (
+        <div class="ihero__actions">
+          <Button href={button.href}>{button.label}</Button>
+        </div>
+      )}
+    </div>
+
+    {(object || photo) && (
+      <div class="ihero__visual" aria-hidden={photo ? undefined : 'true'}>
+        {photo && (
+          <div class="ihero__photo photo-card px-mid">
+            <Image src={photo.image} alt={photo.alt} widths={[480, 720, 960]} sizes="(max-width: 1023px) 90vw, 440px" format="webp" quality={78} loading="eager" decoding="async" fetchpriority="high" />
+          </div>
+        )}
+        {object && (
+          <div class="ihero__obj">
+            <Obj name={object} size={objectSize} sizeMobile={120} rotate={objectRotate} depth="near" float eager phase={2} />
+          </div>
+        )}
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .ihero {
+    padding-block: var(--s-4) var(--s-6);
+  }
+  .ihero__grid {
+    display: grid;
+    gap: var(--s-4);
+    align-items: center;
+  }
+  .ihero__copy h1 {
+    margin-bottom: var(--s-3);
+  }
+  .ihero__body {
+    max-width: 60ch;
+    margin-top: calc(var(--s-2) * -0.5);
+    margin-bottom: var(--s-3);
+  }
+  .ihero__actions {
+    margin-top: var(--s-2);
+  }
+  .ihero__obj-mobile {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: var(--s-1);
+  }
+  .ihero__visual {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: 240px;
+  }
+  .ihero__photo {
+    --tilt: 3deg;
+    width: min(100%, 440px);
+    aspect-ratio: 4 / 3;
+  }
+  .ihero__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .ihero__obj {
+    display: none;
+  }
+  @media (min-width: 1024px) {
+    .ihero {
+      padding-block: var(--s-6) var(--s-8);
+      max-height: 60vh;
+      min-height: 520px;
+      display: flex;
+      align-items: center;
+    }
+    .ihero__grid {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+      gap: var(--s-8);
+    }
+    .ihero__obj-mobile {
+      display: none;
+    }
+    .ihero__obj {
+      display: block;
+      position: absolute;
+      right: -4%;
+      bottom: -10%;
+      z-index: 2;
+    }
+    .ihero--visual .ihero__visual:not(:has(.ihero__photo)) .ihero__obj {
+      position: static;
+    }
+    .ihero__visual {
+      min-height: 360px;
+    }
+  }
+</style>

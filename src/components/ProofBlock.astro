@@ -1,0 +1,69 @@
+---
+// Proof section of the ServiceSkeleton: Joe's relevant background, a labeled testimonial slot,
+// and the sibling-service links the SEO doc asks for.
+import Placeholder from './Placeholder.astro';
+
+interface Props {
+  heading: string;
+  testimonial: string;
+  related?: { label: string; href: string; lead?: string }[];
+  id?: string;
+}
+const { heading, testimonial, related = [], id = 'proof' } = Astro.props;
+---
+
+<div class="proof" data-reveal-children>
+  <h2 id={`${id}-title`}>{heading}</h2>
+  <div class="proof__body measure">
+    <slot />
+  </div>
+  <div class="proof__quote">
+    <svg class="proof__mark" aria-hidden="true" viewBox="0 0 32 32" width="32" height="32"><path d="M9 20c-2.8 0-5-2.2-5-5 0-4.4 3.3-8 8-9l.8 1.8C10 8.8 8.2 10.8 8 13h1c2.2 0 4 1.6 4 3.5S11.2 20 9 20zm12 0c-2.8 0-5-2.2-5-5 0-4.4 3.3-8 8-9l.8 1.8C22 8.8 20.2 10.8 20 13h1c2.2 0 4 1.6 4 3.5S23.2 20 21 20z" fill="#54A4E2" /></svg>
+    <Placeholder text={testimonial} block />
+  </div>
+  <slot name="extra" />
+  {
+    related.length > 0 && (
+      <ul class="proof__related">
+        {related.map((r) => (
+          <li>
+            {r.lead && <span>{r.lead} </span>}
+            <a href={r.href}>{r.label}</a>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</div>
+
+<style>
+  .proof h2 {
+    max-width: 24ch;
+  }
+  .proof__body {
+    margin-bottom: var(--s-4);
+  }
+  .proof__quote {
+    display: grid;
+    gap: var(--s-2);
+    padding: var(--s-3);
+    border-radius: var(--r-lg);
+    background: var(--mist);
+    border: 1px solid var(--line);
+    margin-bottom: var(--s-4);
+    max-width: 760px;
+  }
+  .proof__related {
+    list-style: none;
+    margin: var(--s-4) 0 0;
+    padding: var(--s-3) 0 0;
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-1) var(--s-4);
+    color: var(--ink-600);
+  }
+  .proof__related a {
+    font-weight: 600;
+  }
+</style>

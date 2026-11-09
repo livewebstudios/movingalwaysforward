@@ -1,0 +1,206 @@
+---
+import '@fontsource-variable/archivo';
+import '@fontsource/public-sans/400.css';
+import '@fontsource/public-sans/600.css';
+import '@fontsource/source-serif-4/400-italic.css';
+import '../styles/global.css';
+import archivoUrl from '@fontsource-variable/archivo/files/archivo-latin-wght-normal.woff2?url';
+import publicSansUrl from '@fontsource/public-sans/files/public-sans-latin-400-normal.woff2?url';
+import { ClientRouter } from 'astro:transitions';
+import { getImage } from 'astro:assets';
+import Seo from '../components/Seo.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import FlagDefs from '../components/FlagDefs.astro';
+import { site } from '../data/site';
+import { organization, person, breadcrumbs, webPage, website, type Crumb } from '../lib/seo';
+import logoFull from '../assets/brand/logo-full-2x.png';
+import portrait from '../assets/photos/joe-portrait.png';
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  crumbs?: Crumb[];
+  schema?: Record<string, unknown>[];
+  noIndex?: boolean;
+  /** Omit the sitewide Person so a page can supply a richer one. */
+  personOverride?: boolean;
+  bodyClass?: string;
+}
+
+const {
+  title,
+  description,
+  path,
+  ogImage,
+  ogType,
+  crumbs = [],
+  schema = [],
+  noIndex = false,
+  personOverride = false,
+  bodyClass = '',
+} = Astro.props;
+
+const logo = await getImage({ src: logoFull, format: 'png' });
+const portraitImg = await getImage({ src: portrait, width: 800, format: 'jpg' });
+const logoAbs = new URL(logo.src, site.url).href;
+const portraitAbs = new URL(portraitImg.src, site.url).href;
+
+const graph: Record<string, unknown>[] = [
+  website(),
+  organization(logoAbs),
+  ...(personOverride ? [] : [person(portraitAbs)]),
+  webPage(path, title, description),
+  ...(crumbs.length ? [breadcrumbs(crumbs)] : []),
+  ...schema,
+];
+const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph });
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <Seo {title} {description} {path} {ogImage} {ogType} {noIndex} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="alternate" type="application/rss+xml" title="Always Forward Insights" href="/insights/rss.xml" />
+    <link rel="preload" as="font" type="font/woff2" href={archivoUrl} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={publicSansUrl} crossorigin />
+    <meta name="theme-color" content="#061A3A" />
+    <meta name="generator" content={Astro.generator} />
+    <ClientRouter />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+    <slot name="head" />
+
+    <script type="application/ld+json" set:html={jsonLd} />
+
+    <!-- GA4: G-XXXXXXXXXX · swap the ID in src/data/site.ts and this block goes live. Loaded after the page, so it never competes with content. -->
+    <script is:inline define:vars={{ ga4: site.ga4 }}>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', ga4, { anonymize_ip: true });
+      window.addEventListener('load', function () {
+        var go = function () {
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = 'https://www.googletagmanager.com/gtag/js?id=' + ga4;
+          document.head.appendChild(s);
+        };
+        'requestIdleCallback' in window ? requestIdleCallback(go, { timeout: 3000 }) : setTimeout(go, 1500);
+      });
+    </script>
+  </head>
+  <body class={bodyClass}>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <FlagDefs />
+    <Header transition:persist="header" />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+
+    <script>
+      // Reveal (motion kit #1): class toggle when 20% of the element enters the viewport, once.
+      // Count-up (#9) for [data-count-to]. Pause all animation when the tab is hidden.
+      const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // Fallback for environments where IntersectionObserver is slow or silent: on scroll and after
+      // a short timer, anything at or above the fold is revealed by measuring it directly.
+      const revealVisible = () => {
+        const pending = document.querySelectorAll<HTMLElement>('[data-reveal]:not(.is-in), [data-reveal-children]:not(.is-in)');
+        if (!pending.length) return;
+        const vh = window.innerHeight;
+        pending.forEach((el) => {
+          const r = el.getBoundingClientRect();
+          if (r.top < vh * 0.95 && r.bottom > 0) el.classList.add('is-in');
+        });
+      };
+      let ticking = false;
+      const onScroll = () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          revealVisible();
+          ticking = false;
+        });
+      };
+
+      function setupReveal() {
+        const els = document.querySelectorAll<HTMLElement>('[data-reveal]:not(.is-in), [data-reveal-children]:not(.is-in)');
+        if (!els.length) return;
+        if (!('IntersectionObserver' in window)) {
+          els.forEach((el) => el.classList.add('is-in'));
+          return;
+        }
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const e of entries) {
+              if (e.isIntersecting) {
+                e.target.classList.add('is-in');
+                io.unobserve(e.target);
+              }
+            }
+          },
+          { threshold: 0.2, rootMargin: '0px 0px -5% 0px' }
+        );
+        els.forEach((el) => io.observe(el));
+        window.setTimeout(revealVisible, 900);
+      }
+
+      function setupCountUp() {
+        const nums = document.querySelectorAll<HTMLElement>('[data-count-to]:not([data-counted])');
+        if (!nums.length) return;
+        const run = (el: HTMLElement) => {
+          el.dataset.counted = '1';
+          const to = Number(el.dataset.countTo);
+          const prefix = el.dataset.countPrefix ?? '';
+          const suffix = el.dataset.countSuffix ?? '';
+          if (reduced() || Number.isNaN(to)) {
+            el.textContent = `${prefix}${to}${suffix}`;
+            return;
+          }
+          const start = performance.now();
+          const dur = 900;
+          const tick = (now: number) => {
+            const p = Math.min(1, (now - start) / dur);
+            const eased = 1 - Math.pow(1 - p, 3);
+            el.textContent = `${prefix}${Math.round(to * eased)}${suffix}`;
+            if (p < 1) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        };
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const e of entries) {
+              if (e.isIntersecting) {
+                run(e.target as HTMLElement);
+                io.unobserve(e.target);
+              }
+            }
+          },
+          { threshold: 0.5 }
+        );
+        nums.forEach((el) => io.observe(el));
+      }
+
+      function init() {
+        setupReveal();
+        setupCountUp();
+      }
+      document.addEventListener('astro:page-load', init);
+      window.addEventListener('scroll', onScroll, { passive: true });
+      document.addEventListener('visibilitychange', () => {
+        document.documentElement.classList.toggle('page-hidden', document.visibilityState === 'hidden');
+      });
+    </script>
+  </body>
+</html>

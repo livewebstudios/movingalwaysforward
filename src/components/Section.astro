@@ -1,0 +1,50 @@
+---
+// A page section. `pitch` cuts the top edge on the mountain's slope (motion kit #7),
+// rising left to right. Use it at most twice per page, never between two white sections.
+interface Props {
+  tone?: 'white' | 'mist' | 'navy';
+  pitch?: boolean;
+  id?: string;
+  class?: string;
+  tight?: boolean;
+  labelledby?: string;
+}
+const { tone = 'white', pitch = false, id, class: cls = '', tight = false, labelledby } = Astro.props;
+---
+
+<section
+  {id}
+  class:list={['section', `section--${tone}`, { 'section--pitch': pitch, 'section--tight': tight, 'on-navy': tone === 'navy' }, cls]}
+  aria-labelledby={labelledby}
+>
+  <div class="container">
+    <slot />
+  </div>
+</section>
+
+<style>
+  .section {
+    position: relative;
+    padding-block: var(--section-y);
+  }
+  .section--tight {
+    padding-block: calc(var(--section-y) * 0.66);
+  }
+  .section--white {
+    background: var(--paper);
+  }
+  .section--mist {
+    background: var(--mist);
+  }
+  .section--navy {
+    background: linear-gradient(160deg, var(--navy), var(--navy-700));
+  }
+  .section--pitch {
+    clip-path: polygon(0 var(--pitch), 100% 0, 100% 100%, 0 100%);
+    margin-top: calc(var(--pitch) * -1);
+    padding-top: calc(var(--section-y) + var(--pitch));
+  }
+  .section--pitch > .container {
+    position: relative;
+  }
+</style>

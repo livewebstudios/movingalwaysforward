@@ -1,0 +1,330 @@
+---
+// Contact · three sections. The Calendly is the page. No map, no closing CTA band.
+import Base from '../layouts/Base.astro';
+import Section from '../components/Section.astro';
+import Button from '../components/Button.astro';
+import Obj from '../components/Obj.astro';
+import Placeholder from '../components/Placeholder.astro';
+import { site } from '../data/site';
+
+const title = 'Book a Call with Joe Hliboki | Always Forward Coaching';
+const description =
+  'Book a free thirty-minute call with coach Joe Hliboki of Always Forward. Career coaching, executive coaching and corporate training in northern New Jersey and by video anywhere.';
+const path = '/contact/';
+const schema = [
+  {
+    '@type': 'ContactPage',
+    '@id': `${site.url}${path}#contact`,
+    url: `${site.url}${path}`,
+    name: 'Contact Always Forward',
+    mainEntity: { '@id': `${site.url}/#org` },
+  },
+];
+---
+
+<Base {title} {description} {path} crumbs={[{ name: 'Contact', href: path }]} {schema}>
+  <!-- 1. Hero -->
+  <section class="chero" aria-labelledby="contact-title">
+    <div class="container" data-reveal-children>
+      <p class="eyebrow">Contact</p>
+      <h1 id="contact-title">Talk to Joe.</h1>
+      <p class="lede">A first call is free, thirty minutes, and useful even if you never come back. Pick a time, or send a note and Joe will reach out.</p>
+    </div>
+  </section>
+
+  <!-- 2. Two columns -->
+  <section class="ctwo" aria-label="Book a time or send a note">
+    <div class="container ctwo__grid">
+      <div class="cal" id="calendly-col">
+        <div class="cal__head">
+          <Obj name="coffee-cups" size={120} sizeMobile={88} rotate={-6} float phase={1} eager />
+          <h2>Grab a time</h2>
+        </div>
+        <div class="cal__frame" data-calendly={site.calendly}>
+          <div class="cal__skeleton" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <p class="cal__fallback">
+            The calendar is loading. If it does not appear, <a href={site.calendly} target="_blank" rel="noopener">open Joe's Calendly in a new tab</a>.
+          </p>
+        </div>
+      </div>
+
+      <div class="note card">
+        <div class="note__obj">
+          <Obj name="calendar-30" size={100} sizeMobile={72} rotate={8} float phase={3} />
+        </div>
+        <h2 class="note__title">Or send a note</h2>
+        <form class="note__form" id="contact-form" action={site.formspree} method="POST" novalidate>
+          <input type="hidden" name="_subject" value="Always Forward website: new note" />
+          <input type="text" name="_gotcha" class="sr-only" tabindex="-1" autocomplete="off" aria-hidden="true" />
+          <div class="field">
+            <label for="f-name">Name</label>
+            <input id="f-name" name="name" type="text" autocomplete="name" required />
+          </div>
+          <div class="field">
+            <label for="f-email">Email</label>
+            <input id="f-email" name="email" type="email" autocomplete="email" required />
+          </div>
+          <div class="field field--optional">
+            <label for="f-phone">Phone</label>
+            <input id="f-phone" name="phone" type="tel" autocomplete="tel" />
+          </div>
+          <div class="field">
+            <label for="f-for">This is for</label>
+            <select id="f-for" name="this_is_for" required>
+              <option value="Myself">Myself</option>
+              <option value="My son or daughter">My son or daughter</option>
+              <option value="My company or team">My company or team</option>
+              <option value="Something else">Something else</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-msg">What's going on?</label>
+            <textarea id="f-msg" name="message" rows="5" required></textarea>
+          </div>
+          <p class="note__error" id="form-error" role="alert" hidden>Something went sideways. Call or text Joe at <a href={`tel:${site.phoneMobileE164}`}>{site.phoneMobile}</a> and he will take it from there.</p>
+          <Button type="submit">Send it</Button>
+          <p class="small"><Placeholder text="FORM_ID_PLACEHOLDER: set the Formspree ID in src/data/site.ts" /></p>
+        </form>
+        <div class="note__success" id="form-success" role="status" hidden>
+          <h3>Got it.</h3>
+          <p>Joe reads these himself. You will hear back within a business day.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Facts strip -->
+  <Section tone="mist" tight id="facts" labelledby="facts-title">
+    <h2 class="sr-only" id="facts-title">How to reach Joe</h2>
+    <dl class="facts" data-reveal-children>
+      <div class="facts__item">
+        <dt>Call or text</dt>
+        <dd>Office <a href={`tel:${site.phoneOfficeE164}`}>{site.phoneOffice}</a> · Mobile <a href={`tel:${site.phoneMobileE164}`}>{site.phoneMobile}</a></dd>
+      </div>
+      <div class="facts__item">
+        <dt>Email</dt>
+        <dd><a href={`mailto:${site.email}`}>{site.email}</a> <Placeholder text="CONFIRM_EMAIL: FocalPoint address until an @movingalwaysforward.com mailbox exists" /></dd>
+      </div>
+      <div class="facts__item">
+        <dt>Where</dt>
+        <dd>Montvale, New Jersey. In person within about thirty miles, including Bergen County and Fairfield County, CT. Everywhere else by video.</dd>
+      </div>
+    </dl>
+  </Section>
+</Base>
+
+<script>
+  // Calendly: load the widget script on the first interaction (or after six quiet seconds).
+  // Formspree: submit with fetch and swap in the success state; fall back to a normal POST without JS.
+  function initCalendly() {
+    const frame = document.querySelector<HTMLElement>('.cal__frame[data-calendly]');
+    if (!frame || frame.dataset.loaded) return;
+    const load = () => {
+      if (frame.dataset.loaded) return;
+      frame.dataset.loaded = '1';
+      const url = frame.dataset.calendly!;
+      const widget = document.createElement('div');
+      widget.className = 'calendly-inline-widget';
+      widget.setAttribute('data-url', `${url}?hide_gdpr_banner=1&primary_color=061a3a`);
+      widget.setAttribute('title', 'Book a call with Joe on Calendly');
+      frame.appendChild(widget);
+      const s = document.createElement('script');
+      s.src = 'https://assets.calendly.com/assets/external/widget.js';
+      s.async = true;
+      s.onload = () => frame.classList.add('is-loaded');
+      s.onerror = () => frame.classList.add('is-failed');
+      document.head.appendChild(s);
+    };
+    // Load on the first real interaction (scroll, pointer, key, touch) so the 5MB widget never
+    // competes with the page itself, with a quiet fallback for a visitor who only waits.
+    ['pointermove', 'pointerdown', 'keydown', 'touchstart', 'scroll', 'wheel'].forEach((ev) =>
+      window.addEventListener(ev, load, { once: true, passive: true })
+    );
+    window.setTimeout(load, 6000);
+  }
+
+  function initForm() {
+    const form = document.getElementById('contact-form') as HTMLFormElement | null;
+    const ok = document.getElementById('form-success');
+    const err = document.getElementById('form-error');
+    if (!form || !ok || !err || form.dataset.bound) return;
+    form.dataset.bound = '1';
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!form.reportValidity()) return;
+      err.hidden = true;
+      const btn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+      if (btn) btn.disabled = true;
+      try {
+        const res = await fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } });
+        if (!res.ok) throw new Error(String(res.status));
+        form.hidden = true;
+        ok.hidden = false;
+        ok.focus?.();
+      } catch {
+        err.hidden = false;
+        if (btn) btn.disabled = false;
+      }
+    });
+  }
+
+  const init = () => {
+    initCalendly();
+    initForm();
+  };
+  document.addEventListener('astro:page-load', init);
+</script>
+
+<style>
+  .chero {
+    padding-block: var(--s-4) var(--s-5);
+  }
+  .chero h1 {
+    margin-bottom: var(--s-2);
+  }
+  .ctwo {
+    padding-bottom: var(--s-8);
+  }
+  .ctwo__grid {
+    display: grid;
+    gap: var(--s-5);
+    align-items: start;
+  }
+  .cal__head {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--s-2);
+    margin-bottom: var(--s-2);
+  }
+  .cal__head h2 {
+    margin: 0 0 var(--s-2);
+  }
+  .cal__frame {
+    position: relative;
+    min-height: 700px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--mist);
+    overflow: hidden;
+  }
+  .cal__frame :global(.calendly-inline-widget) {
+    min-width: 280px;
+    height: 700px;
+    position: relative;
+    z-index: 1;
+  }
+  .cal__skeleton {
+    position: absolute;
+    inset: 0;
+    padding: var(--s-4);
+    display: grid;
+    gap: 14px;
+    align-content: start;
+  }
+  .cal__skeleton span {
+    display: block;
+    height: 18px;
+    border-radius: 6px;
+    background: linear-gradient(90deg, var(--line), var(--paper), var(--line));
+    background-size: 200% 100%;
+    animation: shimmer 1.4s linear infinite;
+  }
+  .cal__skeleton span:nth-child(1) {
+    width: 40%;
+    height: 28px;
+  }
+  .cal__skeleton span:nth-child(2) {
+    width: 70%;
+  }
+  .cal__skeleton span:nth-child(3) {
+    width: 55%;
+  }
+  .cal__skeleton span:nth-child(4) {
+    height: 260px;
+    width: 100%;
+    border-radius: var(--r-md);
+  }
+  .cal__skeleton span:nth-child(5) {
+    width: 60%;
+  }
+  @keyframes shimmer {
+    to {
+      background-position: -200% 0;
+    }
+  }
+  .cal__fallback {
+    position: absolute;
+    left: var(--s-4);
+    right: var(--s-4);
+    bottom: var(--s-3);
+    font-size: var(--fs-small);
+    color: var(--ink-600);
+  }
+  .cal__frame.is-loaded .cal__skeleton,
+  .cal__frame.is-loaded .cal__fallback {
+    display: none;
+  }
+  .note {
+    position: relative;
+    padding-top: var(--s-5);
+  }
+  .note__obj {
+    position: absolute;
+    top: -34px;
+    right: var(--s-2);
+  }
+  .note__title {
+    margin-right: 96px;
+  }
+  .note__error {
+    padding: var(--s-2);
+    border-radius: var(--r-md);
+    background: #fff4f2;
+    border: 1px solid #f2c9c2;
+    color: #7a2e22;
+    margin-bottom: var(--s-2);
+  }
+  .note__error a {
+    color: inherit;
+  }
+  .note__form .small {
+    margin-top: var(--s-2);
+  }
+  .note__success h3 {
+    color: var(--success);
+    font-size: 1.75rem;
+  }
+  .facts {
+    display: grid;
+    gap: var(--s-3);
+    margin: 0;
+  }
+  .facts dt {
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+  .facts dd {
+    margin: 0;
+  }
+  @media (min-width: 900px) {
+    .ctwo__grid {
+      grid-template-columns: minmax(0, 1.1fr) minmax(360px, 0.9fr);
+      gap: var(--s-8);
+    }
+    .facts {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--s-5);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cal__skeleton span {
+      animation: none;
+    }
+  }
+</style>

@@ -1,0 +1,96 @@
+---
+// Group Programs · ServiceSkeleton, six sections. No prices.
+import Base from '../layouts/Base.astro';
+import Section from '../components/Section.astro';
+import InteriorHero from '../components/InteriorHero.astro';
+import ProofBlock from '../components/ProofBlock.astro';
+import CtaBand from '../components/CtaBand.astro';
+import StepsStrip from '../islands/StepsStrip';
+import { objSrc } from '../lib/images';
+import { service } from '../lib/seo';
+import workshop from '../assets/photos/joe-workshop.png';
+
+const title = 'Group Coaching Programs | Always Forward Coaching';
+const description =
+  'Group coaching with Joe Hliboki for cohorts, teams and peer groups. A defined group, a defined arc, structured sessions and shared accountability.';
+const path = '/group-programs/';
+const coffee = await objSrc('coffee-cups', 144);
+const schema = [service('Group Coaching Programs', path, description, 'Peer cohorts, leadership teams and groups of young professionals')];
+---
+
+<Base {title} {description} {path} crumbs={[{ name: 'Group Programs', href: path }]} {schema}>
+  <InteriorHero
+    eyebrow="Group Programs"
+    title="Some things grow faster in groups."
+    deck="Structured coaching for cohorts, teams and peer groups of four to ten. A beginning, a middle and a finish line, with homework in between."
+    button={{ label: 'Book a call', href: '/contact/' }}
+    object="speech-bubbles"
+    objectRotate={10}
+    photo={{ image: workshop, alt: 'Joe Hliboki leading a workshop at the front of a glass-walled conference room' }}
+  />
+
+  <Section tone="mist" pitch id="who" labelledby="who-title">
+    <div class="prose" data-reveal-children>
+      <h2 id="who-title">Teams that rise or stall together.</h2>
+      <p>
+        Peer cohorts of owners or managers who want structured growth without paying for one-on-one at every seat. Leadership teams that need a shared language. Organizations that want a coaching culture, not one coached executive. Groups of young professionals inside a company, or across companies, who are all facing the same first years.
+      </p>
+    </div>
+  </Section>
+
+  <Section id="what" labelledby="what-title">
+    <div class="sec-head" data-reveal>
+      <h2 id="what-title">Structured sessions. Not a support group.</h2>
+    </div>
+    <ul class="syllabus" data-reveal-children>
+      <li>
+        <h3>A defined cohort and a defined arc.</h3>
+        <p>Groups of roughly four to ten, meeting on a set cadence for a set number of sessions. You know when it starts and when it ends.</p>
+      </li>
+      <li>
+        <h3>A topic, a tool and homework every session.</h3>
+        <p>FocalPoint curriculum where it fits, Joe's own material where it fits better. Nobody leaves without something to do before next time.</p>
+      </li>
+      <li>
+        <h3>Peer accountability.</h3>
+        <p>The quiet power of saying what you will do in front of people who will ask about it next session.</p>
+      </li>
+      <li>
+        <h3>One-on-one check-ins woven in.</h3>
+        <p>Group pace, individual attention where someone needs it.</p>
+      </li>
+    </ul>
+  </Section>
+
+  <Section tone="mist" pitch id="how" labelledby="how-title">
+    <div class="sec-head" data-reveal>
+      <h2 id="how-title">How it works</h2>
+    </div>
+    <StepsStrip
+      client:visible
+      {coffee}
+      steps={[
+        { title: 'Talk.', body: 'What the group needs, who is in it, what done looks like.' },
+        { title: 'Design.', body: 'A session-by-session outline you approve before anyone sits down.' },
+        { title: 'Run the arc.', body: 'Scheduled sessions, homework, and a closing review of what changed.' },
+      ]}
+    />
+  </Section>
+
+  <Section id="proof" labelledby="proof-title">
+    <ProofBlock
+      heading="He cannot help himself."
+      testimonial="TESTIMONIAL PLACEHOLDER: from a group participant. Jon supplies."
+      related={[
+        { lead: 'One person, not a group?', label: 'Executive & Business Coaching', href: '/executive-business-coaching/' },
+        { lead: 'Training for the whole company?', label: 'Corporate Training', href: '/corporate-training/' },
+      ]}
+    >
+      <p>
+        Joe has run teams, cohorts and workshops his whole career, including coaching more than five hundred young athletes and the Professional Communications workshop he built and delivered to his own BNI chapter because he thought they needed it. They did. His <a href="/career-steppingstones/">Career Steppingstones program</a> runs on the same group model for young professionals.
+      </p>
+    </ProofBlock>
+  </Section>
+
+  <CtaBand heading="Bring the group. Leave with momentum." body="Tell Joe who is in the room and what has to be different in ninety days." button={{ label: 'Book a call with Joe', href: '/contact/' }} />
+</Base>

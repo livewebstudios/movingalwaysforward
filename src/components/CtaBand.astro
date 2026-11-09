@@ -1,0 +1,91 @@
+---
+// Closing CTA band: navy, contour backdrop (video-ready), H2, body, one gold button,
+// the summit flag (or the page's object) at 120px on the right.
+import Backdrop from './Backdrop.astro';
+import Button from './Button.astro';
+import Obj from './Obj.astro';
+import bgNavy from '../assets/backgrounds/bg-contour-navy.png';
+import type { ObjectName } from '../lib/images';
+
+interface Props {
+  heading: string;
+  body: string;
+  button: { label: string; href: string };
+  object?: ObjectName;
+  id?: string;
+}
+const { heading, body, button, object = 'summit-flag', id = 'cta' } = Astro.props;
+---
+
+<section class="cta-wrap" aria-labelledby={`${id}-title`}>
+  <div class="container">
+    <div class="cta on-navy" data-reveal>
+      <Backdrop image={bgNavy} class="cta__bg" />
+      <div class="cta__inner">
+        <div class="cta__copy">
+          <h2 id={`${id}-title`}>{heading}</h2>
+          <p class="cta__body">{body}</p>
+          <Button href={button.href}>{button.label}</Button>
+        </div>
+        <div class="cta__obj">
+          <Obj name={object} size={120} sizeMobile={88} rotate={object === 'summit-flag' ? 6 : -8} depth="near" float phase={3} />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta-wrap {
+    padding-block: var(--s-4) var(--s-8);
+  }
+  .cta {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--r-xl);
+    background: linear-gradient(160deg, var(--navy), var(--navy-700));
+    padding: var(--s-6) var(--s-3);
+  }
+  .cta :global(.cta__bg) {
+    opacity: 0.6;
+  }
+  .cta__inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-3);
+    align-items: flex-start;
+  }
+  .cta__copy {
+    max-width: 60ch;
+  }
+  .cta__copy h2 {
+    margin-bottom: var(--s-2);
+  }
+  .cta__body {
+    font-size: 1.125rem;
+    color: var(--sky-200);
+    margin-bottom: var(--s-3);
+  }
+  .cta__obj {
+    position: absolute;
+    right: -8px;
+    top: -16px;
+  }
+  @media (min-width: 768px) {
+    .cta {
+      padding: var(--s-8) var(--s-6);
+    }
+    .cta__inner {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .cta__obj {
+      position: static;
+      flex: none;
+      margin-right: var(--s-4);
+    }
+  }
+</style>
