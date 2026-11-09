@@ -40,8 +40,8 @@ for (const file of files) {
   let s = readFileSync(file, 'utf8');
   const before = s;
   if (file.endsWith('.html')) {
-    s = s.replace(/\b(href|src|poster|data-src|action)=("|')(\/(?!\/)[^"']*)\2/g, (_m, a, q, u) => `${a}=${q}${fix(u)}${q}`);
-    s = s.replace(/\b(srcset|imagesrcset)=("|')([^"']*)\2/g, (_m, a, q, list) =>
+    s = s.replace(/\b(href|src|poster|data-src|action)=("|')(\/(?!\/)[^"']*)\2/gi, (_m, a, q, u) => `${a}=${q}${fix(u)}${q}`);
+    s = s.replace(/\b(srcset|imagesrcset)=("|')([^"']*)\2/gi, (_m, a, q, list) =>
       `${a}=${q}${list.split(',').map((part) => part.trim().replace(/^(\S+)/, (u) => fix(u))).join(', ')}${q}`);
     // <base href="/"> in 404.html must stay as is
     s = s.replace(/<base href="\.\/"\s*\/?>/, '<base href="/">');
@@ -57,7 +57,7 @@ for (const file of files) {
 const leftovers = [];
 for (const file of files) {
   const s = readFileSync(file, 'utf8').replace('<base href="/">', '');
-  const m = s.match(/\b(?:href|src|poster|data-src|srcset|imagesrcset)=["']\/(?!\/)[^"']*/g);
+  const m = s.match(/\b(?:href|src|poster|data-src|srcset|imagesrcset)=["']\/(?!\/)[^"']*/gi);
   if (m) leftovers.push(`${file}: ${m.slice(0, 3).join(' | ')}`);
 }
 console.log(`relativize: ${count} URL(s) rewritten in ${changed}/${files.length} files`);

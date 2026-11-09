@@ -4,7 +4,7 @@ import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 
 const SITE = 'https://movingalwaysforward.com';
-const EXCLUDE = /\/404\/?$/;
+const EXCLUDE = /\/(404|privacy)\/?$/;
 
 export default defineConfig({
   site: SITE,
