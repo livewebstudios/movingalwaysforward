@@ -16,7 +16,7 @@ const { card } = Astro.props;
     <h3 class="stone__title">{card.title}</h3>
     {
       card.price && (
-        <p class:list={['stone__price', { 'stone__price--gold': card.featured }]}>
+        <p class:list={['stone__price', { 'stone__price--gold': card.gold }]}>
           <span class="stone__amount">{card.price}</span>
           {card.priceNote && <span class="stone__note">{card.priceNote}</span>}
         </p>

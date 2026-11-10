@@ -18,10 +18,10 @@ export const site = {
   emailPlaceholder: 'CONFIRM_EMAIL',
   calendly: 'https://calendly.com/joe-hliboki-focalpoint-coaching/',
   linkedin: '[LINKEDIN_URL_PLACEHOLDER]',
-  amazon: '[AMAZON_URL_PLACEHOLDER]',
-  formspree: 'https://formspree.io/f/FORM_ID_PLACEHOLDER',
-  ga4: 'G-XXXXXXXXXX',
-  gscToken: 'GSC_VERIFICATION_PLACEHOLDER',
+  amazon: 'https://www.amazon.com/dp/B0GXGBN1NW',
+  formspree: 'https://formspree.io/f/mljjqbyn',
+  // Google Tag Manager container. GA4 and any other tags are managed inside GTM.
+  gtm: 'GTM-KCVCP4X2',
   ogDefault: '/og/default.png',
   areaServed: ['New Jersey', 'New York metro', 'Connecticut'],
 } as const;

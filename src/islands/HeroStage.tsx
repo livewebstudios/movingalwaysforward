@@ -271,7 +271,7 @@ const css = `
 @media (max-width: 767px) {
   .hero__cards { flex-direction: column; align-items: center; position: static; margin-top: var(--s-6); gap: var(--s-4); }
   .hero__box { padding-top: 104px; padding-bottom: 72px; }
-  .hero__stack .pill { font-size: 0.6875rem; letter-spacing: 0.06em; text-align: center; }
+  .hero__stack .eyebrow { font-size: 0.6875rem; letter-spacing: 0.1em; padding-right: calc(14px - 0.1em); text-align: center; justify-content: center; }
   .hcard--photo { transform: rotate(-3deg); }
   .hcard--plan { transform: rotate(2deg); }
 }
@@ -291,4 +291,34 @@ const css = `
   .hobj--bubbles { display: block; top: 58%; left: 14%; width: 130px; }
 }
 @media (prefers-reduced-motion: reduce) { .hcard { transform: none !important; } }
+
+/* Page-load entrance (after Aceternity's AI-visibility hero): things start transparent,
+   blurred 10px and 12px low, then resolve in place. Headline words also grow from 0.9 and
+   open from the center outward (--rank 0 = middle words). Uses the standalone translate and
+   scale properties so it never fights the Motion transforms on the cards and objects.
+   Pure CSS, so it plays even before React hydrates. */
+@keyframes hero-in {
+  from { opacity: 0; filter: blur(10px); translate: 0 12px; }
+  to { opacity: 1; filter: blur(0); translate: 0 0; }
+}
+@keyframes hero-word-in {
+  from { opacity: 0; filter: blur(10px); translate: 0 12px; scale: 0.9; }
+  to { opacity: 1; filter: blur(0); translate: 0 0; scale: 1; }
+}
+@keyframes hero-rise {
+  from { opacity: 0; translate: 0 24px; }
+  to { opacity: 1; translate: 0 0; }
+}
+/* Astro wraps the slotted hero copy in <astro-slot>, so target by class, not by child. */
+.hero__stack .eyebrow, .hero__stack .lede, .hero__stack .hero__actions { animation: hero-in 800ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+/* --d is set per word by the script in index.astro (distance from the headline's lower
+   center); --rank (sentence-order fallback) only applies if that script never runs. */
+.hero__stack .hw { display: inline-block; transform-origin: 50% 60%; animation: hero-word-in 900ms cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: var(--d, calc(140ms + var(--rank, 0) * 110ms)); }
+.hero__stack h1.is-measuring .hw { animation-play-state: paused; }
+.hero__stack .lede { animation-delay: 600ms; }
+.hero__stack .hero__actions { animation-delay: 720ms; }
+.hero__cards { animation: hero-rise 900ms cubic-bezier(0.22, 1, 0.36, 1) 860ms both; }
+@media (prefers-reduced-motion: reduce) {
+  .hero__stack .eyebrow, .hero__stack .lede, .hero__stack .hero__actions, .hero__stack .hw, .hero__cards { animation: none; }
+}
 `;

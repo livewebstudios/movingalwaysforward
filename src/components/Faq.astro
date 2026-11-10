@@ -1,5 +1,11 @@
 ---
-// FAQ accordion with native <details>. Pair with faqPage() JSON-LD on the page.
+// FAQ accordion with native <details> (works with no JS). Pair with faqPage() JSON-LD on the page.
+// Layout after Jon's reference (26_11_10): centered heading and contact line, divider rows with a
+// plus that turns into an x, the open question outlined and its answer in a rounded mist panel.
+// Every item starts closed. The script below animates open and close (height, fade, blur);
+// reduced motion and no-JS get the plain native toggle.
+import { site } from '../data/site';
+
 interface Props {
   items: { q: string; a: string }[];
   heading?: string;
@@ -8,33 +14,116 @@ const { items, heading = 'Questions people ask first' } = Astro.props;
 ---
 
 <div class="faq" data-reveal>
-  <h3 class="faq__heading">{heading}</h3>
-  {
-    items.map((f) => (
-      <details class="faq__item">
-        <summary class="faq__q">
-          <span>{f.q}</span>
-          <svg aria-hidden="true" viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 4v12M4 10h12" /></svg>
-        </summary>
-        <div class="faq__a" set:html={f.a} />
-      </details>
-    ))
-  }
+  <div class="faq__head">
+    <h3 class="faq__heading">{heading}</h3>
+    <p class="faq__sub">
+      Don't see yours? Ask Joe directly at <a href={`mailto:${site.email}`}>{site.email}</a>.
+    </p>
+  </div>
+  <div class="faq__list">
+    {
+      items.map((f) => (
+        <details class="faq__item">
+          <summary class="faq__q">
+            <span>{f.q}</span>
+            <svg aria-hidden="true" viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M10 4v12M4 10h12" /></svg>
+          </summary>
+          <div class="faq__a">
+            <div class="faq__panel" set:html={f.a} />
+          </div>
+        </details>
+      ))
+    }
+  </div>
 </div>
+
+<script>
+  // One delegated listener, bound once, so it keeps working across ClientRouter page swaps.
+  const EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
+  const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function toggle(item: HTMLDetailsElement) {
+    const body = item.querySelector<HTMLElement>('.faq__a');
+    if (!body || reduced() || !body.animate) {
+      item.open = !item.open;
+      return;
+    }
+    body.getAnimations().forEach((a) => a.cancel());
+    if (!item.open || item.dataset.state === 'closing') {
+      item.open = true;
+      item.dataset.state = 'open';
+      const h = body.scrollHeight;
+      body.animate(
+        [
+          { height: '0px', opacity: 0, filter: 'blur(6px)', transform: 'translateY(-6px)' },
+          { height: `${h}px`, opacity: 1, filter: 'blur(0)', transform: 'translateY(0)' },
+        ],
+        { duration: 420, easing: EASE }
+      );
+    } else {
+      item.dataset.state = 'closing';
+      const h = body.offsetHeight;
+      const a = body.animate(
+        [
+          { height: `${h}px`, opacity: 1, filter: 'blur(0)', transform: 'translateY(0)' },
+          { height: '0px', opacity: 0, filter: 'blur(4px)', transform: 'translateY(-4px)' },
+        ],
+        { duration: 300, easing: EASE }
+      );
+      // finish event plus a timer backup (a throttled background tab can hold the event back)
+      let done = false;
+      const close = () => {
+        if (done || item.dataset.state !== 'closing') return;
+        done = true;
+        item.open = false;
+        delete item.dataset.state;
+      };
+      a.onfinish = close;
+      window.setTimeout(close, 340);
+    }
+  }
+
+  document.addEventListener('click', (e) => {
+    const summary = (e.target as Element | null)?.closest?.('.faq__q');
+    if (!summary) return;
+    const item = summary.parentElement as HTMLDetailsElement | null;
+    if (!item || !item.classList.contains('faq__item')) return;
+    e.preventDefault();
+    toggle(item);
+  });
+</script>
 
 <style>
   .faq {
     max-width: 760px;
-    margin-top: var(--s-4);
+    margin: var(--s-6) auto 0;
+  }
+  .faq__head {
+    text-align: center;
+    margin-bottom: var(--s-4);
   }
   .faq__heading {
-    margin-bottom: var(--s-2);
+    margin: 0 0 var(--s-2);
+    font-size: clamp(1.75rem, 1.4rem + 1.4vw, 2.5rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .faq__sub {
+    margin: 0 auto;
+    max-width: 52ch;
+    color: var(--ink-600);
+    font-size: 1.0625rem;
+  }
+  .faq__sub a {
+    color: var(--navy);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    overflow-wrap: anywhere;
   }
   .faq__item {
-    border-top: 1px solid var(--line);
-  }
-  .faq__item:last-of-type {
     border-bottom: 1px solid var(--line);
+    padding: 6px 0;
   }
   .faq__q {
     display: flex;
@@ -42,28 +131,64 @@ const { items, heading = 'Questions people ask first' } = Astro.props;
     align-items: center;
     gap: var(--s-2);
     min-height: 56px;
-    padding: 12px 4px;
+    padding: 12px 16px;
+    border: 1.5px solid transparent;
+    border-radius: 12px;
     font-family: var(--font-display);
     font-weight: 600;
     font-size: 1.125rem;
     color: var(--navy);
     cursor: pointer;
     list-style: none;
+    transition:
+      border-color 240ms var(--ease-out),
+      background-color 240ms var(--ease-out),
+      box-shadow 240ms var(--ease-out);
   }
   .faq__q::-webkit-details-marker {
     display: none;
   }
+  .faq__q:hover {
+    background: var(--mist);
+  }
+  .faq__q:focus-visible {
+    outline: 2px solid var(--navy);
+    outline-offset: 2px;
+  }
   .faq__q svg {
     flex: none;
-    color: var(--sky);
-    transition: transform 200ms var(--ease-out);
+    color: var(--navy);
+    transition: transform 420ms cubic-bezier(0.34, 1.56, 0.64, 1);
   }
-  details[open] .faq__q svg {
-    transform: rotate(45deg);
+  /* open: outlined question, plus turns into an x */
+  .faq__item[open]:not([data-state='closing']) .faq__q {
+    border-color: var(--sky-200);
+    background: var(--paper);
+    box-shadow: 0 6px 18px -12px rgba(6, 26, 58, 0.35);
+  }
+  .faq__item[open]:not([data-state='closing']) .faq__q svg {
+    transform: rotate(135deg);
   }
   .faq__a {
-    padding: 0 4px var(--s-3);
-    max-width: 68ch;
+    overflow: hidden;
+  }
+  .faq__panel {
+    margin: 8px 0 6px;
+    padding: var(--s-2) var(--s-3);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--mist);
     color: var(--ink);
+    line-height: 1.6;
+  }
+  .faq__panel :global(a) {
+    color: var(--navy);
+    font-weight: 600;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .faq__q,
+    .faq__q svg {
+      transition: none;
+    }
   }
 </style>

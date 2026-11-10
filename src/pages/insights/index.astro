@@ -1,13 +1,11 @@
 ---
-// Insights index · three sections: header, filter + list with the email rail, closing CTA.
+// Insights index · three sections: header, filter + card grid with the email band, closing CTA.
 import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import Section from '../../components/Section.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import Button from '../../components/Button.astro';
-import Obj from '../../components/Obj.astro';
-import Placeholder from '../../components/Placeholder.astro';
 import InsightsFilter, { type PostItem } from '../../islands/InsightsFilter';
 import { categories } from '../../content.config';
 import { site } from '../../data/site';
@@ -18,14 +16,26 @@ const description =
   'Insights from coach Joe Hliboki: plain-talk writing on early careers, leadership, sales and workplace skills. A new post every two weeks.';
 const path = '/insights/';
 
+// Tiny round author photos on the cards. Add a line here when a new author starts writing.
+const authorPhotos: Record<string, string> = { 'Joe Hliboki': '/images/authors/joe-hliboki.webp' };
+
 const posts = (await getCollection('insights', ({ data }) => !data.draft)).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+// LWS path rule: island props are not touched by scripts/relativize.mjs, so make them
+// relative here (this page sits one folder deep, at /insights/).
+const up = '../'.repeat(path.split('/').filter(Boolean).length);
+const rel = (u?: string) => (u && u.startsWith('/') ? up + u.slice(1) : u);
+
 const items: PostItem[] = posts.map((p) => ({
   title: p.data.title,
-  href: `/insights/${p.id}/`,
+  href: rel(`/insights/${p.id}/`)!,
   date: p.data.pubDate.toISOString().slice(0, 10),
   dateLabel: p.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }),
   category: p.data.category,
   description: p.data.description,
+  image: rel(p.data.image),
+  imageAlt: p.data.imageAlt,
+  author: p.data.author,
+  avatar: rel(authorPhotos[p.data.author]),
 }));
 
 const schema = [
@@ -46,7 +56,7 @@ const schema = [
   <!-- 1. Header -->
   <section class="ihead" aria-labelledby="insights-title">
     <div class="ihead__band" aria-hidden="true">
-      <Image src={ridge} alt="" widths={[800, 1400, 2000]} sizes="100vw" format="webp" quality={66} loading="eager" decoding="async" fetchpriority="high" class="ihead__img" />
+      <Image src={ridge} alt="" widths={[800, 1400, 2048]} sizes="100vw" format="webp" quality={80} loading="eager" decoding="async" fetchpriority="high" class="ihead__img" />
       <div class="ihead__scrim"></div>
     </div>
     <div class="container ihead__inner">
@@ -54,9 +64,6 @@ const schema = [
         <p class="eyebrow">Insights</p>
         <h1 id="insights-title">Plain talk on careers, leadership and work.</h1>
         <p class="deck">A new post every two weeks. No jargon, no hot takes, no ten-minute reads that should have been two.</p>
-      </div>
-      <div class="ihead__obj">
-        <Obj name="paper-plane" size={140} sizeMobile={88} rotate={-14} depth="near" float eager phase={0} />
       </div>
     </div>
   </section>
@@ -78,7 +85,6 @@ const schema = [
           <input type="text" name="_gotcha" class="sr-only" tabindex="-1" autocomplete="off" aria-hidden="true" />
           <input type="hidden" name="_subject" value="Always Forward website: Insights list" />
           <Button type="submit">Send it</Button>
-          <p class="small rail__ph"><Placeholder text="FORM_ID_PLACEHOLDER" /></p>
         </form>
         <p class="small rail__rss">Prefer a feed? <a href="/insights/rss.xml">RSS</a>.</p>
       </aside>
@@ -90,68 +96,95 @@ const schema = [
 </Base>
 
 <style>
+  /* Header photo: full and sharp. Joe stands right of center with open sky to his left, so the
+     copy sits on a left-side fade and Joe stays crisp. Phones get the photo as a clean band. */
   .ihead {
     position: relative;
-    padding-block: var(--s-6) var(--s-5);
     overflow: hidden;
   }
   .ihead__band {
-    position: absolute;
-    inset: 0 0 auto;
-    height: 40%;
-    min-height: 180px;
-    z-index: 0;
+    position: relative;
+    height: clamp(220px, 62vw, 340px);
   }
   .ihead :global(.ihead__img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 40%;
+    object-position: 68% 30%;
   }
   .ihead__scrim {
     position: absolute;
-    inset: 0;
-    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.92) 55%, var(--paper));
+    inset: auto 0 0;
+    height: 30%;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0), var(--paper));
   }
   .ihead__inner {
     position: relative;
     z-index: 1;
-    display: grid;
-    gap: var(--s-3);
-    align-items: end;
-    padding-top: var(--s-8);
+    padding-block: var(--s-3) var(--s-5);
   }
   .ihead__copy h1 {
     margin-bottom: var(--s-2);
-  }
-  .ihead__obj {
-    justify-self: end;
   }
   .ilayout {
     display: grid;
     gap: var(--s-5);
     align-items: start;
   }
-  .rail__card h3 {
-    margin-bottom: var(--s-2);
+  /* Email signup: a slim band under the grid (the grid needs the full width) */
+  .rail__card {
+    display: grid;
+    gap: var(--s-2);
+    align-items: end;
+    background: linear-gradient(135deg, var(--sky-050), var(--paper) 70%);
   }
-  .rail__ph {
-    margin-top: var(--s-2);
+  .rail__card h3 {
+    margin: 0;
+  }
+  .rail__card .field {
+    margin: 0;
   }
   .rail__rss {
     margin-top: var(--s-2);
   }
   @media (min-width: 900px) {
+    .ihead {
+      min-height: clamp(520px, 44vw, 640px);
+      display: flex;
+      align-items: center;
+    }
+    .ihead__band {
+      position: absolute;
+      inset: 0;
+      height: auto;
+    }
+    .ihead :global(.ihead__img) {
+      object-position: center 32%;
+    }
+    .ihead__scrim {
+      inset: 0;
+      height: auto;
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.94) 0%,
+        rgba(255, 255, 255, 0.86) 34%,
+        rgba(255, 255, 255, 0.35) 52%,
+        rgba(255, 255, 255, 0) 64%
+      );
+    }
     .ihead__inner {
-      grid-template-columns: minmax(0, 1fr) auto;
+      width: 100%;
+      padding-block: var(--s-8);
     }
-    .ilayout {
-      grid-template-columns: minmax(0, 1fr) 320px;
-      gap: var(--s-8);
+    .ihead__copy {
+      max-width: 34rem;
     }
-    .rail {
-      position: sticky;
-      top: 96px;
+    .rail__card {
+      grid-template-columns: minmax(0, 1fr) minmax(240px, 340px) auto;
+      gap: var(--s-3);
+    }
+    .rail__card h3 {
+      align-self: center;
     }
   }
 </style>

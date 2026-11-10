@@ -9,6 +9,8 @@ import StepsStrip from '../islands/StepsStrip';
 import { objSrc } from '../lib/images';
 import { service } from '../lib/seo';
 import workshop from '../assets/photos/joe-workshop.png';
+import SummitPhoto from '../components/SummitPhoto.astro';
+import peak from '../assets/photos/summit-peak-group.jpg';
 
 const title = 'Group Coaching Programs | Always Forward Coaching';
 const description =
@@ -26,6 +28,7 @@ const schema = [service('Group Coaching Programs', path, description, 'Peer coho
     button={{ label: 'Book a call', href: '/contact/' }}
     object="speech-bubbles"
     objectRotate={10}
+    objectLow
     photo={{ image: workshop, alt: 'Joe Hliboki leading a workshop at the front of a glass-walled conference room' }}
   />
 
@@ -39,27 +42,32 @@ const schema = [service('Group Coaching Programs', path, description, 'Peer coho
   </Section>
 
   <Section id="what" labelledby="what-title">
-    <div class="sec-head" data-reveal>
-      <h2 id="what-title">Structured sessions. Not a support group.</h2>
+    <div class="summit-split">
+      <div>
+        <div class="sec-head" data-reveal>
+          <h2 id="what-title">Structured sessions. Not a support group.</h2>
+        </div>
+        <ul class="syllabus syllabus--cards" data-reveal-children>
+          <li>
+            <h3>A defined cohort and a defined arc.</h3>
+            <p>Groups of roughly four to ten, meeting on a set cadence for a set number of sessions. You know when it starts and when it ends.</p>
+          </li>
+          <li>
+            <h3>A topic, a tool and homework every session.</h3>
+            <p>FocalPoint curriculum where it fits, Joe's own material where it fits better. Nobody leaves without something to do before next time.</p>
+          </li>
+          <li>
+            <h3>Peer accountability.</h3>
+            <p>The quiet power of saying what you will do in front of people who will ask about it next session.</p>
+          </li>
+          <li>
+            <h3>One-on-one check-ins woven in.</h3>
+            <p>Group pace, individual attention where someone needs it.</p>
+          </li>
+        </ul>
+      </div>
+      <SummitPhoto image={peak} summit={[33.8, 12.5]} />
     </div>
-    <ul class="syllabus" data-reveal-children>
-      <li>
-        <h3>A defined cohort and a defined arc.</h3>
-        <p>Groups of roughly four to ten, meeting on a set cadence for a set number of sessions. You know when it starts and when it ends.</p>
-      </li>
-      <li>
-        <h3>A topic, a tool and homework every session.</h3>
-        <p>FocalPoint curriculum where it fits, Joe's own material where it fits better. Nobody leaves without something to do before next time.</p>
-      </li>
-      <li>
-        <h3>Peer accountability.</h3>
-        <p>The quiet power of saying what you will do in front of people who will ask about it next session.</p>
-      </li>
-      <li>
-        <h3>One-on-one check-ins woven in.</h3>
-        <p>Group pace, individual attention where someone needs it.</p>
-      </li>
-    </ul>
   </Section>
 
   <Section tone="mist" pitch id="how" labelledby="how-title">

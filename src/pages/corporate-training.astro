@@ -10,6 +10,8 @@ import CatalogCards, { type CatalogItem } from '../islands/CatalogCards';
 import { objSrc } from '../lib/images';
 import { service } from '../lib/seo';
 import workshop from '../assets/photos/joe-workshop.png';
+import SummitPhoto from '../components/SummitPhoto.astro';
+import peak from '../assets/photos/summit-peak-corporate.jpg';
 
 const title = 'Corporate Training & Workshops in New Jersey | Always Forward Coaching';
 const description =
@@ -63,22 +65,26 @@ const schema = [service('Corporate Training & Workshops', path, description, 'HR
     button={{ label: 'Book a scope call', href: '/contact/' }}
     object="ladder"
     objectRotate={-6}
+    objectLow
     photo={{ image: workshop, alt: 'Joe Hliboki leading a workshop at the front of a glass-walled conference room' }}
   />
 
   <Section tone="mist" pitch id="who" labelledby="who-title">
-    <div class="prose" data-reveal-children>
-      <h2 id="who-title">For HR and L&D leaders who have sat through enough motivational theater.</h2>
-      <p>
-        You need programs with a syllabus, a duration and an outcome you can put in a slide. You need a trainer who has done the job, not one who has read about it. And you need the new hires you spent six months recruiting to still be here in two years. That last one is Joe's specialty.
-      </p>
-      <p>In-person within about thirty miles of Montvale, New Jersey, and in Fairfield County, Connecticut. Virtual anywhere. Travel further by arrangement.</p>
+    <div class="summit-split">
+      <div class="prose" data-reveal-children>
+        <h2 id="who-title">For HR and L&D leaders who have sat through enough motivational theater.</h2>
+        <p>
+          You need programs with a syllabus, a duration and an outcome you can put in a slide. You need a trainer who has done the job, not one who has read about it. And you need the new hires you spent six months recruiting to still be here in two years. That last one is Joe's specialty.
+        </p>
+        <p>In-person within about thirty miles of Montvale, New Jersey, and in Fairfield County, Connecticut. Virtual anywhere. Travel further by arrangement.</p>
+      </div>
+      <SummitPhoto image={peak} summit={[49.9, 12.4]} contained />
     </div>
   </Section>
 
   <Section id="catalog" labelledby="catalog-title">
     <div class="sec-head" data-reveal-children>
-      <h2 id="catalog-title">The catalog.</h2>
+      <h2 id="catalog-title">The <span class="h-accent">catalog</span>.</h2>
       <p class="deck">Each program has a what, a format and an outcome. Mix them, or ask for something these do not cover.</p>
     </div>
     <CatalogCards client:visible {items} />

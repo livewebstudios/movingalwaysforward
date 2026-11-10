@@ -48,7 +48,7 @@ const schema = [
     inLanguage: 'en',
     author: { '@id': `${site.url}/#joe` },
     publisher: { '@id': `${site.url}/#org` },
-    image: new URL(portraitImg.src, site.url).href,
+    image: new URL(post.data.image ?? portraitImg.src, site.url).href,
     isPartOf: { '@id': `${site.url}/insights/#blog` },
   },
 ];
@@ -60,9 +60,18 @@ const schema = [
       <a class="pill pill--tint post__cat" href={`/insights/#${post.data.category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>{post.data.category}</a>
       <h1>{post.data.title}</h1>
       <p class="small post__meta">
-        <time datetime={iso}>{dateLabel}</time> · {minutes} min read · by Joe Hliboki
+        <img class="post__avatar" src="/images/authors/joe-hliboki.webp" alt="" width="24" height="24" />
+        <span>by {post.data.author}</span> · <time datetime={iso}>{dateLabel}</time> · {minutes} min read
       </p>
     </header>
+
+    {
+      post.data.image && (
+        <figure class="post__hero container">
+          <img src={post.data.image} alt={post.data.imageAlt ?? ''} width="1200" height="806" fetchpriority="high" decoding="async" />
+        </figure>
+      )
+    }
 
     <div class="post__body container">
       <Content />
@@ -126,6 +135,31 @@ const schema = [
   .post__head h1 {
     font-size: var(--fs-h2);
     margin-bottom: var(--s-2);
+  }
+  .post__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+  }
+  .post__avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .post__hero {
+    margin-block: 0 var(--s-5);
+    max-width: 960px;
+  }
+  .post__hero img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-1);
   }
   .post__body {
     max-width: calc(var(--measure) + 2 * var(--gutter));

@@ -1,5 +1,5 @@
 ---
-// Header (03_layout_and_components.md). Transparent over the hero, white with a hairline
+// Header (03_layout_and_components.md). Always white (frosted), hairline added
 // after 40px of scroll. Nav items ALL CAPS. COACHING opens a 2x2 panel, one row per audience.
 import { Image } from 'astro:assets';
 import logo from '../assets/brand/logo-full-2x.png';
@@ -17,7 +17,7 @@ const mobileItems = [
 <header class="site-header" id="site-header">
   <div class="container site-header__bar">
     <a class="site-header__logo" href="/" aria-label="Always Forward, home">
-      <Image src={logo} alt="Always Forward Business & Career Coaching" width={180} height={55} densities={[1, 2]} loading="eager" decoding="async" fetchpriority="high" />
+      <Image src={logo} alt="Always Forward Business & Career Coaching" width={320} height={64} densities={[1, 2]} loading="eager" decoding="async" fetchpriority="high" />
     </a>
 
     <nav class="site-nav" aria-label="Primary">
@@ -68,48 +68,108 @@ const mobileItems = [
 
 <script>
   // Scroll state (motion kit #8), dropdown keyboard/pointer handling, current-page marking.
-  // The header persists across View Transitions, so this binds once and listens for page loads.
-  const header = document.getElementById('site-header');
-  const toggle = document.getElementById('coaching-toggle') as HTMLButtonElement | null;
-  const panel = document.getElementById('coaching-panel');
-  const item = toggle?.closest('.site-nav__item--has-panel') as HTMLElement | null;
+  // The ClientRouter swaps in a NEW header on every page change, so nothing may hold on to
+  // header elements: document/window listeners bind once and look the header up each time,
+  // and the per-element listeners re-bind on every astro:page-load (initial load included).
   let closeTimer: number | undefined;
 
-  const onScroll = () => header?.classList.toggle('is-scrolled', window.scrollY > 40);
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
+  const els = () => {
+    const toggle = document.getElementById('coaching-toggle') as HTMLButtonElement | null;
+    return {
+      header: document.getElementById('site-header'),
+      toggle,
+      panel: document.getElementById('coaching-panel'),
+      item: toggle?.closest('.site-nav__item--has-panel') as HTMLElement | null,
+    };
+  };
+
+  // Resizable navbar (Aceternity pattern, plain CSS): past 100px the bar floats as a pill.
+  const onScroll = () => els().header?.classList.toggle('is-floating', window.scrollY > 100);
 
   const setOpen = (open: boolean) => {
+    const { toggle, panel, item } = els();
     if (!toggle || !panel || !item) return;
     toggle.setAttribute('aria-expanded', String(open));
     panel.hidden = !open;
     item.classList.toggle('is-open', open);
   };
 
-  toggle?.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
-  item?.addEventListener('pointerenter', (e) => {
-    if ((e as PointerEvent).pointerType !== 'mouse') return;
-    window.clearTimeout(closeTimer);
-    setOpen(true);
-  });
-  item?.addEventListener('pointerleave', (e) => {
-    if ((e as PointerEvent).pointerType !== 'mouse') return;
-    closeTimer = window.setTimeout(() => setOpen(false), 160);
-  });
-  item?.addEventListener('focusout', (e) => {
-    if (!item.contains((e as FocusEvent).relatedTarget as Node | null)) setOpen(false);
-  });
+  // Bound once for the life of the tab.
+  window.addEventListener('scroll', onScroll, { passive: true });
   document.addEventListener('keydown', (e) => {
+    const { toggle } = els();
     if (e.key === 'Escape' && toggle?.getAttribute('aria-expanded') === 'true') {
       setOpen(false);
       toggle.focus();
     }
   });
   document.addEventListener('click', (e) => {
+    const { item } = els();
     if (item && !item.contains(e.target as Node)) setOpen(false);
   });
 
-  const markCurrent = () => {
+  // Bound to whichever header is on the page now.
+  const bindMenu = () => {
+    const { toggle, item } = els();
+    if (!toggle || !item || item.dataset.bound) return;
+    item.dataset.bound = '1';
+
+    // A mouse has already opened the panel on hover, so a mouse click only ever opens it
+    // (toggling here closed it again, which read as "the menu didn't appear").
+    // Keyboard and touch still toggle.
+    toggle.addEventListener('click', (e) => {
+      if ((e as PointerEvent).pointerType === 'mouse') {
+        window.clearTimeout(closeTimer);
+        setOpen(true);
+        return;
+      }
+      setOpen(toggle.getAttribute('aria-expanded') !== 'true');
+    });
+    item.addEventListener('pointerenter', (e) => {
+      if ((e as PointerEvent).pointerType !== 'mouse') return;
+      window.clearTimeout(closeTimer);
+      setOpen(true);
+    });
+    item.addEventListener('pointerleave', (e) => {
+      if ((e as PointerEvent).pointerType !== 'mouse') return;
+      closeTimer = window.setTimeout(() => setOpen(false), 160);
+    });
+    item.addEventListener('focusout', (e) => {
+      if (!item.contains((e as FocusEvent).relatedTarget as Node | null)) setOpen(false);
+    });
+
+    // Hover pill: one gray pill that slides between nav items. It appears in place on the
+    // first item you touch and vanishes when the pointer leaves the nav (no slide in or out).
+    const list = item.closest('.site-nav__list') as HTMLElement | null;
+    if (!list) return;
+    const pill = document.createElement('span');
+    pill.className = 'site-nav__hover';
+    pill.setAttribute('aria-hidden', 'true');
+    list.prepend(pill);
+    const moveTo = (link: HTMLElement) => {
+      const l = list.getBoundingClientRect();
+      const r = link.getBoundingClientRect();
+      const fresh = !pill.classList.contains('is-on');
+      if (fresh) pill.style.transition = 'none';
+      pill.style.width = `${r.width}px`;
+      pill.style.transform = `translate(${r.left - l.left}px, -50%)`;
+      if (fresh) {
+        void pill.offsetWidth;
+        pill.style.transition = '';
+        pill.classList.add('is-on');
+      }
+    };
+    list.querySelectorAll<HTMLElement>('.site-nav__link').forEach((link) => {
+      link.addEventListener('pointerenter', (e) => {
+        if ((e as PointerEvent).pointerType === 'mouse') moveTo(link);
+      });
+    });
+    list.addEventListener('pointerleave', () => pill.classList.remove('is-on'));
+  };
+
+  const onPageLoad = () => {
+    window.clearTimeout(closeTimer);
+    bindMenu();
     const here = location.pathname.replace(/\/?$/, '/');
     document.querySelectorAll<HTMLAnchorElement>('.site-nav a, .panel-row').forEach((a) => {
       const path = new URL(a.href, location.origin).pathname.replace(/\/?$/, '/');
@@ -117,41 +177,80 @@ const mobileItems = [
       else a.removeAttribute('aria-current');
     });
     const inCoaching = Array.from(document.querySelectorAll<HTMLAnchorElement>('.panel-row')).some((a) => a.getAttribute('aria-current'));
-    toggle?.classList.toggle('is-current', inCoaching);
+    els().toggle?.classList.toggle('is-current', inCoaching);
     setOpen(false);
     onScroll();
   };
-  document.addEventListener('astro:page-load', markCurrent);
+  document.addEventListener('astro:page-load', onPageLoad);
+  // Wire the new header the instant it is swapped in; page-load can land ~1s later.
+  document.addEventListener('astro:after-swap', () => {
+    bindMenu();
+    onScroll();
+  });
 </script>
 
 <style>
+  /* Resizable navbar (Aceternity "resizable-navbar", rebuilt in plain CSS). At the top the
+     bar is full width and see-through; past 100px of scroll it shrinks into a floating,
+     frosted, shadowed bar 20px down: a pill on desktop, a 90% box on phones. The source
+     animates with a spring (stiffness 200, damping 50), which is overdamped: no bounce,
+     settles in ~0.7s, so a long ease-out reproduces it. */
   .site-header {
+    --float-ease: cubic-bezier(0.16, 1, 0.3, 1);
+    --float-time: 700ms;
+    --float-shadow: 0 0 24px rgba(34, 42, 53, 0.06), 0 1px 1px rgba(0, 0, 0, 0.05),
+      0 0 0 1px rgba(34, 42, 53, 0.04), 0 0 4px rgba(34, 42, 53, 0.08),
+      0 16px 68px rgba(47, 48, 55, 0.05), 0 1px 0 rgba(255, 255, 255, 0.1) inset;
     position: sticky;
     top: 0;
     z-index: 50;
     background: transparent;
-    border-bottom: 1px solid transparent;
-    transition:
-      background-color 240ms var(--ease-out),
-      border-color 240ms var(--ease-out);
-  }
-  .site-header.is-scrolled {
-    background: rgba(255, 255, 255, 0.94);
-    backdrop-filter: saturate(140%) blur(8px);
-    border-bottom-color: var(--line);
   }
   .site-header__bar {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: var(--s-2);
     height: 64px;
+    background-color: rgba(255, 255, 255, 0);
+    backdrop-filter: blur(0);
+    border-radius: 2rem;
+    transition:
+      max-width var(--float-time) var(--float-ease),
+      height var(--float-time) var(--float-ease),
+      padding var(--float-time) var(--float-ease),
+      transform var(--float-time) var(--float-ease),
+      border-radius var(--float-time) var(--float-ease),
+      background-color var(--float-time) var(--float-ease),
+      box-shadow var(--float-time) var(--float-ease),
+      backdrop-filter var(--float-time) var(--float-ease);
+  }
+  .site-header.is-floating .site-header__bar {
+    max-width: 90%;
+    padding-inline: 12px;
+    border-radius: 4px;
+    transform: translateY(20px);
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    box-shadow: var(--float-shadow);
+  }
+  /* Floating on a phone: logo shrinks to fit the narrower box beside CTA + menu. */
+  .site-header.is-floating .site-header__logo {
+    width: clamp(96px, calc(90vw - 24px - 16px - 191px), 260px);
+  }
+  /* Mobile menu hangs under the floating box as a rounded card. */
+  .site-header.is-floating :global(.mnav__panel) {
+    top: calc(100% + 8px);
+    border: 0;
+    border-radius: 8px;
   }
   .site-header__logo {
     display: block;
     flex: none;
-    width: 140px;
-    transition: width 240ms var(--ease-out);
+    /* Biggest that fits beside the CTA + menu button (≈191px + 48px of padding/gap). */
+    width: clamp(132px, calc(100vw - 240px), 260px);
+    transition: width var(--float-time) var(--float-ease);
   }
   .site-header__logo img {
     width: 100%;
@@ -172,12 +271,33 @@ const mobileItems = [
   }
 
   .site-nav__list {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 4px;
     list-style: none;
     margin: 0;
     padding: 0;
+  }
+  /* The sliding hover pill (positioned by the script). */
+  .site-nav__list :global(.site-nav__hover) {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    height: 36px;
+    border-radius: 9999px;
+    background: #f3f4f6;
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      transform 350ms var(--float-ease),
+      width 350ms var(--float-ease);
+  }
+  .site-nav__list :global(.site-nav__hover.is-on) {
+    opacity: 1;
+  }
+  .site-nav__item {
+    z-index: 1;
   }
   .site-nav__item {
     position: relative;
@@ -212,7 +332,7 @@ const mobileItems = [
     transform-origin: left;
     transition: transform 200ms var(--ease-out);
   }
-  .site-nav__link:hover::after,
+  /* Hover is the gray pill now; the sky underline marks the current page and the open menu. */
   .site-nav__link:focus-visible::after,
   .site-nav__link[aria-current='page']::after,
   .site-nav__link.is-current::after,
@@ -310,15 +430,26 @@ const mobileItems = [
     .site-header__bar {
       height: 72px;
     }
+    /* Grows with the room the nav leaves (nav ≈562 + CTA ≈152 + padding/gaps ≈80),
+       capped at 320px = 64px tall inside the 72px bar. */
     .site-header__logo {
-      width: 180px;
-    }
-    .site-header.is-scrolled .site-header__logo {
-      width: 150px;
+      width: clamp(230px, calc(100vw - 794px), 320px);
     }
     .site-nav {
       display: block;
     }
+    /* Floating on desktop: a pill just wide enough for logo + nav + CTA. */
+    .site-header.is-floating .site-header__bar {
+      max-width: min(1000px, calc(100% - 32px));
+      height: 60px;
+      padding-inline: 16px;
+      border-radius: 9999px;
+    }
+    .site-header.is-floating .site-header__logo {
+      width: 210px;
+    }
+  }
+  @media (min-width: 1024px) {
     .site-header__actions :global(.site-header__cta) {
       min-height: 48px;
       padding-inline: 20px;
@@ -329,6 +460,11 @@ const mobileItems = [
   @media (prefers-reduced-motion: reduce) {
     .site-nav__panel {
       animation: none;
+    }
+    .site-header__bar,
+    .site-header__logo,
+    .site-nav__list :global(.site-nav__hover) {
+      transition: none;
     }
   }
 </style>

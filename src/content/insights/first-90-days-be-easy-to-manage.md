@@ -4,6 +4,9 @@ description: "Nobody gets fired in month two for lacking brilliance. Plenty stal
 pubDate: 2026-11-17
 category: "Early Career"
 cta: "/early-career-coaching/"
+image: "/images/insights/first-90-days-be-easy-to-manage.webp"
+imageAlt: "A new hire leaning in his manager's doorway with a laptop, giving her a quick update"
+author: "Joe Hliboki"
 draft: false
 ---
 

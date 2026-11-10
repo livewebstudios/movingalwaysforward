@@ -1,0 +1,50 @@
+# Decap CMS for Insights. Joe (and Jon) log in at /admin/ with Netlify Identity.
+# Netlify UI, once: Identity on (invite only), Git Gateway on, then invite Joe.
+# Every Publish is a commit to main; Netlify rebuilds the site in about a minute.
+# Decap is pinned to 3.1.2 in admin/index.html. Do not bump it (image-field crash).
+backend:
+  name: git-gateway
+  branch: main
+media_folder: "public/images/insights"
+public_folder: "/images/insights"
+site_url: https://movingalwaysforward.com
+display_url: https://movingalwaysforward.com
+logo_url: /admin/logo.svg
+collections:
+  - name: insights
+    label: Insights
+    label_singular: Post
+    description: "Joe's posts. They show on the Insights page newest first, filtered by category."
+    folder: src/content/insights
+    create: true
+    extension: md
+    format: frontmatter
+    slug: "{{slug}}"
+    preview_path: "insights/{{slug}}"
+    summary: "{{title}} ({{category}}, {{pubDate}})"
+    sortable_fields: [pubDate, title, category]
+    fields:
+      - { label: Title, name: title, widget: string }
+      - label: "Summary (shows on the card and in Google)"
+        name: description
+        widget: text
+        pattern: ['^[\s\S]{1,170}$', "Keep it to 170 characters or fewer."]
+      - { label: Date, name: pubDate, widget: datetime, format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+      - { label: Category, name: category, widget: select, options: ["Early Career", "Leadership", "Sales", "Workplace Skills"] }
+      - { label: Author, name: author, widget: select, options: ["Joe Hliboki"], default: "Joe Hliboki" }
+      - { label: Photo, name: image, widget: image, required: false, hint: "A wide photo, about 1200 pixels across, 3:2." }
+      - { label: Photo description, name: imageAlt, widget: string, required: false, hint: "One short sentence describing the photo. Google and screen readers read this." }
+      - label: "Button at the end of the post points to"
+        name: cta
+        widget: select
+        default: "/contact/"
+        options:
+          - { label: "Book a call (Contact)", value: "/contact/" }
+          - { label: "Early Career Coaching", value: "/early-career-coaching/" }
+          - { label: "Executive & Business Coaching", value: "/executive-business-coaching/" }
+          - { label: "Corporate Training", value: "/corporate-training/" }
+          - { label: "Group Programs", value: "/group-programs/" }
+          - { label: "Career Steppingstones", value: "/career-steppingstones/" }
+          - { label: "The Book", value: "/the-book/" }
+      - { label: "Hide from the site (draft)", name: draft, widget: boolean, default: false, hint: "Check this to save a post without showing it. Uncheck and Publish to put it live." }
+      - { label: Body, name: body, widget: markdown }

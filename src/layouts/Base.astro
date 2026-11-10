@@ -75,34 +75,45 @@ const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': grap
     <meta name="theme-color" content="#061A3A" />
     <meta name="generator" content={Astro.generator} />
     <ClientRouter />
-    <script is:inline>document.documentElement.classList.add('js');</script>
+    <script is:inline>
+      // .js gates the reveal start states. Re-add it after every ClientRouter swap, which
+      // replaces <html> attributes with the new page's (the class used to vanish after a click).
+      document.documentElement.classList.add('js');
+      // Netlify Identity invite and password links land on the home page; send them to the CMS.
+      if (/(invite|recovery|confirmation|email_change)_token=/.test(location.hash)) {
+        location.replace('/admin/' + location.hash);
+      }
+      if (!window.__afJs) {
+        window.__afJs = true;
+        document.addEventListener('astro:after-swap', function () {
+          document.documentElement.classList.add('js');
+        });
+      }
+    </script>
     <slot name="head" />
 
     <script type="application/ld+json" set:html={jsonLd} />
 
-    <!-- GA4: G-XXXXXXXXXX · swap the ID in src/data/site.ts and this block goes live. Loaded after the page, so it never competes with content. -->
-    <script is:inline define:vars={{ ga4: site.ga4 }}>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag('js', new Date());
-      gtag('config', ga4, { anonymize_ip: true });
-      window.addEventListener('load', function () {
-        var go = function () {
-          var s = document.createElement('script');
-          s.async = true;
-          s.src = 'https://www.googletagmanager.com/gtag/js?id=' + ga4;
-          document.head.appendChild(s);
-        };
-        'requestIdleCallback' in window ? requestIdleCallback(go, { timeout: 3000 }) : setTimeout(go, 1500);
-      });
+    <!-- Google Tag Manager (ID in src/data/site.ts). Official container snippet: the gtm.start
+         event is what fires GTM's "All Pages" trigger. Async, so it never blocks the page. -->
+    <script is:inline define:vars={{ gtm: site.gtm }}>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, 'script', 'dataLayer', gtm);
     </script>
   </head>
   <body class={bodyClass}>
+    <noscript><iframe src={`https://www.googletagmanager.com/ns.html?id=${site.gtm}`} height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>
     <a class="skip-link" href="#main">Skip to content</a>
     <FlagDefs />
-    <Header transition:persist="header" />
+    <Header />
     <main id="main" tabindex="-1">
       <slot />
     </main>
@@ -201,6 +212,10 @@ const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': grap
       document.addEventListener('visibilitychange', () => {
         document.documentElement.classList.toggle('page-hidden', document.visibilityState === 'hidden');
       });
+    </script>
+    <script>
+      // Typed text, top to bottom, on the service pages' dash lists (.syllabus). No-op on other pages.
+      import '../motion/syllabus-fx';
     </script>
   </body>
 </html>

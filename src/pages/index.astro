@@ -9,7 +9,6 @@ import Backdrop from '../components/Backdrop.astro';
 import Obj from '../components/Obj.astro';
 import CtaBand from '../components/CtaBand.astro';
 import PostCard from '../components/PostCard.astro';
-import Placeholder from '../components/Placeholder.astro';
 import HeroStage from '../islands/HeroStage';
 import DoorGrid, { type Door } from '../islands/DoorGrid';
 import { objSrc, photoSrc } from '../lib/images';
@@ -17,6 +16,7 @@ import { site, bookInfo } from '../data/site';
 import bgLight from '../assets/backgrounds/bg-contour-light.png';
 import heroTeaching from '../assets/photos/joe-hero-teaching.png';
 import oneOnOne from '../assets/photos/joe-one-on-one.png';
+import bookCover from '../assets/book/book-cover.jpg';
 
 const title = 'Always Forward | Business & Career Coaching, Montvale NJ';
 const description =
@@ -67,6 +67,13 @@ const doors: Door[] = [
 const posts = (await getCollection('insights', ({ data }) => !data.draft))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
   .slice(0, 3);
+
+// Hero headline, split into words for the blur-in entrance (CSS in HeroStage). Each word
+// gets a --rank by its distance from the middle, so the middle words resolve first and the
+// headline opens outward from the center.
+const heroWords = 'Working to facilitate change and accelerate success.'.split(' ');
+// Fallback order (only if the ordering script below never runs): sentence order, top down.
+const heroRank = (i: number) => i;
 ---
 
 <Base {title} {description} path="/">
@@ -74,8 +81,8 @@ const posts = (await getCollection('insights', ({ data }) => !data.draft))
     <Fragment slot="backdrop">
       <Backdrop image={bgLight} eager parallax={false} />
     </Fragment>
-    <span class="pill">Business & Career Coaching · Montvale, NJ</span>
-    <h1 id="hero-title">Working to facilitate change and accelerate success.</h1>
+    <span class="eyebrow">Business & Career Coaching · Montvale, NJ</span>
+    <h1 id="hero-title" class="is-measuring">{heroWords.map((w, i) => <Fragment><span class="hw" style={`--rank:${heroRank(i)}`}>{w}</span>{i < heroWords.length - 1 ? ' ' : ''}</Fragment>)}</h1>
     <p class="lede">
       Coaching from Joe Hliboki for the 23-year-old figuring out a first job, the leader building a team, and the company that wants both to get better at it.
     </p>
@@ -84,12 +91,65 @@ const posts = (await getCollection('insights', ({ data }) => !data.draft))
       <Button href="/early-career-coaching/" variant="secondary">See the coaching</Button>
     </div>
   </HeroStage>
+  <noscript><style>#hero-title .hw { animation-play-state: running; }</style></noscript>
+  <script>
+    // Hero headline entrance order: top down, line by line, however the lines wrap at this
+    // width. Each line starts 180ms after the one above; inside a line the middle words lead
+    // the ends by up to 60ms so each line opens from its center.
+    // The h1 is server-rendered with is-measuring, so the words are held from the first frame,
+    // then released here once the headline font is in (the fallback font wraps differently).
+    // Runs on astro:page-load, which fires on a hard load AND on every ClientRouter visit.
+    // (An is:inline script is not re-run when you come back to Home after leaving it, which
+    // left the words held, or, before the hold, playing in the fallback order.)
+    function order(h: HTMLElement) {
+      const r = h.getBoundingClientRect();
+      const ox = r.left + r.width / 2;
+      const words = h.querySelectorAll<HTMLElement>('.hw');
+      // Group words into lines by their top edge (half a line height of tolerance).
+      const tops: number[] = [];
+      words.forEach((w) => {
+        const t = w.getBoundingClientRect().top;
+        if (!tops.some((x) => Math.abs(x - t) < w.offsetHeight / 2)) tops.push(t);
+      });
+      tops.sort((a, b) => a - b);
+      words.forEach((w) => {
+        const b = w.getBoundingClientRect();
+        let line = 0;
+        tops.forEach((t, i) => {
+          if (Math.abs(t - b.top) < w.offsetHeight / 2) line = i;
+        });
+        const dx = Math.min(1, Math.abs(b.left + b.width / 2 - ox) / (r.width / 2));
+        w.style.setProperty('--d', Math.round(140 + line * 180 + dx * 60) + 'ms');
+      });
+    }
+
+    function heroEntrance() {
+      const h = document.getElementById('hero-title');
+      if (!h || h.dataset.ordered) return;
+      h.dataset.ordered = '1';
+      h.classList.add('is-measuring');
+      let done = false;
+      const go = () => {
+        if (done) return;
+        done = true;
+        try {
+          order(h);
+        } finally {
+          h.classList.remove('is-measuring'); // never leave the words held
+        }
+      };
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(go);
+      window.setTimeout(go, 500);
+    }
+
+    document.addEventListener('astro:page-load', heroEntrance);
+  </script>
 
   <!-- 2. The four doors -->
   <Section tone="mist" pitch id="doors" labelledby="doors-title">
     <div class="sec-head" data-reveal-children>
       <p class="eyebrow">Who this is for</p>
-      <h2 id="doors-title">Four ways in. Pick yours.</h2>
+      <h2 id="doors-title">Four ways in. <span class="h-accent">Pick yours.</span></h2>
       <p class="deck">Same coach. Different doors, because a new grad and an HR director are not shopping for the same thing.</p>
     </div>
     <DoorGrid client:visible {doors} />
@@ -103,9 +163,9 @@ const posts = (await getCollection('insights', ({ data }) => !data.draft))
       </div>
       <div class="why__copy" data-reveal-children>
         <p class="eyebrow">The coach</p>
-        <h2 id="why-title">He ran the careers he now coaches.</h2>
+        <h2 id="why-title">He ran the <span class="h-accent">careers</span> he now <span class="h-accent">coaches</span>.</h2>
         <p>
-          Joe spent his corporate career at Cisco, where he led a healthcare sales team of sixteen to twenty people. Hiring, promoting, coaching through slumps, managing up, carrying the number. Every question he gets paid to answer now is one he lived first, with a quota attached.
+          Joe spent his corporate career at Cisco, where he led a healthcare sales team of sixteen to twenty people. Hiring, promoting, coaching through slumps, managing up, hitting the target. Every question he gets paid to answer now is one he lived first, with a quota attached.
         </p>
         <p>
           Along the way Cisco handed him its elite new-hire engineers to mentor. Twenty-two-year-olds, brilliant on paper, no idea how work actually works. He found he could get through to them fast. A mentor watched him do it and told him that the ability to earn a young person's trust in thirty minutes is rare, and it would be a waste not to build on it.
@@ -134,10 +194,9 @@ const posts = (await getCollection('insights', ({ data }) => !data.draft))
   <Section tone="mist" pitch id="book" labelledby="book-title">
     <div class="bookband">
       <div class="bookband__visual" data-reveal>
-        <div class="bookband__cover">
-          <Placeholder text="BOOK COVER PLACEHOLDER: assets/source/book-cover.jpg, Jon supplies" block />
-          <span class="bookband__cover-title" aria-hidden="true">{bookInfo.title}</span>
-        </div>
+        <a class="bookband__cover" href={site.amazon} target="_blank" rel="noopener" aria-label={`${bookInfo.title} on Amazon`}>
+          <Image src={bookCover} alt={`${bookInfo.title}: ${bookInfo.subtitle}, by Joe Hliboki. Book cover.`} widths={[300, 600]} sizes="300px" format="webp" quality={82} loading="lazy" decoding="async" />
+        </a>
         <div class="bookband__obj">
           <Obj name="notebook-pen" size={90} sizeMobile={70} rotate={-14} depth="near" float phase={4} />
         </div>
@@ -150,10 +209,9 @@ const posts = (await getCollection('insights', ({ data }) => !data.draft))
           School hands you a diploma and a bubble: a comfortable set of assumptions about how work is going to work. The first job pops it. Joe wrote the handbook for that moment, in plain language, from everything he watched Fortune 100 new hires learn the hard way. How to show up, how to be managed, how to ask, how to recover, how to get noticed for the right reasons.
         </p>
         <div class="bookband__actions">
-          <Button href="#amazon-url-placeholder" describedBy="amazon-ph">Get it on Amazon</Button>
+          <Button href={site.amazon} external>Get it on Amazon</Button>
           <Button href="/the-book/" variant="ghost">About the book</Button>
         </div>
-        <p class="small" id="amazon-ph"><Placeholder text={site.amazon.replace(/[\[\]]/g, '')} /></p>
       </div>
     </div>
   </Section>
@@ -164,8 +222,8 @@ const posts = (await getCollection('insights', ({ data }) => !data.draft))
       <p class="eyebrow">Insights</p>
       <h2 id="latest-title">Plain talk on careers, leadership and work.</h2>
     </div>
-    <div class="latest" data-reveal-children>
-      {posts.map((p) => <PostCard title={p.data.title} href={`/insights/${p.id}/`} date={p.data.pubDate} category={p.data.category} description={p.data.description} />)}
+    <div class="pgrid latest" data-reveal-children>
+      {posts.map((p) => <PostCard title={p.data.title} href={`/insights/${p.id}/`} date={p.data.pubDate} category={p.data.category} description={p.data.description} image={p.data.image} imageAlt={p.data.imageAlt} author={p.data.author} />)}
     </div>
     <div class="latest__more">
       <Button href="/insights/" variant="ghost">All Insights</Button>
@@ -241,27 +299,24 @@ const posts = (await getCollection('insights', ({ data }) => !data.draft))
     justify-self: center;
     width: min(100%, 300px);
   }
+  /* The real cover, tipped back like a book on a desk. Links to Amazon. */
   .bookband__cover {
     position: relative;
-    aspect-ratio: 2 / 3;
-    display: grid;
-    align-content: end;
-    gap: var(--s-2);
-    padding: var(--s-3);
-    background: linear-gradient(160deg, var(--navy), var(--navy-700));
-    border-radius: var(--r-lg);
+    display: block;
+    border-radius: 6px;
+    overflow: hidden;
     box-shadow: var(--shadow-2);
     transform: rotate(-5deg);
+    transition: transform var(--t-hover) var(--ease-out), box-shadow var(--t-hover) var(--ease-out);
   }
-  .bookband__cover :global(.ph) {
-    background: rgba(255, 255, 255, 0.92);
+  .bookband__cover img {
+    display: block;
+    width: 100%;
+    height: auto;
   }
-  .bookband__cover-title {
-    font-family: var(--font-display);
-    font-weight: 800;
-    font-size: 1.5rem;
-    color: var(--paper);
-    letter-spacing: -0.02em;
+  .bookband__cover:hover,
+  .bookband__cover:focus-visible {
+    transform: rotate(-3deg) translateY(-4px);
   }
   .bookband__obj {
     position: absolute;
@@ -283,9 +338,6 @@ const posts = (await getCollection('insights', ({ data }) => !data.draft))
     margin-top: var(--s-1);
   }
 
-  .latest {
-    max-width: 820px;
-  }
   .latest__more {
     margin-top: var(--s-3);
   }

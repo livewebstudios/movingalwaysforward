@@ -132,30 +132,34 @@ em {
 }
 
 /* type helpers */
+/* Eyebrow: Live Web Studios-style tag (rounded box, wide tracking, gradient border, soft
+   glow) in Always Forward colors. The border is a sky-to-gold gradient painted on the
+   border-box under an opaque fill on the padding-box, so it keeps the rounded corners. */
 .eyebrow {
-  display: inline-block;
+  --eyebrow-fill: var(--paper);
+  display: inline-flex;
+  align-items: center;
+  padding: 6px calc(14px - 0.14em) 6px 14px; /* trailing tracking eats into the right pad */
   font-family: var(--font-body);
-  font-size: var(--fs-eyebrow);
+  font-size: 0.75rem;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  line-height: 1.2;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--navy);
+  color: var(--ink-600);
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background:
+    linear-gradient(var(--eyebrow-fill), var(--eyebrow-fill)) padding-box,
+    linear-gradient(135deg, rgba(84, 164, 226, 0.55) 0%, var(--sky-200) 50%, rgba(255, 189, 46, 0.55) 100%) border-box;
+  box-shadow: 0 4px 14px -8px rgba(84, 164, 226, 0.3);
   margin-bottom: var(--s-2);
 }
 
-.eyebrow::before {
-  content: '';
-  display: inline-block;
-  width: 20px;
-  height: 2px;
-  background: var(--sky);
-  vertical-align: middle;
-  margin-right: 10px;
-  transform: translateY(-1px);
-}
-
 .on-navy .eyebrow {
+  --eyebrow-fill: var(--navy-700);
   color: var(--sky-200);
+  box-shadow: 0 4px 16px -8px rgba(84, 164, 226, 0.45);
 }
 
 .deck {
@@ -217,6 +221,12 @@ em {
 
 .on-navy a {
   text-decoration-color: var(--sky-200);
+}
+
+/* the honey button keeps navy text on navy bands (.on-navy a would otherwise make it white) */
+.on-navy a.btn--primary,
+.on-navy .btn--primary {
+  color: var(--navy);
 }
 
 /* placeholders Jon must replace (render visibly labeled) */
@@ -575,13 +585,28 @@ em {
   transform: translateX(-4px);
 }
 
-.btn--primary {
-  background: var(--gold);
-  color: var(--navy);
+/* All buttons are pills. Primary: warm honey gold (brighter and cleaner than the logo's
+   gold on purpose), soft top light. Hover keeps the fill and draws a 2px ring with a 2px
+   see-through gap (outline + offset, so the gap shows whatever is behind it). */
+.btn--primary,
+.btn--secondary,
+.btn--primary:focus-visible,
+.btn--secondary:focus-visible {
+  border-radius: 9999px;
 }
-.btn--primary:hover,
-.btn--primary:focus-visible {
-  background: var(--gold-600);
+.btn--primary {
+  background: linear-gradient(180deg, var(--cta-hi) 0%, var(--cta) 100%);
+  color: var(--navy);
+  font-weight: 500;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 1px 2px rgba(6, 26, 58, 0.12);
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  transition:
+    outline-color 200ms var(--ease-out),
+    transform var(--t-hover) var(--ease-out);
+}
+.btn--primary:hover {
+  outline-color: var(--cta);
 }
 .btn--primary:hover .btn__arrow,
 .btn--primary:focus-visible .btn__arrow {
@@ -594,7 +619,6 @@ em {
   transform: translateX(4px);
 }
 .btn--primary:active {
-  background: var(--gold-600);
   transform: translateY(1px);
 }
 
@@ -651,36 +675,42 @@ em {
   }
 }
 
-/* post cards (Insights): text-forward, shared by PostCard.astro and the InsightsFilter island */
-.post-card {
-  display: grid;
-  gap: 10px;
-  padding: var(--s-3) 0;
-  border-top: 1px solid var(--line);
+/* Insights post cards, shared by PostCard.astro (Home) and the InsightsFilter island.
+   Card grid after Aceternity's "Simple Blog With Grid": photo on top, a tiny round author
+   photo, title, two-line teaser. Cards lift and scale a touch on hover. */
+.pgrid { display: grid; gap: var(--s-3); }
+@media (min-width: 640px) { .pgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1024px) { .pgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.pcard { min-width: 0; }
+.pcard__link {
+  display: flex; flex-direction: column; height: 100%; overflow: hidden;
+  background: var(--paper); border: 1px solid var(--line); border-radius: var(--r-lg);
+  box-shadow: var(--shadow-1); color: inherit; text-decoration: none;
+  transition: transform 300ms var(--ease-out), box-shadow 300ms var(--ease-out);
 }
-.post-card:last-child {
-  border-bottom: 1px solid var(--line);
+.pcard__link:hover { transform: translateY(-4px) scale(1.02); box-shadow: var(--shadow-2); }
+.pcard__link:focus-visible { outline: 2px solid var(--navy); outline-offset: 3px; }
+.pcard__media { aspect-ratio: 3 / 2; overflow: hidden; background: var(--sky-050); }
+.pcard__media img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 500ms var(--ease-out); }
+.pcard__link:hover .pcard__media img { transform: scale(1.04); }
+.pcard__media-fallback { display: block; width: 100%; height: 100%; background: linear-gradient(135deg, var(--sky-050), var(--sky-200)); }
+.pcard__body { display: flex; flex-direction: column; gap: 10px; flex: 1; padding: var(--s-3); }
+.pcard__meta { display: flex; align-items: center; gap: 8px; margin: 0; font-size: var(--fs-small); color: var(--ink-600); }
+.pcard__avatar { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 2px var(--paper), 0 0 0 3px var(--sky-200); }
+.pcard__author { font-weight: 600; color: var(--navy); }
+.pcard__title { margin: 0; font-size: 1.1875rem; line-height: 1.3; color: var(--navy); }
+.pcard__excerpt {
+  margin: 0; font-size: 0.9375rem; line-height: 1.55; color: var(--ink-600);
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
 }
-.post-card .pill {
-  justify-self: start;
+.pcard__cat {
+  align-self: flex-start; margin-top: auto; padding: 4px 10px; border-radius: var(--r-pill);
+  background: var(--sky-050); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--navy);
 }
-.post-card__title {
-  margin: 0;
-  font-size: var(--fs-h3);
-  line-height: 1.2;
-}
-.post-card__title a {
-  text-decoration-color: transparent;
-}
-.post-card__title a:hover {
-  text-decoration-color: var(--sky);
-}
-.post-card__date {
-  display: block;
-}
-.post-card__excerpt {
-  margin: 0;
-  max-width: 60ch;
+@media (prefers-reduced-motion: reduce) {
+  .pcard__link, .pcard__media img { transition: none; }
+  .pcard__link:hover, .pcard__link:hover .pcard__media img { transform: none; }
 }
 
 /* section headers and prose blocks shared by the interior pages */
@@ -696,6 +726,10 @@ em {
 }
 .prose p {
   margin-bottom: var(--s-2);
+}
+/* Blue accent words in headings: text-safe sky, 3.25:1+ on white and mist */
+.h-accent {
+  color: var(--sky-600);
 }
 .callout {
   margin-top: var(--s-3);
@@ -739,6 +773,90 @@ em {
 .syllabus p {
   margin: 0;
   max-width: 62ch;
+}
+
+/* syllabus as cards (.syllabus--cards): one blue card per item, all the same height, with a
+   darker wave rising in the bottom-left corner. Card blue is 70% sky-600 + 30% navy-700 so white
+   body text passes AA (about 5.2:1); the hex is the same mix for browsers without color-mix(). */
+.syllabus--cards {
+  gap: var(--s-2);
+  grid-auto-rows: 1fr;
+}
+.syllabus--cards li {
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--s-3) var(--s-4);
+  border-radius: var(--r-xl);
+  background: #2d71ad;
+  background: color-mix(in srgb, var(--sky-600) 70%, var(--navy-700));
+  box-shadow: var(--shadow-1);
+  color: var(--sky-050);
+}
+.syllabus--cards li::before {
+  top: auto;
+  left: 0;
+  right: auto;
+  bottom: 0;
+  z-index: -1;
+  /* mirrored: the wave rises from the bottom-left corner */
+  transform: scaleX(-1);
+  width: min(44%, 300px);
+  height: 78%;
+  border-radius: 0;
+  background: var(--navy-700);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 160' preserveAspectRatio='none'%3E%3Cpath d='M0 160C0 128 22 116 48 108C86 96 92 58 112 30C128 8 156 0 200 0V160Z'/%3E%3C/svg%3E")
+    center / 100% 100% no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 160' preserveAspectRatio='none'%3E%3Cpath d='M0 160C0 128 22 116 48 108C86 96 92 58 112 30C128 8 156 0 200 0V160Z'/%3E%3C/svg%3E")
+    center / 100% 100% no-repeat;
+}
+.syllabus--cards h3 {
+  color: var(--paper);
+  font-size: var(--fs-h3);
+  margin-bottom: var(--s-1);
+}
+.syllabus--cards p {
+  max-width: 54ch;
+}
+@media (max-width: 600px) {
+  .syllabus--cards li {
+    padding: var(--s-3);
+    border-radius: var(--r-lg);
+  }
+  .syllabus--cards li::before {
+    width: 46%;
+    height: 60%;
+  }
+}
+
+/* syllabus cards on the left, the summit photo (SummitPhoto.astro) in the column beside them */
+.summit-split {
+  max-width: 760px;
+}
+@media (min-width: 1024px) {
+  .summit-split {
+    max-width: none;
+    display: grid;
+    grid-template-columns: minmax(0, 760px) minmax(240px, 1fr);
+    gap: var(--s-8);
+  }
+}
+
+/* syllabus typed text (src/motion/syllabus-fx.ts): every class here is added by JS, so no-JS and
+   reduced motion read plain text. Words are opacity-only spans, so nothing moves. */
+.syllabus .fx-w {
+  opacity: 0;
+  transition: opacity 0.09s linear;
+}
+.syllabus li.is-typing .fx-w {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .syllabus .fx-w {
+    opacity: 1;
+  }
 }
 
 /* pull quote (serif, sky rule) */

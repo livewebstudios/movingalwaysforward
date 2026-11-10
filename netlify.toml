@@ -26,3 +26,9 @@
   for = "/og/*"
   [headers.values]
     Cache-Control = "public, max-age=86400"
+
+# Decap CMS at /admin/: keep it out of search results (same-origin framing is already set above).
+[[headers]]
+  for = "/admin/*"
+  [headers.values]
+    X-Robots-Tag = "noindex"

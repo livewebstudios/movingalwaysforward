@@ -4,6 +4,9 @@ description: "You do not have to make every mistake yourself. Somebody already m
 pubDate: 2026-12-15
 category: "Early Career"
 cta: "/the-book/"
+image: "/images/insights/borrowed-experience.webp"
+imageAlt: "Two coworkers walking down a sunlit stairwell, one turning back mid-story as the other laughs"
+author: "Joe Hliboki"
 draft: false
 ---
 

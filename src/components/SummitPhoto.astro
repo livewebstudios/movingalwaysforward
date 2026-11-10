@@ -1,0 +1,151 @@
+---
+// A dramatic black-and-white peak rising out of cloud, photographic, in the column beside the
+// syllabus cards on desktop (hidden below 1024px), with the logo's gold flag planted on the tip.
+// Decorative (aria-hidden, empty alt). The photo bleeds past the container to the right edge of
+// the viewport and melts into the page on its other three sides with a mask.
+//
+// Flag placement: `summit` is the tip's position in the photo, as percentages. It is also the
+// photo's object-position, and with object-fit: cover the point at object-position (x%, y%) always
+// lands at (x%, y%) of the box, whatever the box's size. So the flag sits at left x%, top y% and
+// stays on the tip at every column width with no JS. The flag lives outside the mask so the fade
+// never dims it. Needs the #af-flag symbol (FlagDefs, in Base).
+//
+// Fades and settles in on scroll via the shared [data-reveal] script in Base.astro, then the flag
+// rises; reduced motion and no-JS show it finished. Used inside .summit-split (global.css).
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  image: ImageMetadata;
+  /** The summit tip in the photo, as [x%, y%]. */
+  summit: [number, number];
+  /** Keep the photo inside its section (for clipped sections, e.g. Section's `pitch`). */
+  contained?: boolean;
+  class?: string;
+}
+const { image, summit, contained = false, class: cls = '' } = Astro.props;
+const [sx, sy] = summit;
+---
+
+<div class:list={['sphoto', { 'sphoto--contained': contained }, cls]} data-reveal aria-hidden="true">
+  <div class="sphoto__frame" style={`--sy: ${sy}`}>
+    <div class="sphoto__photo">
+      <Image
+        src={image}
+        alt=""
+        widths={[480, 720, 960, 1280]}
+        sizes="(min-width: 1024px) 40vw, 1px"
+        format="webp"
+        quality={78}
+        loading="lazy"
+        decoding="async"
+        style={`object-position: ${sx}% ${sy}%`}
+      />
+    </div>
+    <svg class="sphoto__flag" style={`left: ${sx}%; top: ${sy}%`} viewBox="0 0 224 432" focusable="false">
+      <use href="#af-flag" width="224" height="432" />
+    </svg>
+  </div>
+</div>
+
+<style>
+  .sphoto {
+    display: none;
+  }
+  @media (min-width: 1024px) {
+    .sphoto {
+      display: block;
+      position: relative;
+      min-height: 560px;
+    }
+    /* The column starts level with the section heading. The frame is lifted by the summit's own
+       height in the photo (translate % is of the frame itself), so the tip lands --lift below the
+       heading's top and the flag stands beside its first line. The bottom is pushed down by about
+       the same amount so the clouds still run the full column. */
+    .sphoto__frame {
+      --lift: 46px;
+      position: absolute;
+      top: 0;
+      bottom: calc(var(--s-8) * -1 - var(--sy) * 1%);
+      transform: translateY(calc(var(--lift) - var(--sy) * 1%));
+      left: calc(var(--s-4) * -1);
+      /* out past the container gutter to the viewport edge */
+      right: calc(-1 * (max(0px, (100vw - var(--container)) / 2) + var(--gutter)));
+    }
+    /* In a clipped section (Section's `pitch`) the bottom fade would be cut off hard, so the photo
+       ends inside the section. The column keeps a tall floor so a short block of copy still gets
+       a full-size mountain. */
+    .sphoto--contained {
+      min-height: 620px;
+    }
+    .sphoto--contained .sphoto__frame {
+      bottom: calc(var(--sy) * -1%);
+    }
+    .sphoto__photo {
+      position: absolute;
+      inset: 0;
+      -webkit-mask-image:
+        linear-gradient(to right, transparent 0, #000 22%),
+        linear-gradient(to bottom, transparent 0, #000 calc(var(--sy) * 1% - 2%), #000 72%, transparent 100%);
+      -webkit-mask-composite: source-in;
+      mask-image:
+        linear-gradient(to right, transparent 0, #000 22%),
+        linear-gradient(to bottom, transparent 0, #000 calc(var(--sy) * 1% - 2%), #000 72%, transparent 100%);
+      mask-composite: intersect;
+    }
+    .sphoto__photo img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    /* pole base on the tip: the pole sits about 4.5% in from the flag's left edge */
+    .sphoto__flag {
+      position: absolute;
+      width: 22px;
+      height: 42px;
+      margin-left: -1px;
+      transform: translate(-4.5%, -100%);
+      transform-origin: 4.5% 100%;
+      overflow: visible;
+      filter: drop-shadow(0 1px 1px rgba(11, 35, 65, 0.25));
+    }
+  }
+
+  /* Reveal. Start states only under .js, so no-JS shows the finished scene. */
+  :global(.js) .sphoto__photo img {
+    opacity: 0;
+    transform: scale(1.06) translateY(18px);
+    transition:
+      opacity 1.8s var(--ease-out) 0.1s,
+      transform 2.4s var(--ease-out) 0.1s;
+  }
+  :global(.js) .sphoto__flag {
+    opacity: 0;
+    transform: translate(-4.5%, -100%) scaleY(0.2);
+    transition:
+      opacity 0.3s var(--ease-out) 2.4s,
+      transform 0.9s var(--ease-out) 2.4s;
+  }
+  .sphoto:global(.is-in) .sphoto__photo img {
+    opacity: 1;
+    transform: none;
+  }
+  .sphoto:global(.is-in) .sphoto__flag {
+    opacity: 1;
+    transform: translate(-4.5%, -100%);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :global(.js) .sphoto__photo img,
+    :global(.js) .sphoto__flag {
+      opacity: 1;
+      transition: none;
+    }
+    :global(.js) .sphoto__photo img {
+      transform: none;
+    }
+    :global(.js) .sphoto__flag {
+      transform: translate(-4.5%, -100%);
+    }
+  }
+</style>

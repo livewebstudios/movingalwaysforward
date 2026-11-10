@@ -7,7 +7,14 @@ export type StoneCard = {
   title: string;
   price: string;
   priceNote?: string;
+  /** Gold price badge: the one gold element in the "What you get" section. */
+  gold?: boolean;
+  /** Ringed "Core program" card; the Monthly/Yearly toggle lands here. */
   featured?: boolean;
+  /** Paid-yearly price, shown when the toggle is on Yearly. Pending Joe's sign-off. */
+  yearly?: { price: string; priceNote: string; billed: string };
+  /** Small line under the price on Monthly (keeps the card height steady when toggling). */
+  billed?: string;
   items: { text: string; strong?: string }[];
 };
 
@@ -18,7 +25,7 @@ export const stoneCards: StoneCard[] = [
     title: 'Getting started',
     price: '$199',
     priceNote: 'one time',
-    featured: true,
+    gold: true,
     items: [
       { text: 'A thirty-minute individual introductory call with Coach Joe' },
       { text: 'A signed copy of Bursting the Bubble, mailed to you' },
@@ -32,6 +39,9 @@ export const stoneCards: StoneCard[] = [
     title: 'The monthly program',
     price: '$99',
     priceNote: 'a month',
+    billed: 'billed monthly',
+    featured: true,
+    yearly: { price: '$79', priceNote: 'a month', billed: 'billed $948 yearly' },
     items: [
       {
         strong: 'Two virtual small-group workshops a month',
@@ -110,4 +120,5 @@ export const flyers: Flyer[] = [
 export const pricing = {
   initiation: { price: '199', label: 'Getting started, one time' },
   monthly: { price: '99', label: 'Monthly program' },
+  yearly: { price: '948', label: 'Monthly program, paid yearly (save 20%)' },
 } as const;

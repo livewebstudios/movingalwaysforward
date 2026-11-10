@@ -4,7 +4,9 @@ import Base from '../layouts/Base.astro';
 import Section from '../components/Section.astro';
 import InteriorHero from '../components/InteriorHero.astro';
 import CtaBand from '../components/CtaBand.astro';
-import StoneCard from '../components/StoneCard.astro';
+import PricingStones from '../islands/PricingStones';
+import { getImage } from 'astro:assets';
+import markPng from '../assets/brand/logo-mark-2x.png';
 import Backdrop from '../components/Backdrop.astro';
 import Obj from '../components/Obj.astro';
 import Button from '../components/Button.astro';
@@ -12,6 +14,25 @@ import Placeholder from '../components/Placeholder.astro';
 import { stoneCards, tracks, flyers, pricing } from '../data/steppingstones';
 import { site } from '../data/site';
 import bgLight from '../assets/backgrounds/bg-contour-light.png';
+import { Image } from 'astro:assets';
+import bgMindset from '../assets/steppingstones/mindset.webp';
+import bgWorth from '../assets/steppingstones/know-your-worth.webp';
+import bgSearch from '../assets/steppingstones/win-the-search.webp';
+import bgYourself from '../assets/steppingstones/know-yourself.webp';
+import bgRoom from '../assets/steppingstones/read-the-room.webp';
+import bgHabits from '../assets/steppingstones/build-the-habits.webp';
+
+// Soothing dark photo behind each topic cluster card, keyed by cluster name.
+const clusterBg: Record<string, ImageMetadata> = {
+  Mindset: bgMindset,
+  'Know your worth': bgWorth,
+  'Win the search': bgSearch,
+  'Know yourself': bgYourself,
+  'Read the room': bgRoom,
+  'Build the habits': bgHabits,
+};
+
+const mark = await getImage({ src: markPng, width: 40 });
 
 const title = 'Career Steppingstones: Virtual Career Growth Program | Always Forward Coaching';
 const description =
@@ -36,6 +57,7 @@ const schema = [
     offers: [
       { '@type': 'Offer', name: pricing.initiation.label, price: pricing.initiation.price, priceCurrency: 'USD', category: 'Initiation', availability: 'https://schema.org/InStock', url: `${site.url}${path}` },
       { '@type': 'Offer', name: pricing.monthly.label, price: pricing.monthly.price, priceCurrency: 'USD', category: 'Subscription', availability: 'https://schema.org/InStock', url: `${site.url}${path}` },
+      { '@type': 'Offer', name: pricing.yearly.label, price: pricing.yearly.price, priceCurrency: 'USD', category: 'Subscription', availability: 'https://schema.org/InStock', url: `${site.url}${path}` },
     ],
   },
 ];
@@ -72,19 +94,21 @@ const schema = [
   <section class="stones-wrap" id="program" aria-labelledby="program-title">
     <Backdrop image={bgLight} class="stones-bg" />
     <div class="container stones-inner">
-      <div class="sec-head" data-reveal>
-        <h2 id="program-title">What you get.</h2>
-      </div>
-      <div class="stones" data-reveal-children>
-        {stoneCards.map((card) => <StoneCard {card} />)}
-      </div>
+      <PricingStones
+        client:load
+        cards={stoneCards}
+        mark={{ src: mark.src, width: 20, height: 18 }}
+        words={['What', 'you', 'get.']}
+        sub="Start once at $199, then month to month. Pay for the year and save 20%."
+        titleId="program-title"
+      />
     </div>
   </section>
 
   <!-- 4. The two tracks: six topic clusters, three per track (data in src/data/steppingstones.ts) -->
   <Section tone="mist" id="tracks" labelledby="tracks-title">
     <div class="sec-head" data-reveal-children>
-      <h2 id="tracks-title">Two tracks. Twenty-two topics.</h2>
+      <h2 id="tracks-title">Two tracks. <span class="h-accent">Twenty-two topics.</span></h2>
       <p class="deck">Each month brings one workshop from each track. One gets you hired. The other gets you better once you are there.</p>
     </div>
     <div class="tracks">
@@ -97,6 +121,9 @@ const schema = [
             </div>
             {t.clusters.map((c) => (
               <div class="cluster">
+                {clusterBg[c.name] && (
+                  <Image class="cluster__bg" src={clusterBg[c.name]} widths={[600, 1000]} sizes="(min-width: 768px) 50vw, 100vw" format="webp" quality={70} alt="" aria-hidden="true" loading="lazy" decoding="async" />
+                )}
                 <h3 class="cluster__name">{c.name}</h3>
                 <ul class="cluster__list">
                   {c.topics.map((topic) => <li>{topic}</li>)}
@@ -112,7 +139,7 @@ const schema = [
   <!-- 5. Proof and the flyer library -->
   <Section pitch id="proof" labelledby="proof-title">
     <div class="prose" data-reveal-children>
-      <h2 id="proof-title">From the coach who wrote the book.</h2>
+      <h2 id="proof-title">From the coach who <span class="h-accent">wrote the book.</span></h2>
       <p>
         Joe Hliboki is a Certified Business, Executive & Career Coach who helps people get better at what they do and solve the problems they have not been able to solve alone. He is connected to Gen Z through his own three kids, through coaching more than five hundred young athletes as they grew up, and through mentoring new hires inside a Fortune 100. <a href="/the-book/"><em>Bursting the Bubble</em></a> is the textbook; this program is the class. The same material, one-on-one, is <a href="/early-career-coaching/">Early Career Coaching</a>.
       </p>
@@ -149,7 +176,6 @@ const schema = [
         <input type="hidden" name="_subject" value="Always Forward website: Steppingstones list" />
         <Button type="submit">Send me the next one</Button>
       </div>
-      <p class="small"><Placeholder text="FORM_ID_PLACEHOLDER: set the Formspree ID in src/data/site.ts" /></p>
     </form>
   </Section>
 
@@ -176,11 +202,6 @@ const schema = [
     position: relative;
     z-index: 1;
   }
-  .stones {
-    display: grid;
-    gap: var(--s-3);
-    align-items: stretch;
-  }
   .tracks {
     display: grid;
     gap: var(--s-5);
@@ -189,6 +210,41 @@ const schema = [
     display: grid;
     gap: var(--s-3);
     align-content: start;
+  }
+  /* Cluster cards float up into place, hinged at the bottom edge (after the Aceternity
+     inference-page panel: 80px low, tipped back 28deg, springing flat with a small overshoot).
+     Rides the section reveal, so the 80ms stagger comes from the global nth-child delays. */
+  .track[data-reveal-children] {
+    perspective: 1800px;
+  }
+  :global(.js) .track[data-reveal-children] > .cluster {
+    opacity: 0;
+    transform: translateY(80px) rotateX(28deg);
+    transform-origin: 50% 100%;
+    backface-visibility: hidden;
+    transition:
+      opacity 600ms var(--ease-out),
+      transform 1100ms cubic-bezier(0.2, 1.25, 0.35, 1);
+  }
+  :global(.js) .track[data-reveal-children].is-in > .cluster {
+    opacity: 1;
+    transform: none;
+  }
+  :global(.js) .track[data-reveal-children].is-in > .cluster:nth-child(2) {
+    transition-delay: 80ms;
+  }
+  :global(.js) .track[data-reveal-children].is-in > .cluster:nth-child(3) {
+    transition-delay: 160ms;
+  }
+  :global(.js) .track[data-reveal-children].is-in > .cluster:nth-child(4) {
+    transition-delay: 240ms;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :global(.js) .track[data-reveal-children] > .cluster {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
   }
   .track__name {
     margin: 0;
@@ -202,15 +258,36 @@ const schema = [
     margin: 4px 0 0;
     color: var(--ink-600);
   }
+  /* Dark photo cards: soothing night image, navy wash for contrast, white type. */
   .cluster {
-    background: var(--paper);
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: var(--navy);
     border-radius: var(--r-lg);
-    box-shadow: var(--shadow-1);
-    padding: var(--s-3) var(--s-4);
+    box-shadow: 0 2px 4px rgba(6, 26, 58, 0.12), 0 14px 32px rgba(6, 26, 58, 0.18);
+    padding: var(--s-4);
+    color: #fff;
+  }
+  .cluster :global(.cluster__bg) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -2;
+  }
+  .cluster::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(100deg, rgba(6, 26, 58, 0.72) 0%, rgba(6, 26, 58, 0.42) 55%, rgba(6, 26, 58, 0.12) 100%);
   }
   .cluster__name {
     font-size: 1.25rem;
     margin: 0 0 var(--s-2);
+    color: #fff;
   }
   .cluster__list {
     list-style: none;
@@ -225,7 +302,7 @@ const schema = [
     font-family: var(--font-body);
     font-size: 1rem;
     line-height: 1.45;
-    color: var(--ink);
+    color: rgba(255, 255, 255, 0.92);
   }
   /* the stone: a small flattened sky oval, tipped like a stepping stone */
   .cluster__list li::before {
@@ -292,13 +369,6 @@ const schema = [
     margin: 0;
   }
   @media (min-width: 768px) {
-    .stones {
-      grid-template-columns: 1fr 1fr;
-    }
-    .stones > :last-child {
-      grid-column: 1 / -1;
-      max-width: 600px;
-    }
     .tracks {
       grid-template-columns: 1fr 1fr;
       gap: var(--s-4);

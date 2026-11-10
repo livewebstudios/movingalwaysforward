@@ -11,6 +11,10 @@ const insights = defineCollection({
     pubDate: z.coerce.date(),
     category: z.enum(categories),
     cta: z.string().default('/contact/'),
+    /** Card and post header image, a path under public/ (Decap uploads land in /images/insights/). */
+    image: z.string().optional(),
+    imageAlt: z.string().optional(),
+    author: z.string().default('Joe Hliboki'),
     draft: z.boolean().default(false),
   }),
 });

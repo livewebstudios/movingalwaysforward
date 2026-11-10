@@ -1,19 +1,44 @@
 ---
-// Insights post card: category pill, title, date, excerpt. No images; Insights is text-forward.
+// Insights post card for Home: the same photo grid card as /insights/ (styles in global.css,
+// .pcard). Photo, tiny round author photo, date, title, teaser, category tag.
 interface Props {
   title: string;
   href: string;
   date: Date;
   category: string;
   description: string;
+  image?: string;
+  imageAlt?: string;
+  author?: string;
 }
-const { title, href, date, category, description } = Astro.props;
+const { title, href, date, category, description, image, imageAlt, author = 'Joe Hliboki' } = Astro.props;
 const dateLabel = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+// Add a line here when a new author starts writing (same map as src/pages/insights/index.astro).
+const authorPhotos: Record<string, string> = { 'Joe Hliboki': '/images/authors/joe-hliboki.webp' };
+const avatar = authorPhotos[author];
 ---
 
-<article class="post-card">
-  <span class="pill pill--tint">{category}</span>
-  <h3 class="post-card__title"><a href={href}>{title}</a></h3>
-  <time class="post-card__date small" datetime={date.toISOString().slice(0, 10)}>{dateLabel}</time>
-  <p class="post-card__excerpt">{description}</p>
+<article class="pcard">
+  <a class="pcard__link" href={href}>
+    <div class="pcard__media">
+      {
+        image ? (
+          <img src={image} alt={imageAlt ?? ''} width="1200" height="806" loading="lazy" decoding="async" />
+        ) : (
+          <span class="pcard__media-fallback" aria-hidden="true" />
+        )
+      }
+    </div>
+    <div class="pcard__body">
+      <p class="pcard__meta">
+        {avatar && <img class="pcard__avatar" src={avatar} alt="" width="24" height="24" loading="lazy" decoding="async" />}
+        <span class="pcard__author">{author}</span>
+        <span aria-hidden="true">·</span>
+        <time datetime={date.toISOString().slice(0, 10)}>{dateLabel}</time>
+      </p>
+      <h3 class="pcard__title">{title}</h3>
+      <p class="pcard__excerpt">{description}</p>
+      <span class="pcard__cat">{category}</span>
+    </div>
+  </a>
 </article>

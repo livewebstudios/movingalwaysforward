@@ -17,6 +17,7 @@ const { tone = 'white', pitch = false, id, class: cls = '', tight = false, label
   class:list={['section', `section--${tone}`, { 'section--pitch': pitch, 'section--tight': tight, 'on-navy': tone === 'navy' }, cls]}
   aria-labelledby={labelledby}
 >
+  <slot name="bg" />
   <div class="container">
     <slot />
   </div>
@@ -46,5 +47,10 @@ const { tone = 'white', pitch = false, id, class: cls = '', tight = false, label
   }
   .section--pitch > .container {
     position: relative;
+  }
+  /* Optional full-bleed background (slot="bg"): content sits above it. */
+  .section > .container {
+    position: relative;
+    z-index: 1;
   }
 </style>

@@ -4,10 +4,15 @@
   --navy: #061a3a;
   --navy-700: #0e2a52;
   --sky: #54a4e2;
+  /* Text-safe sky: 3.47:1 on white, passes AA large text (Jon, 26_11_10) */
+  --sky-600: #3a8fd4;
   --sky-200: #a9d3f0;
   --sky-050: #eaf4fb;
   --gold: #f1c14e;
   --gold-600: #d6a93c;
+  /* CTA gold: brighter honey for buttons only (Jon, 26_11_10). Logo keeps --gold. */
+  --cta: #ffbd2e;
+  --cta-hi: #ffd56b;
   --ink: #1e2430;
   --ink-600: #4b5563;
   --paper: #ffffff;

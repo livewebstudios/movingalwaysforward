@@ -13,7 +13,7 @@ const { heading, testimonial, related = [], id = 'proof' } = Astro.props;
 ---
 
 <div class="proof" data-reveal-children>
-  <h2 id={`${id}-title`}>{heading}</h2>
+  <h2 id={`${id}-title`} set:html={heading} />
   <div class="proof__body measure">
     <slot />
   </div>

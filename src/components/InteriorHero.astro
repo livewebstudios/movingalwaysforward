@@ -17,6 +17,8 @@ interface Props {
   object?: ObjectName;
   objectSize?: number;
   objectRotate?: number;
+  /** Desktop: drop the object so only its tip overlaps the photo card. */
+  objectLow?: boolean;
   photo?: { image: ImageMetadata; alt: string };
   id?: string;
 }
@@ -30,12 +32,13 @@ const {
   object,
   objectSize = 240,
   objectRotate = -8,
+  objectLow = false,
   photo,
   id = 'hero',
 } = Astro.props;
 ---
 
-<section class:list={['ihero', { 'ihero--visual': object || photo }]} id={id} aria-labelledby={`${id}-title`}>
+<section class:list={['ihero', { 'ihero--visual': object || photo, 'ihero--obj-low': objectLow }]} id={id} aria-labelledby={`${id}-title`}>
   <div class="container ihero__grid">
     <div class="ihero__copy" data-reveal-children>
       {object && (
@@ -136,6 +139,9 @@ const {
       right: -4%;
       bottom: -10%;
       z-index: 2;
+    }
+    .ihero--obj-low .ihero__obj {
+      bottom: -150px;
     }
     .ihero--visual .ihero__visual:not(:has(.ihero__photo)) .ihero__obj {
       position: static;

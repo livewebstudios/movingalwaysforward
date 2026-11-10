@@ -7,6 +7,10 @@ export type PostItem = {
   dateLabel: string;
   category: string;
   description: string;
+  image?: string;
+  imageAlt?: string;
+  author: string;
+  avatar?: string;
 };
 
 const PAGE = 12;
@@ -60,17 +64,29 @@ export default function InsightsFilter({ posts, categories }: { posts: PostItem[
         {filtered.length} {filtered.length === 1 ? 'post' : 'posts'}
         {active !== 'All' ? ` in ${active}` : ''}
       </p>
-      <div className="ins__list">
+      <div className="pgrid">
         {shown.map((p) => (
-          <article className="post-card" key={p.href}>
-            <span className="pill pill--tint">{p.category}</span>
-            <h2 className="post-card__title">
-              <a href={p.href}>{p.title}</a>
-            </h2>
-            <time className="post-card__date small" dateTime={p.date}>
-              {p.dateLabel}
-            </time>
-            <p className="post-card__excerpt">{p.description}</p>
+          <article className="pcard" key={p.href}>
+            <a className="pcard__link" href={p.href}>
+              <div className="pcard__media">
+                {p.image ? (
+                  <img src={p.image} alt={p.imageAlt ?? ''} width={1200} height={806} loading="lazy" decoding="async" />
+                ) : (
+                  <span className="pcard__media-fallback" aria-hidden="true" />
+                )}
+              </div>
+              <div className="pcard__body">
+                <p className="pcard__meta">
+                  {p.avatar && <img className="pcard__avatar" src={p.avatar} alt="" width={24} height={24} loading="lazy" decoding="async" />}
+                  <span className="pcard__author">{p.author}</span>
+                  <span aria-hidden="true">·</span>
+                  <time dateTime={p.date}>{p.dateLabel}</time>
+                </p>
+                <h2 className="pcard__title">{p.title}</h2>
+                <p className="pcard__excerpt">{p.description}</p>
+                <span className="pcard__cat">{p.category}</span>
+              </div>
+            </a>
           </article>
         ))}
         {shown.length === 0 && <p className="ins__empty">Nothing in this category yet. The next post lands in two weeks.</p>}
@@ -92,7 +108,6 @@ const css = `
 .chip { min-height: 44px; padding: 0 16px; border-radius: var(--r-pill); border: 1.5px solid var(--line); background: var(--paper); color: var(--navy); font: inherit; font-size: var(--fs-small); font-weight: 600; cursor: pointer; transition: background-color var(--t-hover) var(--ease-out), border-color var(--t-hover) var(--ease-out); }
 .chip:hover { background: var(--sky-050); }
 .chip.is-active { background: var(--navy); border-color: var(--navy); color: var(--paper); }
-.ins__list { display: grid; gap: var(--s-3); }
 .ins__empty { color: var(--ink-600); }
 .ins__more { margin-top: var(--s-4); }
 `;

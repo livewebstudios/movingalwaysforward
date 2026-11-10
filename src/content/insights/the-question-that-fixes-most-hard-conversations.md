@@ -4,6 +4,9 @@ description: "Before the tough talk with your boss, your report or your business
 pubDate: 2026-12-01
 category: "Workplace Skills"
 cta: "/corporate-training/"
+image: "/images/insights/the-question-that-fixes-most-hard-conversations.webp"
+imageAlt: "A man alone at a meeting room window, holding a small card and gathering himself"
+author: "Joe Hliboki"
 draft: false
 ---
 

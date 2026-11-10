@@ -5,12 +5,15 @@ import Section from '../components/Section.astro';
 import InteriorHero from '../components/InteriorHero.astro';
 import ProofBlock from '../components/ProofBlock.astro';
 import CtaBand from '../components/CtaBand.astro';
-import Obj from '../components/Obj.astro';
 import Faq from '../components/Faq.astro';
+import SummitPhoto from '../components/SummitPhoto.astro';
 import StepsStrip from '../islands/StepsStrip';
 import { objSrc } from '../lib/images';
 import { service, faqPage } from '../lib/seo';
+import { Image } from 'astro:assets';
 import oneOnOne from '../assets/photos/joe-one-on-one.png';
+import waitingRoom from '../assets/photos/job-search-living-room.jpg';
+import peak from '../assets/photos/summit-peak-early.jpg';
 
 const title = 'Early Career Coaching for Young Professionals | Always Forward Coaching';
 const description =
@@ -52,13 +55,17 @@ const schema = [
     button={{ label: 'Book a free first call', href: '/contact/' }}
     object="notebook-pen"
     objectRotate={-12}
+    objectLow
     photo={{ image: oneOnOne, alt: 'Joe Hliboki listening across a table to a young professional during a coaching session' }}
   />
 
   <!-- 2. Who this is for -->
-  <Section tone="mist" pitch id="who" labelledby="who-title">
-    <div class="prose" data-reveal-children>
-      <h2 id="who-title">For the person sending out two hundred applications into silence. And the parent watching it happen.</h2>
+  <Section tone="mist" pitch id="who" labelledby="who-title" class="who">
+    <div slot="bg" class="who__bg">
+      <Image src={waitingRoom} alt="A young woman sits on the living room floor with her laptop, looking away from the screen, while her father watches quietly from the kitchen doorway" widths={[640, 960, 1280, 1920, 2560]} sizes="100vw" format="webp" quality={76} loading="lazy" decoding="async" />
+    </div>
+    <div class="prose who__copy" data-reveal-children>
+      <h2 id="who-title">For the person sending out two hundred applications into silence. <span class="h-accent">And the parent watching it happen.</span></h2>
       <p>
         You just graduated, or you are a year or two in and nothing works the way school said it would. Or you are a parent and your kid is smart, qualified and stuck, and the advice you have is from a job market that no longer exists. Either way the problem is the same: starting a career is a skill, and nobody teaches it. Joe does.
       </p>
@@ -70,13 +77,13 @@ const schema = [
 
   <!-- 3. What you get -->
   <Section id="what" labelledby="what-title">
-    <div class="sec-head" data-reveal-children>
-      <h2 id="what-title">The syllabus.</h2>
-      <p class="deck">Every session is one-on-one with Joe. Here is what the first month looks like.</p>
-    </div>
-    <div class="what">
+    <div class="summit-split">
       <div>
-        <ol class="syllabus" data-reveal-children>
+        <div class="sec-head" data-reveal-children>
+          <h2 id="what-title">The <span class="h-accent">syllabus</span>.</h2>
+          <p class="deck">Every session is one-on-one with Joe. Here is what the first month looks like.</p>
+        </div>
+        <ol class="syllabus syllabus--cards" data-reveal-children>
           <li>
             <h3>Session one: where you actually are.</h3>
             <p>Resume, LinkedIn, the applications you have sent, the interviews you have had. A straight read on what is working and what is quietly costing you offers.</p>
@@ -96,13 +103,7 @@ const schema = [
         </ol>
         <p class="what__between prose">Between sessions Joe is reachable. A question the night before an interview does not wait two weeks.</p>
       </div>
-      <aside class="price card" data-reveal aria-labelledby="price-title">
-        <div class="price__obj">
-          <Obj name="calendar-30" size={80} sizeMobile={64} rotate={8} float phase={5} />
-        </div>
-        <h3 id="price-title" class="price__title">$75 per session · $300 per month for four sessions.</h3>
-        <p>Start, see what changes, keep going if it is working. Cancel any time. Hopefully because you got the job.</p>
-      </aside>
+      <SummitPhoto image={peak} summit={[51.7, 10.6]} />
     </div>
   </Section>
 
@@ -124,7 +125,7 @@ const schema = [
 
   <!-- 5. Proof -->
   <Section id="proof" labelledby="proof-title">
-    <ProofBlock heading="He mentored Cisco's new hires. Now he mentors yours." testimonial="TESTIMONIAL PLACEHOLDER: one from a young client, one from a parent. Jon supplies.">
+    <ProofBlock heading="He mentored Cisco's new hires. <span class='h-accent'>Now he mentors yours.</span>" testimonial="TESTIMONIAL PLACEHOLDER: one from a young client, one from a parent. Jon supplies.">
       <p>
         Joe spent years at Cisco mentoring the company's elite new-hire engineers: twenty-two-year-olds walking into a Fortune 100 on day one. A mentor told him his ability to earn a young person's trust in thirty minutes was rare. Parents tend to agree. He has coached more than five hundred Gen Z athletes and professionals, has three of his own at home, and wrote the book on it: <a href="/the-book/"><em>Bursting the Bubble: A Commonsense Guide to Early Career Success</em></a>.
       </p>
@@ -144,29 +145,53 @@ const schema = [
 </Base>
 
 <style>
-  .what {
-    display: grid;
-    gap: var(--s-5);
-    align-items: start;
+  /* 2. Who this is for: full-bleed photo, copy on the right */
+  .who__bg {
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 360px;
+    z-index: 0;
+  }
+  .who__bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 18% 40%;
+  }
+  .who__bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(244, 248, 251, 0) 45%, var(--mist) 100%);
+  }
+  :global(#who.section--pitch) {
+    padding-top: calc(var(--section-y) + var(--pitch) + 250px);
+  }
+  @media (min-width: 1024px) {
+    .who__bg {
+      inset: 0;
+      height: auto;
+    }
+    .who__bg::after {
+      background: linear-gradient(
+        to right,
+        rgba(244, 248, 251, 0) 28%,
+        rgba(244, 248, 251, 0.9) 50%,
+        var(--mist) 68%
+      );
+    }
+    :global(#who.section--pitch) {
+      padding-top: calc(var(--section-y) + var(--pitch) + var(--s-6));
+      padding-bottom: calc(var(--section-y) + var(--s-6));
+    }
+    .who__copy {
+      margin-left: auto;
+      max-width: 600px;
+    }
   }
   .what__between {
     margin-top: var(--s-4);
     color: var(--ink-600);
-  }
-  .price {
-    position: relative;
-    background: var(--mist);
-    padding-top: var(--s-5);
-  }
-  .price__obj {
-    position: absolute;
-    top: -28px;
-    right: var(--s-2);
-  }
-  .price__title {
-    font-size: 1.375rem;
-    max-width: 16ch;
-    margin-right: 72px;
   }
   .xlink {
     max-width: 760px;
@@ -186,15 +211,5 @@ const schema = [
     text-decoration: underline;
     text-decoration-color: var(--sky);
     text-underline-offset: 0.2em;
-  }
-  @media (min-width: 900px) {
-    .what {
-      grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.8fr);
-      gap: var(--s-8);
-    }
-    .price {
-      position: sticky;
-      top: 96px;
-    }
   }
 </style>

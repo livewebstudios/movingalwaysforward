@@ -1,5 +1,5 @@
 ---
-// The Book · five sections. The cover is the hero (placeholder until Jon supplies it).
+// The Book · five sections. The cover is the hero and links to Amazon.
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Section from '../components/Section.astro';
@@ -9,6 +9,7 @@ import Obj from '../components/Obj.astro';
 import Placeholder from '../components/Placeholder.astro';
 import { site, bookInfo } from '../data/site';
 import portrait from '../assets/photos/joe-portrait.png';
+import bookCover from '../assets/book/book-cover.jpg';
 
 const title = 'Bursting the Bubble by Joe Hliboki | Always Forward Coaching';
 const description =
@@ -35,10 +36,9 @@ const schema = [
   <section class="bhero" aria-labelledby="book-title">
     <div class="container bhero__grid">
       <div class="bhero__visual" data-reveal>
-        <div class="bhero__cover">
-          <Placeholder text="BOOK COVER PLACEHOLDER: assets/source/book-cover.jpg, Jon supplies" block />
-          <span class="bhero__cover-title" aria-hidden="true">{bookInfo.title}</span>
-        </div>
+        <a class="bhero__cover" href={site.amazon} target="_blank" rel="noopener" aria-label={`${bookInfo.title} on Amazon`}>
+          <Image src={bookCover} alt={`${bookInfo.title}: ${bookInfo.subtitle}, by Joe Hliboki. Book cover.`} widths={[280, 560]} sizes="280px" format="webp" quality={82} loading="eager" decoding="async" fetchpriority="high" />
+        </a>
         <div class="bhero__obj">
           <Obj name="notebook-pen" size={110} sizeMobile={80} rotate={-14} depth="near" float eager phase={2} />
         </div>
@@ -49,10 +49,9 @@ const schema = [
         <p class="deck">{bookInfo.subtitle}</p>
         <p class="lede">School hands you a diploma and a bubble: the comfortable set of assumptions about how work is going to work. Then the first job pops it. This is the handbook for that moment.</p>
         <div class="bhero__actions">
-          <Button href="#amazon-url-placeholder" describedBy="amazon-ph">Get it on Amazon</Button>
+          <Button href={site.amazon} external>Get it on Amazon</Button>
           <Button href="#sample-pdf-placeholder" variant="ghost" describedBy="sample-ph">Read a chapter</Button>
         </div>
-        <p class="small" id="amazon-ph"><Placeholder text="AMAZON_URL_PLACEHOLDER" /></p>
         <p class="small" id="sample-ph"><Placeholder text="SAMPLE_PDF_PLACEHOLDER or remove the Read a chapter button" /></p>
       </div>
     </div>
@@ -61,7 +60,7 @@ const schema = [
   <!-- 2. What is in it -->
   <Section tone="mist" pitch id="inside" labelledby="inside-title">
     <div class="prose" data-reveal-children>
-      <h2 id="inside-title">No theory. No hustle sermon. Just what works.</h2>
+      <h2 id="inside-title">No theory. No hustle sermon. <span class="h-accent">Just what works.</span></h2>
       <p>
         Joe took everything he learned mentoring Fortune 100 new hires, and everything he watched them learn the hard way, and wrote it down in plain language. How to show up. How to be managed. How to ask. How to recover when you get it wrong. How to get noticed for the right reasons and avoid getting noticed for the wrong ones.
       </p>
@@ -127,27 +126,24 @@ const schema = [
     justify-self: center;
     width: min(100%, 280px);
   }
+  /* The real cover, tipped back like a book on a desk. Links to Amazon. */
   .bhero__cover {
     position: relative;
-    aspect-ratio: 2 / 3;
-    display: grid;
-    align-content: end;
-    gap: var(--s-2);
-    padding: var(--s-3);
-    background: linear-gradient(160deg, var(--navy), var(--navy-700));
-    border-radius: var(--r-lg);
+    display: block;
+    border-radius: 6px;
+    overflow: hidden;
     box-shadow: var(--shadow-2);
     transform: rotate(-5deg);
+    transition: transform var(--t-hover) var(--ease-out), box-shadow var(--t-hover) var(--ease-out);
   }
-  .bhero__cover :global(.ph) {
-    background: rgba(255, 255, 255, 0.92);
+  .bhero__cover img {
+    display: block;
+    width: 100%;
+    height: auto;
   }
-  .bhero__cover-title {
-    font-family: var(--font-display);
-    font-weight: 800;
-    font-size: 1.5rem;
-    color: var(--paper);
-    letter-spacing: -0.02em;
+  .bhero__cover:hover,
+  .bhero__cover:focus-visible {
+    transform: rotate(-3deg) translateY(-4px);
   }
   .bhero__obj {
     position: absolute;

@@ -9,6 +9,8 @@ import StepsStrip from '../islands/StepsStrip';
 import { objSrc } from '../lib/images';
 import { service } from '../lib/seo';
 import oneOnOne from '../assets/photos/joe-one-on-one.png';
+import SummitPhoto from '../components/SummitPhoto.astro';
+import peak from '../assets/photos/summit-peak-exec.jpg';
 
 const title = 'Executive & Business Coaching in Montvale NJ | Always Forward Coaching';
 const description =
@@ -26,12 +28,13 @@ const schema = [service('Executive & Business Coaching', path, description, 'Mid
     button={{ label: 'Book a call', href: '/contact/' }}
     object="compass"
     objectRotate={-10}
+    objectLow
     photo={{ image: oneOnOne, alt: 'Joe Hliboki listening across a table to a young professional during a coaching session' }}
   />
 
   <Section tone="mist" pitch id="who" labelledby="who-title">
     <div class="prose" data-reveal-children>
-      <h2 id="who-title">You do not need a cheerleader. You need an outside view and a plan you will follow.</h2>
+      <h2 id="who-title">You do not need a cheerleader. You need an outside view and a <span class="h-accent">plan you will follow.</span></h2>
       <p>
         Mid-career professionals stuck one level below where they belong. Career changers who know the destination but not the route. Business owners who are the bottleneck in their own company and know it. People who have been told they are "doing great" for three years and have not been promoted once.
       </p>
@@ -40,28 +43,33 @@ const schema = [service('Executive & Business Coaching', path, description, 'Mid
   </Section>
 
   <Section id="what" labelledby="what-title">
-    <div class="sec-head" data-reveal>
-      <h2 id="what-title">What the engagement actually contains.</h2>
+    <div class="summit-split">
+      <div>
+        <div class="sec-head" data-reveal>
+          <h2 id="what-title">What the engagement actually contains.</h2>
+        </div>
+        <ul class="syllabus syllabus--cards" data-reveal-children>
+          <li>
+            <h3>A real assessment first.</h3>
+            <p>Where you are, where the current trajectory takes you, and the honest gap between that and where you want to be. Joe uses FocalPoint's assessment tools, including DISC where it helps, plus his own corporate mileage.</p>
+          </li>
+          <li>
+            <h3>A written plan with dates on it.</h3>
+            <p>Positioning, visibility, skills to build, conversations to have. Specific enough to be checked, not admired.</p>
+          </li>
+          <li>
+            <h3>Standing one-on-one sessions.</h3>
+            <p>Weekly or every other week, in person near Montvale or on video. Structured with FocalPoint's methodology and Joe's experience running teams. Accountability included, whether you want it that day or not.</p>
+          </li>
+          <li>
+            <h3>The hard conversations, rehearsed.</h3>
+            <p>The raise. The restructure. The partner who is not pulling weight. You walk in having already done it once, out loud, with someone who has had that conversation from both chairs.</p>
+          </li>
+        </ul>
+        <p class="prose owners" data-reveal>For owners, the plan also covers the business: where your time goes, what only you can do, and what you are doing anyway because nobody else will.</p>
+      </div>
+      <SummitPhoto image={peak} summit={[54.9, 12.9]} />
     </div>
-    <ul class="syllabus" data-reveal-children>
-      <li>
-        <h3>A real assessment first.</h3>
-        <p>Where you are, where the current trajectory takes you, and the honest gap between that and where you want to be. Joe uses FocalPoint's assessment tools, including DISC where it helps, plus his own corporate mileage.</p>
-      </li>
-      <li>
-        <h3>A written plan with dates on it.</h3>
-        <p>Positioning, visibility, skills to build, conversations to have. Specific enough to be checked, not admired.</p>
-      </li>
-      <li>
-        <h3>Standing one-on-one sessions.</h3>
-        <p>Weekly or every other week, in person near Montvale or on video. Structured with FocalPoint's methodology and Joe's experience running teams. Accountability included, whether you want it that day or not.</p>
-      </li>
-      <li>
-        <h3>The hard conversations, rehearsed.</h3>
-        <p>The raise. The restructure. The partner who is not pulling weight. You walk in having already done it once, out loud, with someone who has had that conversation from both chairs.</p>
-      </li>
-    </ul>
-    <p class="prose owners" data-reveal>For owners, the plan also covers the business: where your time goes, what only you can do, and what you are doing anyway because nobody else will.</p>
   </Section>
 
   <Section tone="mist" pitch id="how" labelledby="how-title">
@@ -89,7 +97,7 @@ const schema = [service('Executive & Business Coaching', path, description, 'Mid
       ]}
     >
       <p>
-        Before coaching, Joe led a healthcare sales team of sixteen to twenty people at Cisco. Hiring, promoting, restructuring, managing up and down, carrying the number. He ran the careers he now coaches. He is a Certified FocalPoint Business, Executive & Career Coach, backed by a curriculum that has been delivered to businesses worldwide, and he has been coaching for three years with a client list that fills three delivery days a week.
+        Before coaching, Joe led a healthcare sales team of sixteen to twenty people at Cisco. Hiring, promoting, restructuring, managing up and down, hitting the target. He ran the careers he now coaches. He is a Certified FocalPoint Business, Executive & Career Coach, backed by a curriculum that has been delivered to businesses worldwide, and he has been coaching for three years with a client list that fills three delivery days a week.
       </p>
     </ProofBlock>
   </Section>
