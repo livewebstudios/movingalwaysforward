@@ -81,26 +81,28 @@ const schema = [
     </div>
   </section>
 
-  <!-- 4. The two tracks -->
-  <Section id="tracks" labelledby="tracks-title">
+  <!-- 4. The two tracks: six topic clusters, three per track (data in src/data/steppingstones.ts) -->
+  <Section tone="mist" id="tracks" labelledby="tracks-title">
     <div class="sec-head" data-reveal-children>
-      <h2 id="tracks-title">Twenty-two workshops. Two tracks.</h2>
-      <p class="lede">Workshops rotate through these topics. Join any month and catch the rest as they come around.</p>
+      <h2 id="tracks-title">Two tracks. Twenty-two topics.</h2>
+      <p class="deck">Each month brings one workshop from each track. One gets you hired. The other gets you better once you are there.</p>
     </div>
     <div class="tracks">
-      <span class="path-line tracks__path" aria-hidden="true"></span>
       {
-        tracks.map((t) => (
-          <div class="track" data-reveal-children>
-            <h3>{t.name}</h3>
-            <ol class="track__list">
-              {t.topics.map((topic) => (
-                <li>
-                  <span class="track__title">{topic.title}</span>
-                  <span class="track__theme">{topic.theme}</span>
-                </li>
-              ))}
-            </ol>
+        tracks.map((t, i) => (
+          <div class="track" role="group" aria-labelledby={`track-${i}`} data-reveal-children>
+            <div class="track__head">
+              <p class="track__name" id={`track-${i}`}>{t.name}</p>
+              <p class="track__tagline">{t.tagline}</p>
+            </div>
+            {t.clusters.map((c) => (
+              <div class="cluster">
+                <h3 class="cluster__name">{c.name}</h3>
+                <ul class="cluster__list">
+                  {c.topics.map((topic) => <li>{topic}</li>)}
+                </ul>
+              </div>
+            ))}
           </div>
         ))
       }
@@ -108,7 +110,7 @@ const schema = [
   </Section>
 
   <!-- 5. Proof and the flyer library -->
-  <Section tone="mist" pitch id="proof" labelledby="proof-title">
+  <Section pitch id="proof" labelledby="proof-title">
     <div class="prose" data-reveal-children>
       <h2 id="proof-title">From the coach who wrote the book.</h2>
       <p>
@@ -180,51 +182,62 @@ const schema = [
     align-items: stretch;
   }
   .tracks {
-    position: relative;
     display: grid;
     gap: var(--s-5);
   }
-  .tracks__path {
-    display: none;
+  .track {
+    display: grid;
+    gap: var(--s-3);
+    align-content: start;
   }
-  .track h3 {
-    margin-bottom: var(--s-2);
-    padding-bottom: var(--s-1);
-    border-bottom: 2px solid var(--sky);
-    display: inline-block;
-  }
-  .track__list {
+  .track__name {
     margin: 0;
-    padding-left: 0;
-    list-style: none;
-    counter-reset: topic;
-    display: grid;
-    gap: 2px;
-  }
-  .track__list li {
-    counter-increment: topic;
-    display: grid;
-    grid-template-columns: 32px 1fr auto;
-    gap: 10px;
-    align-items: baseline;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--line);
-  }
-  .track__list li::before {
-    content: counter(topic, decimal-leading-zero);
     font-family: var(--font-display);
-    font-weight: 800;
-    color: var(--navy);
-    font-size: 0.9375rem;
-  }
-  .track__title {
     font-weight: 600;
+    font-size: var(--fs-h3);
+    line-height: 1.2;
     color: var(--navy);
   }
-  .track__theme {
-    font-size: var(--fs-small);
+  .track__tagline {
+    margin: 4px 0 0;
     color: var(--ink-600);
-    text-transform: lowercase;
+  }
+  .cluster {
+    background: var(--paper);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-1);
+    padding: var(--s-3) var(--s-4);
+  }
+  .cluster__name {
+    font-size: 1.25rem;
+    margin: 0 0 var(--s-2);
+  }
+  .cluster__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+  }
+  .cluster__list li {
+    position: relative;
+    padding-left: 22px;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.45;
+    color: var(--ink);
+  }
+  /* the stone: a small flattened sky oval, tipped like a stepping stone */
+  .cluster__list li::before {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: 0.58em;
+    width: 9px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--sky);
+    transform: rotate(-12deg);
   }
   .flyers {
     margin-top: var(--s-5);
@@ -288,10 +301,7 @@ const schema = [
     }
     .tracks {
       grid-template-columns: 1fr 1fr;
-      gap: var(--s-8);
-    }
-    .tracks__path {
-      display: block;
+      gap: var(--s-4);
     }
     .flyers__grid {
       grid-template-columns: 1fr 1fr;

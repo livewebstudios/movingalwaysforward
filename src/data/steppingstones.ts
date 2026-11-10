@@ -58,39 +58,34 @@ export const stoneCards: StoneCard[] = [
   },
 ];
 
-export type Track = { name: string; topics: { title: string; theme: string }[] };
+// Two tracks, three topic clusters each. Move a topic by moving one line; add one by adding a line.
+// Cluster names are pending Joe's sign-off (Nov 2026).
+export type Cluster = { name: string; topics: string[] };
+export type Track = { name: string; tagline: string; clusters: Cluster[] };
 
 export const tracks: Track[] = [
   {
-    name: 'Career Growth track',
-    topics: [
-      { title: 'Be a Victor', theme: 'mindset' },
-      { title: 'Get in the Game', theme: 'motivation' },
-      { title: 'Find the Value in All You Do', theme: 'purpose' },
-      { title: 'Differentiation', theme: 'strategy' },
-      { title: 'Curiosity', theme: 'success trait' },
-      { title: 'Know Your Value', theme: 'self-awareness' },
-      { title: 'Do Your Homework', theme: 'preparation' },
-      { title: 'Be Resourceful', theme: 'career elevation' },
-      { title: 'Professional Mindset', theme: 'expectations' },
-      { title: 'Intentional Networking', theme: 'job search' },
-      { title: "Interview Do's and Don'ts", theme: 'winning' },
+    name: 'Career Growth',
+    tagline: 'Getting hired.',
+    clusters: [
+      { name: 'Mindset', topics: ['Be a Victor', 'Get in the Game', 'Curiosity', 'Professional Mindset'] },
+      { name: 'Know your worth', topics: ['Find the Value in All You Do', 'Know Your Value'] },
+      {
+        name: 'Win the search',
+        topics: ['Differentiation', 'Do Your Homework', 'Be Resourceful', 'Intentional Networking', "Interview Do's and Don'ts"],
+      },
     ],
   },
   {
-    name: 'Professional Growth track',
-    topics: [
-      { title: 'Why?', theme: 'purpose' },
-      { title: "Don't Label Me", theme: 'awareness' },
-      { title: 'Manipulation', theme: 'awareness' },
-      { title: 'Workforce Challenges', theme: 'career insight' },
-      { title: 'Attitude Is Everything', theme: 'positive mindset' },
-      { title: 'Defining Your Success', theme: 'motivation' },
-      { title: 'Bursting the Bubble', theme: 'personal growth' },
-      { title: 'Career Truths', theme: 'competitive insight' },
-      { title: 'Habits: The Architecture of Success', theme: 'performance' },
-      { title: 'Do Not Walk Alone', theme: 'resourcefulness' },
-      { title: 'The Pathway to Success', theme: 'success' },
+    name: 'Professional Growth',
+    tagline: 'Getting better.',
+    clusters: [
+      { name: 'Know yourself', topics: ['Why?', "Don't Label Me", 'Defining Your Success', 'Bursting the Bubble'] },
+      { name: 'Read the room', topics: ['Manipulation', 'Workforce Challenges', 'Career Truths'] },
+      {
+        name: 'Build the habits',
+        topics: ['Attitude Is Everything', 'Habits: The Architecture of Success', 'Do Not Walk Alone', 'The Pathway to Success'],
+      },
     ],
   },
 ];
