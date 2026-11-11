@@ -15,11 +15,9 @@ import { depth as depthMap, floatStyles, parallaxCap, settle, settled } from '..
 
 export type HeroObjects = {
   flag: ObjSrc;
-  compass: ObjSrc;
   notebook: ObjSrc;
   stones: ObjSrc;
   plane: ObjSrc;
-  bubbles: ObjSrc;
 };
 
 type Props = {
@@ -32,14 +30,13 @@ type Props = {
 type Layer = 'far' | 'mid' | 'near' | 'nearest';
 
 // Placement from 03_layout_and_components.md: percentages of the container, resting rotation,
-// depth layer, pixel size. Settle order: flag, compass, notebook, stones, plane, bubbles.
+// depth layer, pixel size. Settle order: flag, notebook, stones, plane.
+// The compass and speech bubbles were removed from the hero (Jon 26_11_11).
 const PLACE: { key: keyof HeroObjects; cls: string; r: number; layer: Layer; size: number; tilt: number }[] = [
   { key: 'flag', cls: 'flag', r: 8, layer: 'near', size: 140, tilt: 6 },
-  { key: 'compass', cls: 'compass', r: -10, layer: 'near', size: 160, tilt: 5 },
   { key: 'notebook', cls: 'notebook', r: -12, layer: 'mid', size: 200, tilt: 3 },
   { key: 'stones', cls: 'stones', r: 6, layer: 'mid', size: 220, tilt: 3 },
   { key: 'plane', cls: 'plane', r: -14, layer: 'nearest', size: 120, tilt: 8 },
-  { key: 'bubbles', cls: 'bubbles', r: 12, layer: 'mid', size: 130, tilt: 2 },
 ];
 
 const SESSION_KEY = 'af-hero-settled';
@@ -254,7 +251,7 @@ const css = `
 .hobj img { width: 100%; height: auto; }
 .hobj--flag { top: 10px; left: auto; right: 12px; width: 84px; }
 .hobj--stones { top: auto; bottom: -28px; left: 6px; width: 90px; z-index: 4; }
-.hobj--compass, .hobj--notebook, .hobj--plane, .hobj--bubbles { display: none; }
+.hobj--notebook, .hobj--plane { display: none; }
 .hero__stack { position: relative; z-index: 2; display: grid; justify-items: center; text-align: center; gap: var(--s-3); max-width: 760px; margin: 0 auto; }
 .hero__stack h1 { margin: 0; }
 .hero__stack .lede { font-size: 1.125rem; text-align: center; max-width: 56ch; }
@@ -279,7 +276,6 @@ const css = `
   .hero { padding: 0 var(--s-3) calc(var(--s-8) + 40px); }
   .hero__box { min-height: 88vh; padding: var(--s-8) var(--s-6) 260px; }
   .hobj--flag { top: 8%; left: 12%; right: auto; width: 140px; }
-  .hobj--compass { display: block; top: 10%; left: 86%; width: 160px; margin-left: -80px; }
   .hobj--notebook { display: block; top: 72%; left: 6%; bottom: auto; width: 200px; }
   .hobj--stones { display: block; top: 70%; left: 84%; bottom: auto; width: 220px; margin-left: -110px; }
   .hero__cards { bottom: -56px; gap: var(--s-4); }
@@ -288,7 +284,6 @@ const css = `
 }
 @media (min-width: 1100px) {
   .hobj--plane { display: block; top: 30%; left: 78%; width: 120px; }
-  .hobj--bubbles { display: block; top: 58%; left: 14%; width: 130px; }
 }
 @media (prefers-reduced-motion: reduce) { .hcard { transform: none !important; } }
 

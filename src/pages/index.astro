@@ -41,13 +41,11 @@ const title = 'Always Forward | Business & Career Coaching, Montvale NJ';
 const description =
   'Business and career coaching from Joe Hliboki in Montvale, NJ. Early-career coaching for young professionals, executive coaching, and corporate training built like a course catalog.';
 
-const [flag, compass, notebook, stones, plane, bubbles, ladder] = await Promise.all([
+const [flag, notebook, stones, plane, ladder] = await Promise.all([
   objSrc('summit-flag', 280),
-  objSrc('compass', 320),
   objSrc('notebook-pen', 400),
   objSrc('stepping-stones', 440),
   objSrc('paper-plane', 240),
-  objSrc('speech-bubbles', 260),
   objSrc('ladder', 200),
 ]);
 const heroPhoto = await photoSrc(heroTeaching, 'Joe Hliboki explaining a point to a small group of young professionals in a bright training room', [320, 640, 960]);
@@ -96,7 +94,7 @@ const heroRank = (i: number) => i;
 ---
 
 <Base {title} {description} path="/">
-  <HeroStage client:load objects={{ flag, compass, notebook, stones, plane, bubbles }} photo={heroPhoto}>
+  <HeroStage client:load objects={{ flag, notebook, stones, plane }} photo={heroPhoto}>
     <Fragment slot="backdrop">
       <Backdrop image={bgLight} eager parallax={false} />
     </Fragment>
