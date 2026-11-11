@@ -1,34 +1,72 @@
 ---
-// Closing CTA band: navy, contour backdrop (video-ready), H2, body, one gold button,
-// the summit flag (or the page's object) at 120px on the right.
+// Closing CTA band: navy, a subtle photo behind it (a different one per page), the contour
+// backdrop on top of that, H2, body, one gold button.
+// The photo sits under a navy wash that is solid behind the copy and thins toward the right, so
+// the scene only shows on the empty right side. `light` photos (the snowy summits) are knocked into
+// navy with a luminosity blend; the dark navy-and-gold scenes keep their own lamp glow.
+// Jon 26_11_11: the photo replaces the summit flag object. Each page picks its photo below, and
+// none repeats a photo already used on that page.
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 import Backdrop from './Backdrop.astro';
 import Button from './Button.astro';
-import Obj from './Obj.astro';
 import bgNavy from '../assets/backgrounds/bg-contour-navy.png';
-import type { ObjectName } from '../lib/images';
+import mindset from '../assets/steppingstones/mindset.webp';
+import winTheSearch from '../assets/steppingstones/win-the-search.webp';
+import knowYourself from '../assets/steppingstones/know-yourself.webp';
+import buildTheHabits from '../assets/steppingstones/build-the-habits.webp';
+import knowYourWorth from '../assets/steppingstones/know-your-worth.webp';
+import readTheRoom from '../assets/steppingstones/read-the-room.webp';
+import serverRoom from '../assets/photos/proof-server-room.jpg';
+import peakExec from '../assets/photos/summit-peak-exec.jpg';
+import peakEarly from '../assets/photos/summit-peak-early.jpg';
+
+const photos = {
+  'dawn-lake': { img: mindset, light: false, pos: '50% 55%' }, // home
+  'city-night': { img: winTheSearch, light: false, pos: '50% 60%' }, // early career
+  'stepping-stones': { img: knowYourself, light: false, pos: '50% 55%' }, // executive
+  'lantern-path': { img: buildTheHabits, light: false, pos: '60% 60%' }, // group programs
+  'server-room': { img: serverRoom, light: false, pos: '50% 50%' }, // corporate training
+  'summit-dawn': { img: peakExec, light: true, pos: '50% 30%' }, // about
+  'reading-lamp': { img: knowYourWorth, light: false, pos: '60% 50%' }, // insights
+  'quiet-cafe': { img: readTheRoom, light: false, pos: '50% 50%' }, // the book
+  'summit-clouds': { img: peakEarly, light: true, pos: '50% 35%' }, // career steppingstones
+} satisfies Record<string, { img: ImageMetadata; light: boolean; pos: string }>;
+export type CtaPhoto = keyof typeof photos;
 
 interface Props {
   heading: string;
   body: string;
   button: { label: string; href: string };
-  object?: ObjectName;
+  photo: CtaPhoto;
   id?: string;
 }
-const { heading, body, button, object = 'summit-flag', id = 'cta' } = Astro.props;
+const { heading, body, button, photo, id = 'cta' } = Astro.props;
+const p = photos[photo];
 ---
 
 <section class="cta-wrap" aria-labelledby={`${id}-title`}>
   <div class="container">
     <div class="cta on-navy" data-reveal>
+      <div class:list={['cta__photo', { 'is-light': p.light }]} aria-hidden="true">
+        <Image
+          src={p.img}
+          widths={[640, 1000, 1400]}
+          sizes="(min-width: 1248px) 1200px, 100vw"
+          format="webp"
+          quality={62}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          style={`object-position:${p.pos}`}
+        />
+      </div>
       <Backdrop image={bgNavy} class="cta__bg" />
       <div class="cta__inner">
         <div class="cta__copy">
           <h2 id={`${id}-title`}>{heading}</h2>
           <p class="cta__body">{body}</p>
           <Button href={button.href}>{button.label}</Button>
-        </div>
-        <div class="cta__obj">
-          <Obj name={object} size={120} sizeMobile={88} rotate={object === 'summit-flag' ? 6 : -8} depth="near" float phase={3} />
         </div>
       </div>
     </div>
@@ -46,8 +84,34 @@ const { heading, body, button, object = 'summit-flag', id = 'cta' } = Astro.prop
     background: linear-gradient(160deg, var(--navy), var(--navy-700));
     padding: var(--s-6) var(--s-3);
   }
+  /* the page's photo, under a navy wash that clears toward the right */
+  .cta__photo {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .cta__photo :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.85;
+  }
+  .cta__photo.is-light :global(img) {
+    mix-blend-mode: luminosity;
+    opacity: 0.32;
+  }
+  .cta__photo::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(6, 26, 58, 0.55), rgba(6, 26, 58, 0.25) 40%, rgba(6, 26, 58, 0.7)),
+      linear-gradient(90deg, rgba(6, 26, 58, 0.55), rgba(6, 26, 58, 0.25));
+  }
   .cta :global(.cta__bg) {
-    opacity: 0.6;
+    opacity: 0.35;
+    z-index: 0;
   }
   .cta__inner {
     position: relative;
@@ -68,24 +132,19 @@ const { heading, body, button, object = 'summit-flag', id = 'cta' } = Astro.prop
     color: var(--sky-200);
     margin-bottom: var(--s-3);
   }
-  .cta__obj {
-    position: absolute;
-    right: -8px;
-    top: -16px;
-  }
   @media (min-width: 768px) {
     .cta {
       padding: var(--s-8) var(--s-6);
+    }
+    .cta__photo::after {
+      background:
+        linear-gradient(180deg, rgba(6, 26, 58, 0.25), transparent 30%, transparent 70%, rgba(6, 26, 58, 0.35)),
+        linear-gradient(90deg, rgba(6, 26, 58, 0.9) 0%, rgba(6, 26, 58, 0.7) 38%, rgba(6, 26, 58, 0.08) 100%);
     }
     .cta__inner {
       flex-direction: row;
       align-items: center;
       justify-content: space-between;
-    }
-    .cta__obj {
-      position: static;
-      flex: none;
-      margin-right: var(--s-4);
     }
   }
 </style>

@@ -2,7 +2,11 @@
 // A dramatic black-and-white peak rising out of cloud, photographic, in the column beside the
 // syllabus cards on desktop (hidden below 1024px), with the logo's gold flag planted on the tip.
 // Decorative (aria-hidden, empty alt). The photo bleeds past the container to the right edge of
-// the viewport and melts into the page on its other three sides with a mask.
+// the viewport and melts into the page on its other three sides with a mask. The left side reaches
+// --under px behind the cards (or copy), and the left fade is long and eased: it starts under the
+// cards, so the photo comes out from behind them already pale and turns solid well before the
+// summit (Jon 26_11_11: the short fade read as a hard edge). The copy column sits above it
+// (.summit-split > :first-child in global.css).
 //
 // Flag placement: `summit` is the tip's position in the photo, as percentages. It is also the
 // photo's object-position, and with object-fit: cover the point at object-position (x%, y%) always
@@ -21,14 +25,16 @@ interface Props {
   summit: [number, number];
   /** Keep the photo inside its section (for clipped sections, e.g. Section's `pitch`). */
   contained?: boolean;
+  /** Less haze: more contrast, short edge fades, and the rock reaches left to meet the copy. */
+  crisp?: boolean;
   class?: string;
 }
-const { image, summit, contained = false, class: cls = '' } = Astro.props;
+const { image, summit, contained = false, crisp = false, class: cls = '' } = Astro.props;
 const [sx, sy] = summit;
 ---
 
-<div class:list={['sphoto', { 'sphoto--contained': contained }, cls]} data-reveal aria-hidden="true">
-  <div class="sphoto__frame" style={`--sy: ${sy}`}>
+<div class:list={['sphoto', { 'sphoto--contained': contained, 'sphoto--crisp': crisp }, cls]} data-reveal aria-hidden="true">
+  <div class="sphoto__frame" style={`--sx: ${sx}; --sy: ${sy}`}>
     <div class="sphoto__photo">
       <Image
         src={image}
@@ -64,34 +70,70 @@ const [sx, sy] = summit;
        the same amount so the clouds still run the full column. */
     .sphoto__frame {
       --lift: 46px;
+      /* how far the photo runs behind the copy column, and the left fade's length (from the
+         frame's left edge). The fade always ends 40px short of the summit so the tip stays solid. */
+      --under: 120px;
+      --fade: min(calc(var(--under) + 240px), calc(var(--sx) * 1% - 40px));
       position: absolute;
       top: 0;
       bottom: calc(var(--s-8) * -1 - var(--sy) * 1%);
       transform: translateY(calc(var(--lift) - var(--sy) * 1%));
-      left: calc(var(--s-4) * -1);
+      /* across the grid gap and --under px behind the cards (Jon, 26_11_11) */
+      left: calc((var(--s-8) + var(--under)) * -1);
       /* out past the container gutter to the viewport edge */
       right: calc(-1 * (max(0px, (100vw - var(--container)) / 2) + var(--gutter)));
     }
     /* In a clipped section (Section's `pitch`) the bottom fade would be cut off hard, so the photo
-       ends inside the section. The column keeps a tall floor so a short block of copy still gets
-       a full-size mountain. */
+       ends inside the section: it runs down into the section's bottom padding and stops just short
+       of the edge. The column floor is only about the height of a short intro, so the copy has no
+       empty band under it (Jon, 26_11_11). The photo is portrait and the column is wider than it is
+       tall, so object-fit: cover scales it by width and the mountain keeps its full size. */
     .sphoto--contained {
-      min-height: 620px;
+      min-height: 380px;
     }
     .sphoto--contained .sphoto__frame {
-      bottom: calc(var(--sy) * -1%);
+      bottom: calc(var(--section-y) * -1 + var(--s-2));
     }
     .sphoto__photo {
       position: absolute;
       inset: 0;
       -webkit-mask-image:
-        linear-gradient(to right, transparent 0, #000 22%),
-        linear-gradient(to bottom, transparent 0, #000 calc(var(--sy) * 1% - 2%), #000 72%, transparent 100%);
+        linear-gradient(
+          to right,
+          transparent 0,
+          rgba(0, 0, 0, 0.01) calc(var(--fade) * 0.25),
+          rgba(0, 0, 0, 0.04) calc(var(--fade) * 0.4),
+          rgba(0, 0, 0, 0.12) calc(var(--fade) * 0.52),
+          rgba(0, 0, 0, 0.3) calc(var(--fade) * 0.65),
+          rgba(0, 0, 0, 0.58) calc(var(--fade) * 0.79),
+          rgba(0, 0, 0, 0.86) calc(var(--fade) * 0.91),
+          #000 var(--fade)
+        ),
+        linear-gradient(to bottom, transparent 0, #000 calc(var(--sy) * 1% - 2%), #000 var(--bottom-solid, 72%), transparent 100%);
       -webkit-mask-composite: source-in;
       mask-image:
-        linear-gradient(to right, transparent 0, #000 22%),
-        linear-gradient(to bottom, transparent 0, #000 calc(var(--sy) * 1% - 2%), #000 72%, transparent 100%);
+        linear-gradient(
+          to right,
+          transparent 0,
+          rgba(0, 0, 0, 0.01) calc(var(--fade) * 0.25),
+          rgba(0, 0, 0, 0.04) calc(var(--fade) * 0.4),
+          rgba(0, 0, 0, 0.12) calc(var(--fade) * 0.52),
+          rgba(0, 0, 0, 0.3) calc(var(--fade) * 0.65),
+          rgba(0, 0, 0, 0.58) calc(var(--fade) * 0.79),
+          rgba(0, 0, 0, 0.86) calc(var(--fade) * 0.91),
+          #000 var(--fade)
+        ),
+        linear-gradient(to bottom, transparent 0, #000 calc(var(--sy) * 1% - 2%), #000 var(--bottom-solid, 72%), transparent 100%);
       mask-composite: intersect;
+    }
+    /* crisp (Jon 26_11_11, Steppingstones): less haze. The photo gets more contrast and a short
+       bottom fade. The left side is the same long fade as the default (Jon 26_11_11). */
+    .sphoto--crisp .sphoto__photo {
+      --bottom-solid: 84%;
+    }
+    .sphoto--crisp .sphoto__photo img {
+      /* more contrast in the rock; brightness keeps the sky a hair under white so it matches the mist page */
+      filter: contrast(1.18) brightness(0.965);
     }
     .sphoto__photo img {
       display: block;
@@ -124,8 +166,8 @@ const [sx, sy] = summit;
     opacity: 0;
     transform: translate(-4.5%, -100%) scaleY(0.2);
     transition:
-      opacity 0.3s var(--ease-out) 2.4s,
-      transform 0.9s var(--ease-out) 2.4s;
+      opacity 0.2s var(--ease-out) 0.9s,
+      transform 0.5s var(--ease-out) 0.9s;
   }
   .sphoto:global(.is-in) .sphoto__photo img {
     opacity: 1;

@@ -7,8 +7,11 @@ import CtaBand from '../components/CtaBand.astro';
 import Button from '../components/Button.astro';
 import Obj from '../components/Obj.astro';
 import Placeholder from '../components/Placeholder.astro';
+import ReviewMarquee from '../components/ReviewMarquee.astro';
+import { bookReaders } from '../data/testimonials';
 import { site, bookInfo } from '../data/site';
 import portrait from '../assets/photos/joe-portrait.png';
+import gift from '../assets/photos/graduation-gift.jpg';
 import bookCover from '../assets/book/book-cover.jpg';
 
 const title = 'Bursting the Bubble by Joe Hliboki | Always Forward Coaching';
@@ -84,11 +87,17 @@ const schema = [
 
   <!-- 3. Who it is for -->
   <Section id="for" labelledby="for-title">
-    <div class="prose" data-reveal-children>
-      <h2 id="for-title">Buy it for yourself. Or for the graduate who will not ask.</h2>
-      <p>
-        New grads and early-career professionals. Parents who want to help without hovering. Managers onboarding young teams who would rather hand over a book than repeat the same speech. Graduation-gift shoppers, you know who you are.
-      </p>
+    <!-- 50/50 card: a book-sized graduation gift (no people) left, copy right (shared .split-card in global.css) -->
+    <div class="split-card card" data-reveal>
+      <div class="split-card__media">
+        <Image src={gift} alt="A book-sized gift wrapped in kraft paper with a navy bow, next to a graduation cap with a gold tassel on a kitchen table" widths={[480, 720, 960, 1280]} sizes="(min-width: 900px) 50vw, 100vw" format="webp" quality={78} loading="lazy" decoding="async" style="--split-pos: 45% 50%" />
+      </div>
+      <div class="split-card__copy prose">
+        <h2 id="for-title">Buy it for yourself. Or for the graduate <span class="h-accent">who will not ask.</span></h2>
+        <p>
+          New grads and early-career professionals. Parents who want to help without hovering. Managers onboarding young teams who would rather hand over a book than repeat the same speech. Graduation-gift shoppers, you know who you are.
+        </p>
+      </div>
     </div>
   </Section>
 
@@ -103,13 +112,17 @@ const schema = [
         <p>
           Former Cisco sales leader, Certified FocalPoint Business, Executive & Career Coach, father of three, and the guy a mentor once told to stop wasting his knack for earning a young person's trust in thirty minutes. The book is that knack, written down. He coaches the same material <a href="/early-career-coaching/">one-on-one</a>, runs it as <a href="/career-steppingstones/">a group program</a>, and delivers it inside companies as <a href="/corporate-training/">an early-talent program</a>.
         </p>
-        <Placeholder text="READER QUOTES PLACEHOLDER: two or three Amazon reviews, if Jon has them." block />
       </div>
+    </div>
+    <!-- reader reviews: two marquee rows (ReviewMarquee), sample content until real reviews come in -->
+    <div class="readers">
+      <h2 class="readers__title" data-reveal>What <span class="h-accent">readers say.</span></h2>
+      <ReviewMarquee reviews={bookReaders} sample />
     </div>
   </Section>
 
   <!-- 5. Closing CTA -->
-  <CtaBand heading="Read it. Then come talk about it." body="The book is the cheapest coaching session Joe offers. The next one is free." button={{ label: 'Book a call with Joe', href: '/contact/' }} />
+  <CtaBand heading="Read it. Then come talk about it." body="The book is the cheapest coaching session Joe offers. The next one is free." button={{ label: 'Book a call with Joe', href: '/contact/' }} photo="quiet-cafe" />
 </Base>
 
 <style>
@@ -186,6 +199,13 @@ const schema = [
     --tilt: 2deg;
     width: min(70vw, 360px);
     aspect-ratio: 3 / 4;
+  }
+  .readers {
+    margin-top: var(--s-8);
+  }
+  .readers__title {
+    margin-bottom: var(--s-3);
+    text-align: center;
   }
   .author__copy p {
     max-width: 60ch;

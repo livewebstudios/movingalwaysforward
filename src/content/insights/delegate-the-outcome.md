@@ -1,7 +1,7 @@
 ---
 title: "Delegate the outcome, not the steps"
 description: "When you hand off the steps, you keep the job. Hand off the result you need, the limits and the deadline, and let them own the rest."
-pubDate: 2026-09-08
+pubDate: 2026-08-14
 category: "Leadership"
 cta: "/executive-business-coaching/"
 image: "/images/insights/delegate-the-outcome.webp"

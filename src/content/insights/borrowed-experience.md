@@ -1,7 +1,7 @@
 ---
 title: "Borrowed experience: the shortcut nobody tells you about"
 description: "You do not have to make every mistake yourself. Somebody already made it, and they will tell you about it if you ask the right way."
-pubDate: 2026-12-15
+pubDate: 2026-11-05
 category: "Early Career"
 cta: "/the-book/"
 image: "/images/insights/borrowed-experience.webp"

@@ -4,22 +4,21 @@ import Base from '../layouts/Base.astro';
 import Section from '../components/Section.astro';
 import InteriorHero from '../components/InteriorHero.astro';
 import ProofBlock from '../components/ProofBlock.astro';
+import { corporate } from '../data/testimonials';
 import CtaBand from '../components/CtaBand.astro';
-import StepsStrip from '../islands/StepsStrip';
+import CardTimeline from '../components/CardTimeline.astro';
 import CatalogCards, { type CatalogItem } from '../islands/CatalogCards';
-import { objSrc } from '../lib/images';
 import { service } from '../lib/seo';
 import workshop from '../assets/photos/joe-workshop.png';
 import SummitPhoto from '../components/SummitPhoto.astro';
 import peak from '../assets/photos/summit-peak-corporate.jpg';
+import { Image } from 'astro:assets';
+import teaching from '../assets/photos/joe-hero-teaching.png';
 
 const title = 'Corporate Training & Workshops in New Jersey | Always Forward Coaching';
 const description =
   'Sales training, leadership development and communication workshops for companies, delivered by Joe Hliboki. Course-catalog clarity: what you get, how long, what changes.';
 const path = '/corporate-training/';
-const coffee = await objSrc('coffee-cups', 144);
-const bubbles = await objSrc('speech-bubbles', 176);
-
 const items: CatalogItem[] = [
   {
     title: 'Sales Training',
@@ -38,7 +37,6 @@ const items: CatalogItem[] = [
     what: 'The easy way to have hard conversations. Writing, presenting, and saying the thing that needs saying. Joe’s most-requested workshop, and the one he volunteered to his own BNI chapter.',
     format: 'Half-day workshop, worksheets included.',
     outcome: 'Fewer meetings about the meeting. Issues surfaced while they are still cheap.',
-    object: bubbles,
   },
   {
     title: 'Early-Talent Programs',
@@ -71,14 +69,14 @@ const schema = [service('Corporate Training & Workshops', path, description, 'HR
 
   <Section tone="mist" pitch id="who" labelledby="who-title">
     <div class="summit-split">
-      <div class="prose" data-reveal-children>
-        <h2 id="who-title">For HR and L&D leaders who have sat through enough motivational theater.</h2>
+      <div class="prose who__copy" data-reveal-children>
+        <h2 id="who-title">For HR and L&D leaders who have sat through enough <span class="h-accent">motivational theater.</span></h2>
         <p>
           You need programs with a syllabus, a duration and an outcome you can put in a slide. You need a trainer who has done the job, not one who has read about it. And you need the new hires you spent six months recruiting to still be here in two years. That last one is Joe's specialty.
         </p>
         <p>In-person within about thirty miles of Montvale, New Jersey, and in Fairfield County, Connecticut. Virtual anywhere. Travel further by arrangement.</p>
       </div>
-      <SummitPhoto image={peak} summit={[49.9, 12.4]} contained />
+      <SummitPhoto image={peak} summit={[49.9, 12.4]} contained crisp />
     </div>
   </Section>
 
@@ -93,10 +91,9 @@ const schema = [service('Corporate Training & Workshops', path, description, 'HR
   <Section tone="mist" pitch id="how" labelledby="how-title">
     <div class="sec-head" data-reveal>
       <h2 id="how-title">How engagements run</h2>
+      <p class="deck">Twenty minutes to scope it, one page to approve, and a written debrief when it is done.</p>
     </div>
-    <StepsStrip
-      client:visible
-      {coffee}
+    <CardTimeline
       steps={[
         { title: 'Scope call.', body: 'Your goals, your team, your timeline. Twenty minutes.' },
         { title: 'Proposal.', body: 'A one-page program outline: sessions, deliverables, measurement.' },
@@ -105,10 +102,17 @@ const schema = [service('Corporate Training & Workshops', path, description, 'HR
     />
   </Section>
 
+  <!-- Proof: 50/50 card, photo left, copy right (same build as the early-career Steppingstones card); stacks on phones -->
   <Section id="proof" labelledby="proof-title">
+    <div class="split-card card" data-reveal>
+      <div class="split-card__media">
+        <Image src={teaching} alt="Joe Hliboki addressing a room of smiling professionals during a corporate workshop" widths={[480, 720, 960, 1280]} sizes="(min-width: 900px) 50vw, 100vw" format="webp" quality={78} loading="lazy" decoding="async" style="--split-pos: 62% 30%" />
+      </div>
+      <div class="split-card__copy">
     <ProofBlock
-      heading="He has been the buyer of training too."
-      testimonial="TESTIMONIAL PLACEHOLDER: client logos or a workshop testimonial. Jon supplies."
+      heading="He has been the <span class='h-accent'>buyer of training too.</span>"
+      sample
+      quotes={corporate}
       related={[
         { lead: 'One leader, not a team?', label: 'Executive & Business Coaching', href: '/executive-business-coaching/' },
         { lead: 'A peer cohort instead?', label: 'Group Programs', href: '/group-programs/' },
@@ -118,11 +122,22 @@ const schema = [service('Corporate Training & Workshops', path, description, 'HR
         Sixteen to twenty direct reports at a Fortune 100. Years of quota. A certification from FocalPoint, whose curriculum has been delivered to businesses worldwide. And Joe has sat on your side of the table, approving training budgets and watching what did and did not change afterward. His programs are built the way buyers wish they all were.
       </p>
     </ProofBlock>
+      </div>
+    </div>
   </Section>
 
   <CtaBand
     heading="Twenty minutes of your time. A program worth budgeting for."
     body="Tell Joe what your team needs to do differently. You will get a one-page outline back, not a deck."
     button={{ label: 'Book a scope call', href: '/contact/' }}
+    photo="server-room"
   />
 </Base>
+
+<style>
+  /* Who: the copy sits above the summit photo, which reaches left to touch it (Jon 26_11_11) */
+  .who__copy {
+    position: relative;
+    z-index: 1;
+  }
+</style>

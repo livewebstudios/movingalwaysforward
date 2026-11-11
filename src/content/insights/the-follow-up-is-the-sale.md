@@ -1,7 +1,7 @@
 ---
 title: "The follow-up is the sale"
 description: "The meeting went great, then nothing happened. Most deals are not lost in the room. They are lost in the quiet week after it."
-pubDate: 2026-08-25
+pubDate: 2026-08-11
 category: "Sales"
 cta: "/corporate-training/"
 image: "/images/insights/the-follow-up-is-the-sale.webp"

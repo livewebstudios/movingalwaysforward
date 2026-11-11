@@ -1,0 +1,244 @@
+---
+// "How it works" timeline, alternating cards on a center rail (Jon, 26_11_11).
+// Desktop (>= 860px): a vertical sky rail down the middle with a navy flag on top. Cards alternate
+// left and right of the rail, each one starting halfway down the card before it. A small pointer
+// on each card runs out to its dot on the rail (Jon 26_11_11: long pointers, no step labels).
+//   How the stagger works: a 3-column grid (card | rail | card). Every card spans two auto rows
+//   and starts one row below the card before it, so opposite cards overlap by about half and
+//   same-side cards stack with the row gap between them. Works for any number of steps.
+// Mobile: the rail runs down the left, every card sits to its right.
+interface Step {
+  when?: string;
+  title: string;
+  body: string;
+}
+interface Props {
+  steps: Step[];
+  flag?: string;
+}
+const { steps, flag = 'Start here' } = Astro.props;
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<div class="ctl">
+  <p class="ctl__flag" data-reveal>{flag}</p>
+  <ol class="ctl__list" data-reveal-children>
+    {
+      steps.map((s, i) => (
+        <li class:list={['ctl__step', i % 2 ? 'is-right' : 'is-left']} style={`--row:${i + 1}`}>
+          <span class="ctl__dot" aria-hidden="true" />
+          <div class="ctl__card">
+            <div class="ctl__top">
+              <span class="ctl__num" aria-hidden="true">{pad(i + 1)}</span>
+            </div>
+            <h3 class="ctl__title">
+              <span class="sr-only">Step {i + 1}: </span>
+              {s.title}
+            </h3>
+            <p class="ctl__text">{s.body}</p>
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+</div>
+
+<style>
+  .ctl {
+    --rail: 40px; /* width of the rail column; the line runs down its center */
+    --dot: 14px;
+    --dot-y: calc(var(--s-3) + 22px); /* dot and pointer height from the card top: the badge center */
+    /* card edge to dot center; the pointer runs that far, minus the dot and a hair of air */
+    --reach: calc(var(--rail) / 2 + var(--s-2));
+    --tip: calc(var(--reach) - var(--dot) / 2 - 5px);
+    position: relative;
+    max-width: 1040px;
+    margin-inline: auto;
+  }
+  /* the rail: from under the flag to the bottom of the last card */
+  .ctl::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    bottom: 0;
+    left: calc(var(--rail) / 2 - 1px);
+    width: 2px;
+    border-radius: 2px;
+    background: linear-gradient(var(--sky-200), var(--sky-200) 85%, transparent);
+  }
+  :global(.js) .ctl::before {
+    transform-origin: top;
+    transform: scaleY(0);
+    transition: transform 1100ms var(--ease-out) 120ms;
+  }
+  .ctl:has(.ctl__flag.is-in)::before {
+    transform: scaleY(1);
+  }
+
+  .ctl__flag {
+    position: relative;
+    z-index: 1;
+    display: inline-block;
+    margin: 0 0 var(--s-5);
+    padding: 12px 22px;
+    border-radius: var(--r-md);
+    background: var(--navy);
+    color: var(--paper);
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    box-shadow: var(--shadow-2);
+  }
+
+  .ctl__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--s-4);
+  }
+  .ctl__step {
+    position: relative;
+    padding-left: calc(var(--rail) + var(--s-2));
+  }
+  .ctl__dot {
+    position: absolute;
+    z-index: 1;
+    top: calc(var(--dot-y) - var(--dot) / 2);
+    left: calc(var(--rail) / 2 - var(--dot) / 2);
+    width: var(--dot);
+    height: var(--dot);
+    border-radius: 50%;
+    background: var(--sky-600);
+    box-shadow:
+      0 0 0 3px var(--paper),
+      0 0 0 7px var(--sky-050);
+  }
+
+  .ctl__card {
+    position: relative;
+    padding: var(--s-3);
+    background: var(--paper);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-2);
+    transition:
+      transform var(--t-hover) var(--ease-out),
+      box-shadow var(--t-hover) var(--ease-out);
+  }
+  /* pointer toward the rail: a long white wedge whose tip stops just short of the blue dot */
+  .ctl__card::before {
+    content: '';
+    position: absolute;
+    top: calc(var(--dot-y) - 11px);
+    left: calc(1px - var(--tip));
+    width: var(--tip);
+    height: 22px;
+    background: var(--paper);
+    clip-path: polygon(0 50%, 100% 0, 100% 100%);
+  }
+  @media (hover: hover) {
+    .ctl__card:hover {
+      transform: translateY(-3px);
+      box-shadow:
+        0 2px 4px rgba(6, 26, 58, 0.08),
+        0 28px 56px rgba(6, 26, 58, 0.16);
+    }
+  }
+
+  .ctl__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-2);
+    margin-bottom: var(--s-2);
+  }
+  /* numbered badge, the card's "avatar": navy disc inside a sky ring */
+  .ctl__num {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: var(--paper);
+    font-family: var(--font-display);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    box-shadow:
+      0 0 0 3px var(--paper),
+      0 0 0 5px var(--sky-200);
+  }
+  .ctl__title {
+    margin: 0 0 6px;
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--navy);
+  }
+  .ctl__text {
+    margin: 0;
+    color: var(--ink-600);
+    line-height: 1.6;
+  }
+
+  /* ---------- desktop: center rail, cards alternate and stagger ---------- */
+  @media (min-width: 860px) {
+    .ctl {
+      --rail: 96px;
+      --dot: 16px;
+      --reach: calc(var(--rail) / 2);
+    }
+    .ctl::before {
+      left: calc(50% - 1px);
+    }
+    .ctl__flag {
+      display: table;
+      margin-inline: auto;
+      margin-bottom: var(--s-6);
+    }
+    .ctl__list {
+      grid-template-columns: minmax(0, 1fr) var(--rail) minmax(0, 1fr);
+      column-gap: 0;
+      row-gap: var(--s-3);
+      align-items: start;
+    }
+    /* each step starts one row below the last and spans two, so it begins halfway down its neighbor */
+    .ctl__step {
+      grid-row: var(--row) / span 2;
+      padding: 0;
+    }
+    .ctl__step.is-left {
+      grid-column: 1;
+    }
+    .ctl__step.is-right {
+      grid-column: 3;
+    }
+    .ctl__step.is-left .ctl__dot {
+      left: auto;
+      right: calc(var(--rail) / -2 - var(--dot) / 2);
+    }
+    .ctl__step.is-right .ctl__dot {
+      left: calc(var(--rail) / -2 - var(--dot) / 2);
+    }
+    .ctl__step.is-left .ctl__card::before {
+      left: auto;
+      right: calc(1px - var(--tip));
+      clip-path: polygon(100% 50%, 0 0, 0 100%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(.js) .ctl::before {
+      transform: none;
+      transition: none;
+    }
+    .ctl__card {
+      transition: none;
+    }
+  }
+</style>

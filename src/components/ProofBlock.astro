@@ -1,15 +1,23 @@
 ---
-// Proof section of the ServiceSkeleton: Joe's relevant background, a labeled testimonial slot,
-// and the sibling-service links the SEO doc asks for.
-import Placeholder from './Placeholder.astro';
+// Proof section of the ServiceSkeleton: Joe's relevant background, testimonial cards, and the
+// sibling-service links the SEO doc asks for.
+//
+// Testimonial cards (Jon 26_11_11): white card, five gold stars with Joe's gold flag on the right,
+// a short title, the quote, then a round candid photo with name and role. Quotes live in
+// src/data/testimonials.ts. `sample` marks them as stand-ins so Joe can see the cards filled in
+// (he knows they are not real); drop it once real quotes replace them.
+import { Image } from 'astro:assets';
+import type { Testimonial } from '../data/testimonials';
 
 interface Props {
   heading: string;
-  testimonial: string;
+  quotes: Testimonial[];
+  sample?: boolean;
   related?: { label: string; href: string; lead?: string }[];
   id?: string;
 }
-const { heading, testimonial, related = [], id = 'proof' } = Astro.props;
+const { heading, quotes, sample = false, related = [], id = 'proof' } = Astro.props;
+const star = 'M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z';
 ---
 
 <div class="proof" data-reveal-children>
@@ -17,9 +25,39 @@ const { heading, testimonial, related = [], id = 'proof' } = Astro.props;
   <div class="proof__body measure">
     <slot />
   </div>
-  <div class="proof__quote">
-    <svg class="proof__mark" aria-hidden="true" viewBox="0 0 32 32" width="32" height="32"><path d="M9 20c-2.8 0-5-2.2-5-5 0-4.4 3.3-8 8-9l.8 1.8C10 8.8 8.2 10.8 8 13h1c2.2 0 4 1.6 4 3.5S11.2 20 9 20zm12 0c-2.8 0-5-2.2-5-5 0-4.4 3.3-8 8-9l.8 1.8C22 8.8 20.2 10.8 20 13h1c2.2 0 4 1.6 4 3.5S23.2 20 21 20z" fill="#54A4E2" /></svg>
-    <Placeholder text={testimonial} block />
+  <div class="proof__quotes">
+    <div class="proof__grid">
+      {
+        quotes.map((q) => (
+          <figure class="tcard">
+            <div class="tcard__top">
+              <span class="tcard__stars" role="img" aria-label="5 out of 5 stars">
+                {[0, 1, 2, 3, 4].map(() => (
+                  <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true" focusable="false">
+                    <path d={star} />
+                  </svg>
+                ))}
+              </span>
+              <svg class="tcard__flag" viewBox="0 0 224 432" aria-hidden="true" focusable="false">
+                <use href="#af-flag" width="224" height="432" />
+              </svg>
+            </div>
+            <p class="tcard__title">{q.title}</p>
+            <blockquote class="tcard__quote">
+              <p>{q.text}</p>
+            </blockquote>
+            <figcaption class="tcard__who">
+              <Image src={q.photo} alt="" widths={[48, 96, 144]} sizes="48px" format="webp" quality={80} loading="lazy" decoding="async" />
+              <span>
+                <strong>{q.name}</strong>
+                {q.role && <span>{q.role}</span>}
+              </span>
+            </figcaption>
+          </figure>
+        ))
+      }
+    </div>
+    {sample && <p class="proof__sample">This is placeholder text. Sample testimonials until the real ones come in.</p>}
   </div>
   <slot name="extra" />
   {
@@ -43,15 +81,91 @@ const { heading, testimonial, related = [], id = 'proof' } = Astro.props;
   .proof__body {
     margin-bottom: var(--s-4);
   }
-  .proof__quote {
-    display: grid;
-    gap: var(--s-2);
-    padding: var(--s-3);
-    border-radius: var(--r-lg);
-    background: var(--mist);
-    border: 1px solid var(--line);
+  .proof__quotes {
+    max-width: 880px;
     margin-bottom: var(--s-4);
-    max-width: 760px;
+  }
+  /* side by side when there is room, stacked in narrow columns (the 50/50 cards) */
+  .proof__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+    gap: var(--s-3);
+  }
+  .tcard {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: var(--s-4);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--r-xl);
+    box-shadow: var(--shadow-2);
+    color: var(--ink);
+  }
+  .tcard__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: var(--s-2);
+  }
+  .tcard__stars {
+    display: inline-flex;
+    gap: 4px;
+  }
+  .tcard__stars svg {
+    fill: var(--gold);
+  }
+  .tcard__flag {
+    width: 16px;
+    height: 31px;
+    margin-top: -6px;
+    filter: drop-shadow(0 1px 1px rgba(11, 35, 65, 0.2));
+  }
+  .tcard__title {
+    margin: 0 0 6px;
+    font-family: var(--font-display);
+    font-size: 1.3125rem;
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--navy);
+  }
+  .tcard__quote {
+    flex: 1;
+    margin: 0 0 var(--s-3);
+  }
+  .tcard__quote p {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--ink-600);
+  }
+  .tcard__who {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.9375rem;
+    line-height: 1.35;
+  }
+  .tcard__who img {
+    flex: none;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 0 0 2px var(--paper), 0 0 0 3px var(--line);
+  }
+  .tcard__who strong {
+    display: block;
+    color: var(--navy);
+    font-weight: 600;
+  }
+  .tcard__who span span {
+    color: var(--ink-600);
+  }
+  .proof__sample {
+    margin: var(--s-2) 0 0;
+    font-size: 0.8125rem;
+    color: var(--ink-600);
   }
   .proof__related {
     list-style: none;

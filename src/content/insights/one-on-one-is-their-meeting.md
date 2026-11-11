@@ -1,7 +1,7 @@
 ---
 title: "The one-on-one is their meeting, not yours"
 description: "If your one-on-ones are status updates, you are wasting the best hour of your week. Hand the agenda to your report and listen more than you talk."
-pubDate: 2026-07-14
+pubDate: 2026-07-03
 category: "Leadership"
 cta: "/executive-business-coaching/"
 image: "/images/insights/one-on-one-is-their-meeting.webp"

@@ -1,7 +1,7 @@
 ---
 title: "Saying no without burning the bridge"
 description: "Saying yes to everything is how good people burn out. You can turn down work, requests and favors and still keep the relationship strong."
-pubDate: 2026-06-16
+pubDate: 2026-06-04
 category: "Workplace Skills"
 cta: "/corporate-training/"
 image: "/images/insights/saying-no-without-burning-bridges.webp"

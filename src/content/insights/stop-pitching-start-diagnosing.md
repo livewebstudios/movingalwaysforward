@@ -1,7 +1,7 @@
 ---
 title: "Stop pitching. Start diagnosing."
 description: "Nobody wants to be pitched. Everyone wants their problem understood. Ask better questions first and the pitch nearly writes itself."
-pubDate: 2026-10-06
+pubDate: 2026-09-09
 category: "Sales"
 cta: "/corporate-training/"
 image: "/images/insights/stop-pitching-start-diagnosing.webp"

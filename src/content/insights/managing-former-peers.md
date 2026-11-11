@@ -1,7 +1,7 @@
 ---
 title: "Your first month as the boss of your friends"
 description: "Getting promoted over your friends is awkward for everyone. Name it early, reset the rules and lead fairly. The first month sets the tone."
-pubDate: 2026-06-02
+pubDate: 2026-05-27
 category: "Leadership"
 cta: "/executive-business-coaching/"
 image: "/images/insights/managing-former-peers.webp"

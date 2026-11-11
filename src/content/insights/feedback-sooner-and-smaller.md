@@ -1,7 +1,7 @@
 ---
 title: "Feedback that lands: sooner and smaller"
 description: "Most feedback fails because it shows up late and all at once. Give it the same week, one point at a time, and people can actually use it."
-pubDate: 2026-10-20
+pubDate: 2026-09-24
 category: "Leadership"
 cta: "/executive-business-coaching/"
 image: "/images/insights/feedback-sooner-and-smaller.webp"

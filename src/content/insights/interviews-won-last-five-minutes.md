@@ -1,7 +1,7 @@
 ---
 title: "Interviews are won in the last five minutes"
 description: "When they ask if you have any questions, the interview is not over. It is your best chance to stand out. Here is how to use it."
-pubDate: 2026-08-11
+pubDate: 2026-07-25
 category: "Early Career"
 cta: "/early-career-coaching/"
 image: "/images/insights/interviews-won-last-five-minutes.webp"

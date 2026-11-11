@@ -57,6 +57,13 @@
   --shadow-1: 0 1px 2px rgba(6, 26, 58, 0.06), 0 8px 24px rgba(6, 26, 58, 0.06);
   --shadow-2: 0 2px 4px rgba(6, 26, 58, 0.08), 0 20px 48px rgba(6, 26, 58, 0.12);
 
+  /* grid paper (catalog cards + syllabus cards). Jon 26_11_11: "meet me in the middle" between
+     the first faint pass and the bluer second pass. Used by .grid-paper in global.css. */
+  --grid-paper-bg: #fafcfe;
+  --grid-paper-major: rgba(84, 164, 226, 0.36);
+  --grid-paper-minor: rgba(84, 164, 226, 0.16);
+  --grid-paper-mask: radial-gradient(130% 110% at 100% 0%, #000 0%, rgba(0, 0, 0, 0.65) 45%, rgba(0, 0, 0, 0.24) 100%);
+
   /* motion (02_motion_system.md) */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);

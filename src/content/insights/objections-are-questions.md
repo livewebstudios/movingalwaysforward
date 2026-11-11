@@ -1,7 +1,7 @@
 ---
 title: "Objections are questions in a bad mood"
 description: "'Too expensive' often means 'show me why this is worth it.' Hear objections as questions and they stop feeling like walls."
-pubDate: 2026-06-30
+pubDate: 2026-06-27
 category: "Sales"
 cta: "/corporate-training/"
 image: "/images/insights/objections-are-questions.webp"

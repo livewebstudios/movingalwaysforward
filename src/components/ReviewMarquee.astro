@@ -1,0 +1,198 @@
+---
+// Reader reviews in two slow marquee rows (Jon 26_11_11, after a Tailwind/shadcn "testimonials with
+// marquee" snippet; rebuilt here in plain CSS because the site has no Tailwind). Row two runs the
+// other way. Each row renders its list twice; the second copy is aria-hidden and only there so the
+// loop is seamless. Hover or focus pauses. Reduced motion: no movement, the first copy scrolls
+// sideways by hand. Same card language as the testimonial cards: gold stars, Joe's flag, a title,
+// the quote, a round photo.
+import { Image } from 'astro:assets';
+import type { Review } from '../data/testimonials';
+
+interface Props {
+  reviews: Review[];
+  sample?: boolean;
+}
+const { reviews, sample = false } = Astro.props;
+const half = Math.ceil(reviews.length / 2);
+const rows = [reviews.slice(0, half), reviews.slice(half)];
+const star = 'M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z';
+---
+
+<div class="rmq" data-reveal>
+  {
+    rows.map((row, r) => (
+      <div class="rmq__viewport" tabindex="0" aria-label={r === 0 ? 'Reader reviews' : 'More reader reviews'} role="region">
+        <div class:list={['rmq__track', { 'rmq__track--rev': r === 1 }]}>
+          {[0, 1].map((copy) =>
+            row.map((q) => (
+              <figure class="rcard" aria-hidden={copy === 1 ? 'true' : undefined}>
+                <div class="rcard__top">
+                  <span class="rcard__stars" role="img" aria-label="5 out of 5 stars">
+                    {[0, 1, 2, 3, 4].map(() => (
+                      <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" focusable="false">
+                        <path d={star} />
+                      </svg>
+                    ))}
+                  </span>
+                  <svg class="rcard__flag" viewBox="0 0 224 432" aria-hidden="true" focusable="false">
+                    <use href="#af-flag" width="224" height="432" />
+                  </svg>
+                </div>
+                <p class="rcard__title">{q.title}</p>
+                <blockquote class="rcard__quote">
+                  <p>{q.text}</p>
+                </blockquote>
+                <figcaption class="rcard__who">
+                  <Image src={q.photo} alt="" widths={[44, 88, 132]} sizes="44px" format="webp" quality={80} loading="lazy" decoding="async" />
+                  <span>
+                    <strong>{q.name}</strong>
+                    {q.role && <span>{q.role}</span>}
+                  </span>
+                </figcaption>
+              </figure>
+            ))
+          )}
+        </div>
+      </div>
+    ))
+  }
+  {sample && <p class="rmq__sample">This is placeholder text. Sample reviews until the real ones come in.</p>}
+</div>
+
+<style>
+  .rmq {
+    display: grid;
+    gap: var(--s-3);
+  }
+  .rmq__viewport {
+    overflow: hidden;
+    padding-block: 12px 20px;
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 7%, #000 93%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0, #000 7%, #000 93%, transparent 100%);
+  }
+  .rmq__viewport:focus-visible {
+    outline: 2px solid var(--navy);
+    outline-offset: 4px;
+    border-radius: var(--r-lg);
+  }
+  .rmq__track {
+    display: flex;
+    width: max-content;
+    animation: rmq-x 60s linear infinite;
+  }
+  .rmq__track--rev {
+    animation-direction: reverse;
+    animation-duration: 70s;
+  }
+  .rmq__viewport:hover .rmq__track,
+  .rmq__viewport:focus-within .rmq__track {
+    animation-play-state: paused;
+  }
+  /* each card carries its own right margin, so half the track is exactly one copy of the list */
+  @keyframes rmq-x {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  .rcard {
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    width: 340px;
+    margin: 0 var(--s-3) 0 0;
+    padding: var(--s-3) var(--s-3) var(--s-3);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--r-xl);
+    box-shadow: var(--shadow-1);
+    color: var(--ink);
+  }
+  .rcard__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .rcard__stars {
+    display: inline-flex;
+    gap: 3px;
+  }
+  .rcard__stars svg {
+    fill: var(--gold);
+  }
+  .rcard__flag {
+    width: 14px;
+    height: 27px;
+    margin-top: -5px;
+    filter: drop-shadow(0 1px 1px rgba(11, 35, 65, 0.2));
+  }
+  .rcard__title {
+    margin: 0 0 6px;
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--navy);
+  }
+  .rcard__quote {
+    flex: 1;
+    margin: 0 0 var(--s-2);
+  }
+  .rcard__quote p {
+    margin: 0;
+    max-width: none;
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    color: var(--ink-600);
+  }
+  .rcard__who {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.875rem;
+    line-height: 1.35;
+  }
+  .rcard__who img {
+    flex: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 0 0 2px var(--paper), 0 0 0 3px var(--line);
+  }
+  .rcard__who strong {
+    display: block;
+    color: var(--navy);
+    font-weight: 600;
+  }
+  .rcard__who span span {
+    color: var(--ink-600);
+  }
+  .rmq__sample {
+    margin: 0;
+    font-size: 0.8125rem;
+    color: var(--ink-600);
+    text-align: center;
+  }
+
+  @media (max-width: 600px) {
+    .rcard {
+      width: 280px;
+    }
+  }
+  /* reduced motion: hold still, drop the loop copy, let the row scroll by hand */
+  @media (prefers-reduced-motion: reduce) {
+    .rmq__track {
+      animation: none;
+    }
+    .rmq__viewport {
+      overflow-x: auto;
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+    .rcard[aria-hidden='true'] {
+      display: none;
+    }
+  }
+</style>

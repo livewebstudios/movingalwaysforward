@@ -7,6 +7,8 @@ import CtaBand from '../components/CtaBand.astro';
 import { site } from '../data/site';
 import portrait from '../assets/photos/joe-portrait.png';
 import ridge from '../assets/photos/joe-ridge-trail.png';
+import SummitPhoto from '../components/SummitPhoto.astro';
+import peak from '../assets/photos/summit-peak-corporate.jpg';
 
 const title = 'About Joe Hliboki, Business & Career Coach | Always Forward Coaching';
 const description =
@@ -52,6 +54,8 @@ const schema = [
 
   <!-- 2. The story -->
   <Section tone="mist" pitch id="story" labelledby="story-title">
+    <!-- the story on the left, the summit photo beside it with the flag level with the heading (Jon 26_11_11) -->
+    <div class="summit-split">
     <div class="prose story" data-reveal-children>
       <h2 id="story-title">He's had your job. <span class="h-accent">That's why he can coach it.</span></h2>
       <p>
@@ -74,6 +78,8 @@ const schema = [
         The tagline is the job description. <strong>Working to facilitate change and accelerate success</strong>: change, because nothing he coaches works without it, and acceleration, because you would get there eventually. He just gets you there sooner.
       </p>
     </div>
+      <SummitPhoto image={peak} summit={[49.9, 12.4]} contained crisp />
+    </div>
   </Section>
 
   <!-- 3. Wide band -->
@@ -95,19 +101,40 @@ const schema = [
   <!-- 4. Credentials -->
   <Section id="credentials" labelledby="cred-title">
     <div class="sec-head" data-reveal>
-      <h2 id="cred-title">The short version.</h2>
+      <h2 id="cred-title">The short <span class="h-accent">version.</span></h2>
     </div>
+    <!-- grid-paper cards, three over two (Jon 26_11_11: same paper as the syllabus cards) -->
     <ol class="creds" data-reveal-children>
-      <li>Certified FocalPoint Business, Executive & Career Coach</li>
-      <li>Former sales leader, Cisco: healthcare team of sixteen to twenty</li>
-      <li>Author, <em>Bursting the Bubble: A Commonsense Guide to Early Career Success</em></li>
-      <li>BNI Sunrise member and Power of One Coordinator, Bergen County, NJ</li>
-      <li>Coaching practice: three years, three delivery days a week, in person in northern NJ and by video nationally</li>
+      <li class="cred">
+        <span class="cred__num" aria-hidden="true">01</span>
+        <h3 class="cred__title">Certified coach</h3>
+        <p>FocalPoint Business, Executive & Career Coach.</p>
+      </li>
+      <li class="cred">
+        <span class="cred__num" aria-hidden="true">02</span>
+        <h3 class="cred__title">Cisco sales leader</h3>
+        <p>Led a healthcare sales team of sixteen to twenty.</p>
+      </li>
+      <li class="cred">
+        <span class="cred__num" aria-hidden="true">03</span>
+        <h3 class="cred__title">Author</h3>
+        <p><a href="/the-book/"><em>Bursting the Bubble</em></a>: A Commonsense Guide to Early Career Success.</p>
+      </li>
+      <li class="cred">
+        <span class="cred__num" aria-hidden="true">04</span>
+        <h3 class="cred__title">BNI Sunrise</h3>
+        <p>Member and Power of One Coordinator, Bergen County, NJ.</p>
+      </li>
+      <li class="cred">
+        <span class="cred__num" aria-hidden="true">05</span>
+        <h3 class="cred__title">Three years coaching</h3>
+        <p>Three delivery days a week, in person in northern NJ and by video nationally.</p>
+      </li>
     </ol>
   </Section>
 
   <!-- 5. Closing CTA -->
-  <CtaBand heading="Thirty minutes. See for yourself." body="The first call is free. Joe will tell you plainly whether coaching fits, and what to do tomorrow either way." button={{ label: 'Book a call with Joe', href: '/contact/' }} />
+  <CtaBand heading="Thirty minutes. See for yourself." body="The first call is free. Joe will tell you plainly whether coaching fits, and what to do tomorrow either way." button={{ label: 'Book a call with Joe', href: '/contact/' }} photo="summit-dawn" />
 </Base>
 
 <style>
@@ -161,28 +188,67 @@ const schema = [
     list-style: none;
     margin: 0;
     padding: 0;
-    max-width: 760px;
-    counter-reset: cred;
-  }
-  .creds li {
-    counter-increment: cred;
     display: grid;
-    grid-template-columns: 48px 1fr;
-    gap: var(--s-2);
-    align-items: baseline;
-    padding: var(--s-2) 0;
-    border-top: 1px solid var(--line);
-    font-size: 1.0625rem;
+    gap: var(--s-3);
   }
-  .creds li:last-child {
-    border-bottom: 1px solid var(--line);
+  /* same grid paper as the syllabus cards (--grid-paper-* tokens) */
+  .cred {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: var(--s-4);
+    border: 1px solid rgba(6, 26, 58, 0.1);
+    border-radius: var(--r-xl);
+    background: var(--grid-paper-bg);
+    box-shadow: var(--shadow-1);
   }
-  .creds li::before {
-    content: counter(cred, decimal-leading-zero);
+  .cred::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      linear-gradient(var(--grid-paper-major) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-paper-major) 1px, transparent 1px),
+      linear-gradient(var(--grid-paper-minor) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-paper-minor) 1px, transparent 1px);
+    background-size: 60px 60px, 60px 60px, 12px 12px, 12px 12px;
+    background-position: -1px -1px;
+    -webkit-mask-image: var(--grid-paper-mask);
+    mask-image: var(--grid-paper-mask);
+    pointer-events: none;
+  }
+  .cred__num {
+    margin-bottom: var(--s-2);
     font-family: var(--font-display);
     font-weight: 800;
-    font-size: 1.25rem;
+    font-size: 2.75rem;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--sky);
+  }
+  .cred__title {
+    margin: 0 0 6px;
+    font-size: var(--fs-h3);
     color: var(--navy);
+  }
+  .cred p {
+    margin: 0;
+    color: var(--ink);
+    max-width: 52ch;
+  }
+  @media (min-width: 720px) {
+    .creds {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+    .cred {
+      grid-column: span 2;
+    }
+    .cred:nth-child(n + 4) {
+      grid-column: span 3;
+    }
   }
   @media (min-width: 900px) {
     .ahero {

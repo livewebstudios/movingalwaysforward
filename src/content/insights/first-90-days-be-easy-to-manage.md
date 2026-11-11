@@ -1,7 +1,7 @@
 ---
 title: "The first 90 days: be easy to manage"
 description: "Nobody gets fired in month two for lacking brilliance. Plenty stall for being hard to manage. Here is the fix."
-pubDate: 2026-11-17
+pubDate: 2026-10-07
 category: "Early Career"
 cta: "/early-career-coaching/"
 image: "/images/insights/first-90-days-be-easy-to-manage.webp"

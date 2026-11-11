@@ -11,6 +11,9 @@ import Backdrop from '../components/Backdrop.astro';
 import Obj from '../components/Obj.astro';
 import Button from '../components/Button.astro';
 import Placeholder from '../components/Placeholder.astro';
+import SummitPhoto from '../components/SummitPhoto.astro';
+import peak from '../assets/photos/summit-peak-exec.jpg';
+import sideline from '../assets/photos/football-sideline.jpg';
 import { stoneCards, tracks, flyers, pricing } from '../data/steppingstones';
 import { site } from '../data/site';
 import bgLight from '../assets/backgrounds/bg-contour-light.png';
@@ -78,8 +81,9 @@ const schema = [
 
   <!-- 2. Who it is for -->
   <Section tone="mist" pitch id="who" labelledby="who-title">
-    <div class="prose" data-reveal-children>
-      <h2 id="who-title">For the ones lacking a map, not ability.</h2>
+    <div class="summit-split">
+    <div class="prose who__copy" data-reveal-children>
+      <h2 id="who-title">For the ones lacking a map, <span class="h-accent">not ability.</span></h2>
       <p>
         About to graduate. Just graduated. Unemployed or underemployed and tired of it. Stuck, without focus, vision or direction. Or already working and wanting the next level and to get better at what you do. Joe built this because the one-on-one coaching works, and not every 23-year-old can afford it. This is the same material at a price a first paycheck can carry.
       </p>
@@ -87,6 +91,8 @@ const schema = [
         To share awareness, insight, strategy and experience that produce confidence and a competitive career advantage that attracts hiring managers.
         <cite>The program's purpose, in Joe's words</cite>
       </blockquote>
+    </div>
+      <SummitPhoto image={peak} summit={[54.9, 12.9]} contained crisp />
     </div>
   </Section>
 
@@ -138,11 +144,17 @@ const schema = [
 
   <!-- 5. Proof and the flyer library -->
   <Section pitch id="proof" labelledby="proof-title">
-    <div class="prose" data-reveal-children>
+    <!-- 50/50 card: high school football practice, a coach on the side (no Joe, no faces) left, copy right (shared .split-card in global.css) -->
+    <div class="split-card card coach-card" data-reveal>
+      <div class="split-card__media">
+        <Image src={sideline} alt="High school football players running a handoff drill at practice while a coach watches from the side" widths={[480, 720, 960, 1280]} sizes="(min-width: 900px) 50vw, 100vw" format="webp" quality={78} loading="lazy" decoding="async" style="--split-pos: 40% 50%" />
+      </div>
+      <div class="split-card__copy prose">
       <h2 id="proof-title">From the coach who <span class="h-accent">wrote the book.</span></h2>
       <p>
         Joe Hliboki is a Certified Business, Executive & Career Coach who helps people get better at what they do and solve the problems they have not been able to solve alone. He is connected to Gen Z through his own three kids, through coaching more than five hundred young athletes as they grew up, and through mentoring new hires inside a Fortune 100. <a href="/the-book/"><em>Bursting the Bubble</em></a> is the textbook; this program is the class. The same material, one-on-one, is <a href="/early-career-coaching/">Early Career Coaching</a>.
       </p>
+      </div>
     </div>
 
     <div class="flyers" data-reveal-children>
@@ -184,7 +196,7 @@ const schema = [
     heading="Thirty minutes with Coach Joe. Then decide."
     body="The introductory call is included in the initiation, and it is also free if you just want to ask questions first."
     button={{ label: 'Book the call', href: '/contact/' }}
-    object="stepping-stones"
+    photo="summit-clouds"
   />
 </Base>
 
@@ -379,5 +391,10 @@ const schema = [
     .capture__row {
       grid-template-columns: 1fr auto;
     }
+  }
+  /* 2. Who: the copy sits above the summit photo, which reaches left to touch it (Jon 26_11_11) */
+  .who__copy {
+    position: relative;
+    z-index: 1;
   }
 </style>

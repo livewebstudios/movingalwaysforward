@@ -32,7 +32,7 @@ export default function DoorGrid({ doors }: { doors: Door[] }) {
                 <h3 className="bento__title">{d.title}</h3>
                 <p className="bento__body">{d.body}</p>
                 <span className="bento__go">
-                  Explore
+                  <span className="bento__go-label">Explore</span>
                   <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d="M4 10h11M10 5l5 5-5 5" />
                   </svg>
@@ -87,6 +87,12 @@ const css = `
 .bento__go {
   display: inline-flex; align-items: center; gap: 6px; margin-top: 4px;
   font-size: var(--fs-small); font-weight: 600; color: var(--navy);
+}
+.bento__go-label {
+  text-decoration: underline;
+  text-decoration-color: var(--cta);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 5px;
 }
 .bento__go svg { transition: transform var(--bento-time) var(--bento-ease); }
 

@@ -1,7 +1,7 @@
 ---
 title: "Run a meeting people want to come back to"
 description: "Most meetings fail before they start: no clear purpose, no decision, no owner. Fix those three and people will show up ready."
-pubDate: 2026-07-28
+pubDate: 2026-07-12
 category: "Workplace Skills"
 cta: "/corporate-training/"
 image: "/images/insights/run-a-meeting-worth-attending.webp"

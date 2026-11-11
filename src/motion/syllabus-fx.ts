@@ -1,7 +1,7 @@
 // Typed text for the dash lists (.syllabus) on the three service pages. Each item types in word by
 // word, one rendered line at a time: the bold lead line first, then the body under it. Items run
 // strictly top to bottom: an item waits for the one above it to finish. Same line sweep as
-// livewebstudios.com/faq, at roughly twice its speed.
+// livewebstudios.com/faq, at roughly four times its speed.
 //
 // - Each item is queued once, when it scrolls into view.
 // - No layout shift: words are opacity-only spans, so the text keeps its box the whole time.
@@ -11,7 +11,7 @@
 // - ClientRouter: binds on astro:page-load, finds elements fresh each time, and data-fx guards
 //   against binding an item twice.
 
-const LINE_MS = 200; // Jon 2026-11-10: faster (was 420, the LWS FAQ pace)
+const LINE_MS = 100; // Jon 2026-11-11: faster again (was 200; 420 before that, the LWS FAQ pace)
 const WORD_FADE_MS = 90;
 const ITEMS = '.syllabus > li';
 const BLOCKS = ':scope > h3, :scope > p';

@@ -1,7 +1,7 @@
 ---
 title: "Know your number before Monday"
 description: "Most salespeople know their target. Fewer know how many calls, meetings and proposals it takes to hit it. Do that math and the week gets clear."
-pubDate: 2026-05-19
+pubDate: 2026-05-16
 category: "Sales"
 cta: "/corporate-training/"
 image: "/images/insights/know-your-number.webp"

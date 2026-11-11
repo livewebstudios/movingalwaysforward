@@ -1,7 +1,7 @@
 ---
 title: "Your resume is not a biography"
 description: "A resume has one job: get you the interview. Cut everything that does not help a busy stranger say yes to talking with you."
-pubDate: 2026-11-03
+pubDate: 2026-09-30
 category: "Early Career"
 cta: "/early-career-coaching/"
 image: "/images/insights/resume-is-not-a-biography.webp"

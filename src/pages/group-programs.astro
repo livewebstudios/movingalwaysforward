@@ -1,14 +1,16 @@
 ---
 // Group Programs · ServiceSkeleton, six sections. No prices.
 import Base from '../layouts/Base.astro';
+import { Image } from 'astro:assets';
 import Section from '../components/Section.astro';
 import InteriorHero from '../components/InteriorHero.astro';
 import ProofBlock from '../components/ProofBlock.astro';
+import { group } from '../data/testimonials';
 import CtaBand from '../components/CtaBand.astro';
-import StepsStrip from '../islands/StepsStrip';
-import { objSrc } from '../lib/images';
+import CardTimeline from '../components/CardTimeline.astro';
 import { service } from '../lib/seo';
 import workshop from '../assets/photos/joe-workshop.png';
+import teaching from '../assets/photos/joe-hero-teaching.png';
 import SummitPhoto from '../components/SummitPhoto.astro';
 import peak from '../assets/photos/summit-peak-group.jpg';
 
@@ -16,7 +18,6 @@ const title = 'Group Coaching Programs | Always Forward Coaching';
 const description =
   'Group coaching with Joe Hliboki for cohorts, teams and peer groups. A defined group, a defined arc, structured sessions and shared accountability.';
 const path = '/group-programs/';
-const coffee = await objSrc('coffee-cups', 144);
 const schema = [service('Group Coaching Programs', path, description, 'Peer cohorts, leadership teams and groups of young professionals')];
 ---
 
@@ -73,10 +74,9 @@ const schema = [service('Group Coaching Programs', path, description, 'Peer coho
   <Section tone="mist" pitch id="how" labelledby="how-title">
     <div class="sec-head" data-reveal>
       <h2 id="how-title">How it works</h2>
+      <p class="deck">Three steps from the first conversation to a group that works differently.</p>
     </div>
-    <StepsStrip
-      client:visible
-      {coffee}
+    <CardTimeline
       steps={[
         { title: 'Talk.', body: 'What the group needs, who is in it, what done looks like.' },
         { title: 'Design.', body: 'A session-by-session outline you approve before anyone sits down.' },
@@ -85,10 +85,17 @@ const schema = [service('Group Coaching Programs', path, description, 'Peer coho
     />
   </Section>
 
+  <!-- Proof: 50/50 card, Joe with a group at the table on the left, copy right (shared .split-card in global.css) -->
   <Section id="proof" labelledby="proof-title">
+    <div class="split-card card" data-reveal>
+      <div class="split-card__media">
+        <Image src={teaching} alt="Joe Hliboki talking with a small group of professionals around a conference table" widths={[480, 720, 960, 1280]} sizes="(min-width: 900px) 50vw, 100vw" format="webp" quality={78} loading="lazy" decoding="async" style="--split-pos: 52% 30%" />
+      </div>
+      <div class="split-card__copy">
     <ProofBlock
       heading="He cannot help himself."
-      testimonial="TESTIMONIAL PLACEHOLDER: from a group participant. Jon supplies."
+      sample
+      quotes={group}
       related={[
         { lead: 'One person, not a group?', label: 'Executive & Business Coaching', href: '/executive-business-coaching/' },
         { lead: 'Training for the whole company?', label: 'Corporate Training', href: '/corporate-training/' },
@@ -98,7 +105,9 @@ const schema = [service('Group Coaching Programs', path, description, 'Peer coho
         Joe has run teams, cohorts and workshops his whole career, including coaching more than five hundred young athletes and the Professional Communications workshop he built and delivered to his own BNI chapter because he thought they needed it. They did. His <a href="/career-steppingstones/">Career Steppingstones program</a> runs on the same group model for young professionals.
       </p>
     </ProofBlock>
+      </div>
+    </div>
   </Section>
 
-  <CtaBand heading="Bring the group. Leave with momentum." body="Tell Joe who is in the room and what has to be different in ninety days." button={{ label: 'Book a call with Joe', href: '/contact/' }} />
+  <CtaBand heading="Bring the group. Leave with momentum." body="Tell Joe who is in the room and what has to be different in ninety days." button={{ label: 'Book a call with Joe', href: '/contact/' }} photo="lantern-path" />
 </Base>

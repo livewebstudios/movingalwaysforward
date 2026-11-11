@@ -1,7 +1,7 @@
 ---
 title: "Write the email they can answer in one line"
 description: "Long emails get skimmed, parked and forgotten. Put the question first, make it easy to answer, and watch your replies come back faster."
-pubDate: 2026-09-22
+pubDate: 2026-08-23
 category: "Workplace Skills"
 cta: "/corporate-training/"
 image: "/images/insights/email-they-can-answer.webp"

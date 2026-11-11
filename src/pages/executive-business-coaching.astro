@@ -1,14 +1,16 @@
 ---
 // Executive & Business Coaching · ServiceSkeleton, six sections. No prices on this page.
 import Base from '../layouts/Base.astro';
+import { Image } from 'astro:assets';
 import Section from '../components/Section.astro';
 import InteriorHero from '../components/InteriorHero.astro';
 import ProofBlock from '../components/ProofBlock.astro';
+import { executive } from '../data/testimonials';
 import CtaBand from '../components/CtaBand.astro';
-import StepsStrip from '../islands/StepsStrip';
-import { objSrc } from '../lib/images';
+import CardTimeline from '../components/CardTimeline.astro';
 import { service } from '../lib/seo';
 import oneOnOne from '../assets/photos/joe-one-on-one.png';
+import portrait from '../assets/photos/joe-portrait.png';
 import SummitPhoto from '../components/SummitPhoto.astro';
 import peak from '../assets/photos/summit-peak-exec.jpg';
 
@@ -16,7 +18,6 @@ const title = 'Executive & Business Coaching in Montvale NJ | Always Forward Coa
 const description =
   'One-on-one executive and business coaching with Joe Hliboki, Certified FocalPoint coach and former Cisco sales leader. For professionals and owners ready for the next level.';
 const path = '/executive-business-coaching/';
-const coffee = await objSrc('coffee-cups', 144);
 const schema = [service('Executive & Business Coaching', path, description, 'Mid-career professionals, career changers and business owners')];
 ---
 
@@ -46,7 +47,7 @@ const schema = [service('Executive & Business Coaching', path, description, 'Mid
     <div class="summit-split">
       <div>
         <div class="sec-head" data-reveal>
-          <h2 id="what-title">What the engagement actually contains.</h2>
+          <h2 id="what-title">What the engagement <span class="h-accent">actually contains.</span></h2>
         </div>
         <ul class="syllabus syllabus--cards" data-reveal-children>
           <li>
@@ -75,10 +76,9 @@ const schema = [service('Executive & Business Coaching', path, description, 'Mid
   <Section tone="mist" pitch id="how" labelledby="how-title">
     <div class="sec-head" data-reveal>
       <h2 id="how-title">How it works</h2>
+      <p class="deck">Three steps. The first is a free call, and by the end of it you will know whether this fits.</p>
     </div>
-    <StepsStrip
-      client:visible
-      {coffee}
+    <CardTimeline
       steps={[
         { title: 'Talk.', body: 'A free call. You describe the ceiling. Joe asks the questions nobody else will.' },
         { title: 'Plan.', body: 'Assessment and a written plan inside the first two sessions.' },
@@ -87,10 +87,17 @@ const schema = [service('Executive & Business Coaching', path, description, 'Mid
     />
   </Section>
 
+  <!-- Proof: 50/50 card, Joe's portrait left, copy right (shared .split-card in global.css); stacks on phones -->
   <Section id="proof" labelledby="proof-title">
+    <div class="split-card card" data-reveal>
+      <div class="split-card__media">
+        <Image src={portrait} alt="Portrait of Joe Hliboki, business and executive coach, in a navy blazer" widths={[480, 720, 960, 1280]} sizes="(min-width: 900px) 50vw, 100vw" format="webp" quality={78} loading="lazy" decoding="async" style="--split-pos: 50% 18%" />
+      </div>
+      <div class="split-card__copy">
     <ProofBlock
       heading="Sixteen to twenty direct reports. Years of quota."
-      testimonial="TESTIMONIAL PLACEHOLDER: one or two from coaching clients. Jon supplies."
+      sample
+      quotes={executive}
       related={[
         { lead: 'Need this for a team instead of one person?', label: 'Group Programs', href: '/group-programs/' },
         { lead: 'Need it for your whole company?', label: 'Corporate Training', href: '/corporate-training/' },
@@ -100,13 +107,15 @@ const schema = [service('Executive & Business Coaching', path, description, 'Mid
         Before coaching, Joe led a healthcare sales team of sixteen to twenty people at Cisco. Hiring, promoting, restructuring, managing up and down, hitting the target. He ran the careers he now coaches. He is a Certified FocalPoint Business, Executive & Career Coach, backed by a curriculum that has been delivered to businesses worldwide, and he has been coaching for three years with a client list that fills three delivery days a week.
       </p>
     </ProofBlock>
+      </div>
+    </div>
   </Section>
 
   <CtaBand
     heading="The next level has a door. Find it."
     body="Thirty minutes to describe the ceiling. Joe will tell you if he can help and, if he cannot, who can."
     button={{ label: 'Book a call with Joe', href: '/contact/' }}
-    object="ladder"
+    photo="stepping-stones"
   />
 </Base>
 

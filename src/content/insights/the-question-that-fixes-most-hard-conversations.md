@@ -1,7 +1,7 @@
 ---
 title: "The question that fixes most hard conversations"
 description: "Before the tough talk with your boss, your report or your business partner, answer one question. Everything else is delivery."
-pubDate: 2026-12-01
+pubDate: 2026-10-28
 category: "Workplace Skills"
 cta: "/corporate-training/"
 image: "/images/insights/the-question-that-fixes-most-hard-conversations.webp"

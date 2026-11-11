@@ -4,22 +4,47 @@ import Base from '../layouts/Base.astro';
 import Section from '../components/Section.astro';
 import InteriorHero from '../components/InteriorHero.astro';
 import ProofBlock from '../components/ProofBlock.astro';
+import { earlyCareer } from '../data/testimonials';
 import CtaBand from '../components/CtaBand.astro';
 import Faq from '../components/Faq.astro';
 import SummitPhoto from '../components/SummitPhoto.astro';
-import StepsStrip from '../islands/StepsStrip';
-import { objSrc } from '../lib/images';
+import CardTimeline from '../components/CardTimeline.astro';
 import { service, faqPage } from '../lib/seo';
 import { Image } from 'astro:assets';
 import oneOnOne from '../assets/photos/joe-one-on-one.png';
 import waitingRoom from '../assets/photos/job-search-living-room.jpg';
 import peak from '../assets/photos/summit-peak-early.jpg';
+import serverRoom from '../assets/photos/proof-server-room.jpg';
+import videoCall from '../assets/photos/video-call-grid.jpg';
 
 const title = 'Early Career Coaching for Young Professionals | Always Forward Coaching';
 const description =
   'Career coaching for Gen Z and young professionals in NJ and by video anywhere. Resumes, interviews, first jobs, first promotions. $75 a session with coach Joe Hliboki.';
 const path = '/early-career-coaching/';
-const coffee = await objSrc('coffee-cups', 144);
+
+// 4. How it works: the timeline cards (CardTimeline, same as the other service pages).
+const timeline = [
+  {
+    when: 'Today',
+    title: 'Talk to Joe.',
+    body: 'A free thirty-minute call. Bring your resume and the job posting you keep going back to. You hang up with one thing to fix tonight.',
+  },
+  {
+    when: 'After session one',
+    title: 'Get the plan.',
+    body: 'A written plan in your inbox: which roles, which companies, what to say. It comes in order, so you know what to do first.',
+  },
+  {
+    when: 'Weeks 2 to 6',
+    title: 'Work the plan.',
+    body: 'Weekly sessions. Mock interviews with real feedback, and the salary conversation before you need it. A question the night before an interview gets an answer.',
+  },
+  {
+    when: 'When it lands',
+    title: 'The offer, or the promotion.',
+    body: 'Then you stop. Or you switch to the promotion track and keep going. No contract either way.',
+  },
+];
 
 const faqs = [
   {
@@ -111,37 +136,40 @@ const schema = [
   <Section tone="mist" pitch id="how" labelledby="how-title">
     <div class="sec-head" data-reveal>
       <h2 id="how-title">How it works</h2>
+      <p class="deck"><strong>No contract, no package.</strong> $75 a session, and you stop when it has done its job.</p>
     </div>
-    <StepsStrip
-      client:visible
-      {coffee}
-      steps={[
-        { title: 'Talk.', body: 'A free thirty-minute call. Bring your resume.' },
-        { title: 'Plan.', body: 'A written plan after session one.' },
-        { title: 'Work the plan.', body: 'Weekly sessions until the offer, or the promotion, lands.' },
-      ]}
-    />
+    <CardTimeline steps={timeline} />
   </Section>
 
-  <!-- 5. Proof -->
-  <Section id="proof" labelledby="proof-title">
-    <ProofBlock heading="He mentored Cisco's new hires. <span class='h-accent'>Now he mentors yours.</span>" testimonial="TESTIMONIAL PLACEHOLDER: one from a young client, one from a parent. Jon supplies.">
+  <!-- 5. Proof: dark server-room photo behind, navy overlay keeps the copy AA -->
+  <Section tone="navy" id="proof" labelledby="proof-title" class="proof-sec">
+    <div slot="bg" class="proof-sec__bg" aria-hidden="true">
+      <Image src={serverRoom} alt="" widths={[640, 960, 1280, 1920, 2400]} sizes="100vw" format="webp" quality={74} loading="lazy" decoding="async" />
+    </div>
+    <ProofBlock heading="He mentored Cisco's new hires. <span class='h-accent'>Now he mentors yours.</span>" sample quotes={earlyCareer}>
       <p>
         Joe spent years at Cisco mentoring the company's elite new-hire engineers: twenty-two-year-olds walking into a Fortune 100 on day one. A mentor told him his ability to earn a young person's trust in thirty minutes was rare. Parents tend to agree. He has coached more than five hundred Gen Z athletes and professionals, has three of his own at home, and wrote the book on it: <a href="/the-book/"><em>Bursting the Bubble: A Commonsense Guide to Early Career Success</em></a>.
       </p>
-      <Fragment slot="extra">
-        <a class="xlink card card--link" href="/career-steppingstones/" data-reveal>
-          <h3>Want structure and a group instead?</h3>
-          <p>Career Steppingstones is Joe's virtual program for young professionals: two small-group workshops a month, a peer Coffee Club, weekly accountability.</p>
-          <span class="xlink__go">Career Steppingstones</span>
-        </a>
-        <Faq items={faqs} />
-      </Fragment>
     </ProofBlock>
   </Section>
 
+  <!-- 5b. The group option and the FAQ -->
+  <Section id="more">
+    <a class="xlink card card--link" href="/career-steppingstones/" data-reveal>
+      <div class="xlink__media">
+        <Image src={videoCall} alt="A laptop on a wooden desk showing a video call with six young professionals, each at home, laughing and taking notes" widths={[400, 640, 960]} sizes="(min-width: 720px) 440px, 100vw" format="webp" quality={78} loading="lazy" decoding="async" />
+      </div>
+      <div class="xlink__copy">
+        <h3>Want structure and a group instead?</h3>
+        <p>Career Steppingstones is Joe's virtual program for young professionals: two small-group workshops a month, a peer Coffee Club, weekly accountability.</p>
+        <span class="xlink__go">Career Steppingstones</span>
+      </div>
+    </a>
+    <Faq items={faqs} />
+  </Section>
+
   <!-- 6. Closing CTA -->
-  <CtaBand heading="Thirty minutes. Bring your resume." body="The first call is free and you will leave with something to fix tonight." button={{ label: 'Book a call with Joe', href: '/contact/' }} />
+  <CtaBand heading="Thirty minutes. Bring your resume." body="The first call is free and you will leave with something to fix tonight." button={{ label: 'Book a call with Joe', href: '/contact/' }} photo="city-night" />
 </Base>
 
 <style>
@@ -193,9 +221,79 @@ const schema = [
     margin-top: var(--s-4);
     color: var(--ink-600);
   }
+
+  /* 4. How it works: the bold lead-in inside the deck line */
+  #how .deck strong {
+    color: var(--navy);
+  }
+
+  /* 5. Proof: full-bleed photo under a navy wash. The wash is heaviest on the left, where the
+     copy sits, so white text stays well above AA; the racks show through on the right. */
+  .proof-sec__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .proof-sec__bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 70% 50%;
+  }
+  .proof-sec__bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to right, rgba(6, 26, 58, 0.9) 0%, rgba(6, 26, 58, 0.8) 42%, rgba(6, 26, 58, 0.3) 72%, rgba(6, 26, 58, 0.1) 100%),
+      linear-gradient(to bottom, rgba(6, 26, 58, 0.25), rgba(6, 26, 58, 0) 40%, rgba(6, 26, 58, 0.45));
+  }
+  @media (max-width: 767px) {
+    .proof-sec__bg::after {
+      background: rgba(6, 26, 58, 0.88);
+    }
+  }
+  .proof-sec :global(.proof__body a) {
+    color: var(--paper);
+    text-decoration: underline;
+    text-decoration-color: var(--sky);
+    text-underline-offset: 0.2em;
+  }
+  .proof-sec :global(.h-accent) {
+    color: var(--sky);
+  }
+  .proof-sec :global(.tcard) {
+    border-color: transparent;
+  }
+  .proof-sec :global(.proof__sample) {
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  /* 5b. The group option: photo left, copy right; stacks on phones */
   .xlink {
-    max-width: 760px;
-    margin-top: var(--s-2);
+    display: grid;
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 0;
+    overflow: hidden;
+  }
+  .xlink__media {
+    aspect-ratio: 4 / 3;
+    background: var(--mist);
+  }
+  .xlink__media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 40%;
+  }
+  .xlink__copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: var(--s-4) var(--s-3);
   }
   .xlink h3 {
     margin-bottom: 6px;
@@ -204,6 +302,7 @@ const schema = [
     max-width: 60ch;
   }
   .xlink__go {
+    align-self: flex-start;
     display: inline-block;
     margin-top: var(--s-2);
     font-weight: 600;
@@ -211,5 +310,17 @@ const schema = [
     text-decoration: underline;
     text-decoration-color: var(--sky);
     text-underline-offset: 0.2em;
+  }
+  @media (min-width: 720px) {
+    .xlink {
+      grid-template-columns: 1fr 1fr;
+    }
+    .xlink__media {
+      aspect-ratio: auto;
+      min-height: 320px;
+    }
+    .xlink__copy {
+      padding: var(--s-5) var(--s-5) var(--s-5) var(--s-4);
+    }
   }
 </style>
