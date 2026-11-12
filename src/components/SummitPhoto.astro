@@ -27,14 +27,17 @@ interface Props {
   contained?: boolean;
   /** Less haze: more contrast, short edge fades, and the rock reaches left to meet the copy. */
   crisp?: boolean;
+  /** Slide the mountain this far left (a CSS length) without resizing it. The photo runs further
+      under the copy, and its right edge, now short of the viewport, fades out (Jon 26_11_12). */
+  shift?: string;
   class?: string;
 }
-const { image, summit, contained = false, crisp = false, class: cls = '' } = Astro.props;
+const { image, summit, contained = false, crisp = false, shift, class: cls = '' } = Astro.props;
 const [sx, sy] = summit;
 ---
 
 <div class:list={['sphoto', { 'sphoto--contained': contained, 'sphoto--crisp': crisp }, cls]} data-reveal aria-hidden="true">
-  <div class="sphoto__frame" style={`--sx: ${sx}; --sy: ${sy}`}>
+  <div class="sphoto__frame" style={`--sx: ${sx}; --sy: ${sy}${shift ? `; --shift: ${shift}; --rfade: var(--shift)` : ''}`}>
     <div class="sphoto__photo">
       <Image
         src={image}
@@ -79,9 +82,9 @@ const [sx, sy] = summit;
       bottom: calc(var(--s-8) * -1 - var(--sy) * 1%);
       transform: translateY(calc(var(--lift) - var(--sy) * 1%));
       /* across the grid gap and --under px behind the cards (Jon, 26_11_11) */
-      left: calc((var(--s-8) + var(--under)) * -1);
-      /* out past the container gutter to the viewport edge */
-      right: calc(-1 * (max(0px, (100vw - var(--container)) / 2) + var(--gutter)));
+      left: calc((var(--s-8) + var(--under) + var(--shift, 0px)) * -1);
+      /* out past the container gutter to the viewport edge (less the shift, so the size holds) */
+      right: calc(-1 * (max(0px, (100vw - var(--container)) / 2) + var(--gutter)) + var(--shift, 0px));
     }
     /* In a clipped section (Section's `pitch`) the bottom fade would be cut off hard, so the photo
        ends inside the section: it runs down into the section's bottom padding and stops just short
@@ -109,8 +112,9 @@ const [sx, sy] = summit;
           rgba(0, 0, 0, 0.86) calc(var(--fade) * 0.91),
           #000 var(--fade)
         ),
-        linear-gradient(to bottom, transparent 0, #000 calc(var(--sy) * 1% - 2%), #000 var(--bottom-solid, 72%), transparent 100%);
-      -webkit-mask-composite: source-in;
+        linear-gradient(to bottom, transparent 0, #000 calc(var(--sy) * 1% - 2%), #000 var(--bottom-solid, 72%), transparent 100%),
+        linear-gradient(to left, transparent 0, #000 var(--rfade, 0px));
+      -webkit-mask-composite: source-in, source-in;
       mask-image:
         linear-gradient(
           to right,
@@ -123,8 +127,9 @@ const [sx, sy] = summit;
           rgba(0, 0, 0, 0.86) calc(var(--fade) * 0.91),
           #000 var(--fade)
         ),
-        linear-gradient(to bottom, transparent 0, #000 calc(var(--sy) * 1% - 2%), #000 var(--bottom-solid, 72%), transparent 100%);
-      mask-composite: intersect;
+        linear-gradient(to bottom, transparent 0, #000 calc(var(--sy) * 1% - 2%), #000 var(--bottom-solid, 72%), transparent 100%),
+        linear-gradient(to left, transparent 0, #000 var(--rfade, 0px));
+      mask-composite: intersect, intersect;
     }
     /* crisp (Jon 26_11_11, Steppingstones): less haze. The photo gets more contrast and a short
        bottom fade. The left side is the same long fade as the default (Jon 26_11_11). */

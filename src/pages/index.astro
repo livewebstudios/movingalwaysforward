@@ -248,7 +248,7 @@ const heroRank = (i: number) => i;
           <Button href={site.amazon} external>Get it on Amazon</Button>
           <Button href="/the-book/" variant="ghost">About the book</Button>
         </div>
-        <!-- the notebook floats on the right, under the copy (Jon 26_11_11) -->
+        <!-- the notebook floats under the copy, on the left (Jon 26_11_12) -->
         <div class="bookband__obj">
           <Obj name="notebook-pen" size={110} sizeMobile={70} rotate={-14} depth="near" float phase={4} />
         </div>
@@ -445,7 +445,7 @@ const heroRank = (i: number) => i;
   }
   .bookband__obj {
     display: flex;
-    justify-content: flex-end;
+    justify-content: flex-start;
     margin-top: var(--s-2);
   }
   .bookband__copy p {
@@ -484,7 +484,7 @@ const heroRank = (i: number) => i;
     /* out of the flow, hovering below the copy on the right */
     .bookband__obj {
       position: absolute;
-      right: 8%;
+      left: 0;
       bottom: -120px;
       margin: 0;
     }
